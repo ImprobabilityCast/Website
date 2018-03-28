@@ -1,0 +1,54 @@
+<html>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<style>
+p.peaches {
+    width: 125px;
+    display: flex;
+    flex-wrap: wrap-reverse;
+    direction: rtl;
+}
+</style>
+<script>
+window.onload = function () {
+    var peaches = document.getElementsByClassName("peaches");
+    for (var i = 0; i < peaches.length; i++) {
+        addSpans(peaches[i]);
+        var box = peaches[i].getBoundingClientRect();
+        alignSpans(peaches[i].childNodes, box);
+    }
+}
+
+function addSpans(element) {
+    var text = element.innerHTML.split(" ");
+    var result = "";
+    for (var i = text.length - 1; i >= 0; i--) {
+        result += "<span>" + text[i] + "&nbsp;</span>";
+    }
+    element.innerHTML = result;
+}
+
+function alignSpans(nodes, box) {
+    var previousY = null, previousRight = null;
+    
+    for (var i = nodes.length - 1; i >= 0; i--) {
+        var style = nodes[i].style;
+        style.position = "relative";
+        
+        var rect = nodes[i].getBoundingClientRect();
+        if (previousY != null && rect.y == previousY) {
+            style.right = previousRight;
+        } else {
+            style.right = rect.x - box.x;
+            previousY = rect.y;
+            previousRight = style.right;
+        }
+    }
+}
+</script>
+<body>
+<p class="peaches">
+Wrote this to answer a question on StackOverflow.com. Someone wanted to have text that flowed backwards and up in an odd way.
+</p>
+</body>
+</html>

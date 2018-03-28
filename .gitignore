@@ -1,0 +1,8 @@
+# Ignore a bunch of IIS directories
+custerr
+history
+logs
+temp
+
+# Ignore a school project
+wwwroot/myself.html

@@ -1,0 +1,33 @@
+body {
+	background: #222;
+	color: white;
+	margin: 0;
+}
+#left, #right {
+	padding: 10px;
+	margin-right: 10px;
+	margin-left: 10px;
+}
+#right{
+	float: right;
+}
+div.head {
+    text-align: center;
+}
+img.head {
+	position: relative;
+	width: 100%;
+	max-width: 640px;
+	max-height: 360px;
+}
+img.list {
+	width: 100%;
+	margin-top: 10px;
+	box-shadow: 4px 4px 4px black;
+}
+@media screen and (min-width: 768px) {
+	#left, #right {
+		width: 48%;
+		height: 48%;
+	}
+}

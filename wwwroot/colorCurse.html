@@ -1,0 +1,94 @@
+<html lang="en-US">
+<meta charset="UTF-8" />
+<style>
+* {
+    box-sizing: border-box;
+    outline: none;
+}
+
+#slow {
+    float: right;
+}
+
+#fast, #slow {
+    padding: 12pt;
+    font-size: 40pt;
+    width: 50%;
+}
+p, #colors, #fast, #slow {
+    position: relative;
+    margin: auto;
+
+}
+#fast, #slow {
+    padding: 30pt;
+}
+p {
+    padding: 40pt;
+    font-family: monospace;
+    text-align: center;
+    display: block;
+    font-size: 40pt;
+    color: white;
+    transition: background-color 0.3s;
+}
+
+#colors {
+    top: 40%;
+}
+
+@media screen and (min-width: 1000px) {
+    #colors {
+        width: 50%;
+    }
+}
+
+@media screen and (max-width: 1000px) {
+    #colors {
+        width: 70%;
+    }
+}
+
+@media screen and (max-width: 800px) {
+    #colors {
+        width: 90%;
+    }
+}
+
+</style>
+<body>
+<div id="colors">
+<p id="p">ffffff</p>
+<button id="fast" onclick="reset(-100)">Faster</button>
+<button id="slow" onclick="reset(100)">Slower</button>
+<script>
+
+var p = document.getElementById("p");
+var t = 1000;
+
+var interval = setInterval(setColor, t);
+
+function setColor() {
+    var color = randomHexColor();
+    p.innerHTML = color;
+    p.style.backgroundColor = "#" + color;
+}
+
+function randomHexColor() {
+    var minColor = 0x1000000;
+    var num;
+    do {
+        num = Math.floor(Math.random() * minColor);
+    } while (num < (minColor / 0x10));
+    
+    return new Number(num).toString(16);
+}
+
+function reset(inc) {
+    clearInterval(interval);
+    t += inc;
+    interval = setInterval(setColor, t);
+}
+</script>
+</body>
+</html>

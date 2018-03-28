@@ -1,0 +1,21 @@
+/* style for error pages */
+* { box-sizing: border-box; }
+body {
+	color: black;
+	background-color: #eeeeee;
+}
+span {
+	line-height: 0.5em;
+	margin: 0.15em;
+	font-size: 9em;
+	position: absolute;
+	color: rgba(0,0,0, 0.1);
+	z-index: -1;
+}
+h1 { margin: 0; }
+@media screen and (max-width: 320px) {
+	span {
+		left: -12px;
+		font-size: 7em;
+	}
+}

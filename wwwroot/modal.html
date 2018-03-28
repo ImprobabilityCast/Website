@@ -1,0 +1,42 @@
+<html>
+<meta charset="UTF-8" />
+<style>
+#coverDiv {
+    position: fixed;
+    z-index: 100;
+    background-color: rgba(128,128,128,0.8);
+    width: 100%;
+    height: 100%;
+    top: 0;
+    right: 0;
+}
+#msgBox {
+    position: relative;
+    top: 100px;
+    width: 250px;
+    background-color: white;
+    padding: 20px;
+    margin: auto;
+}
+#msgBox p {
+    padding: 20px;
+}
+#msgBox button {
+    position: relative;
+    left: 160px;
+    width: 80px;
+}
+</style>
+<body>
+<p>text</p>
+<button>button</button>
+<div id='coverDiv'>
+    <div id='msgBox'>
+    <p>Full Name is required!</p>
+    <button onclick='location.href="booboo.php"'>
+        Ok
+    </button>
+    </div>
+</div>
+</body>
+</html>

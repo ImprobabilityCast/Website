@@ -1,0 +1,13 @@
+body {
+    background: #111;
+    color: #888;
+}
+.phpcode {
+    background: #000;
+    box-shadow: 0 0 5px grey;
+    padding: 10px;
+}
+a { color: #5b5; }
+a:active { color: yellow; }
+a:hover { color: #7e7; }
+a:visited { color: #48a; }

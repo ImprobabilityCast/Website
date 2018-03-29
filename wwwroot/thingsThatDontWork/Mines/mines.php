@@ -42,12 +42,11 @@
 
 </p>
 
-<script src="minesTile.js" ></script>
 <script src="mines.js" ></script>
-<script src="minesEventHandlers.js" defer="defer"></script>
 <script>
-var mines = new Mines(document.getElementById("board"));
-mines.newGame(8, 8);
+reSize(8, 8);
+//loadGame();
+setRandomMines(3);
 </script>
 </body>
 </html>

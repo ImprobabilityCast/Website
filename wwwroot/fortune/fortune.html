@@ -1,0 +1,125 @@
+<html lang="en-US">
+<title>Fortune</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" type="text/css" href="fortune.css">
+
+<body>
+<div id="container">
+	<p id="p1"></p>
+	<pre id="pre1"></pre>
+	<div id="btn-fade"></div>
+	<div id="btns">
+		<div id="btns-container">
+			<button id="next-btn" name="any" onclick="newFortune()">Next</button>
+			<button id="show-options" onclick="showOptions()"
+                title="Categories">&#9654;</button>
+		</div>
+	</div>
+</div>
+<div id="category">
+	<div id="pad-div"></div>
+	<div id="header">
+		<h3>Categories</h3>
+		<img class="close-btn" src="cross.ico" alt="X" name="close"
+			onclick="hideOptions(event)"></img>
+	</div>
+	
+	<button class="fortune-type current" onclick="hideOptions(event)"
+		name="any">any</button>
+	<button class="fortune-type" onclick="hideOptions(event)"
+		name="art">art</button>
+	<button class="fortune-type" onclick="hideOptions(event)"
+		name="ascii-art">ascii-art</button>
+	<button class="fortune-type" onclick="hideOptions(event)"	
+		name="bofh-excuses">bofh-excuses</button>
+	<button class="fortune-type" onclick="hideOptions(event)"
+		name="computers">computers</button>
+	<button class="fortune-type" onclick="hideOptions(event)"
+		name="cookie">cookie</button>
+	<button class="fortune-type" onclick="hideOptions(event)"
+		name="debian">debian</button>
+	<button class="fortune-type" onclick="hideOptions(event)"
+		name="definitions">definitions</button>
+	<button class="fortune-type" onclick="hideOptions(event)"
+		name="disclaimer">disclaimer</button>
+	<button class="fortune-type" onclick="hideOptions(event)"
+		name="drugs">drugs</button>
+	<button class="fortune-type" onclick="hideOptions(event)"
+		name="education">education</button>
+	<button class="fortune-type" onclick="hideOptions(event)"
+		name="ethnic">ethnic</button>
+	<button class="fortune-type" onclick="hideOptions(event)"
+		name="food">food</button>
+	<button class="fortune-type" onclick="hideOptions(event)"
+		name="fortunes">fortunes</button>
+	<button class="fortune-type" onclick="hideOptions(event)"
+		name="goedel">goedel</button>
+	<button class="fortune-type" onclick="hideOptions(event)"
+		name="humorists">humorists</button>
+	<button class="fortune-type" onclick="hideOptions(event)"
+		name="kids">kids</button>
+	<button class="fortune-type" onclick="hideOptions(event)"
+		name="knghtbrd">knghtbrd</button>
+	<button class="fortune-type" onclick="hideOptions(event)"
+		name="law">law</button>
+	<button class="fortune-type" onclick="hideOptions(event)"
+		name="linux">linux</button>
+	<button class="fortune-type" onclick="hideOptions(event)"
+		name="linuxcookie">linuxcookie</button>
+	<button class="fortune-type" onclick="hideOptions(event)"
+		name="literature">literature</button>
+	<button class="fortune-type" onclick="hideOptions(event)"
+		name="love">love</button>
+	<button class="fortune-type" onclick="hideOptions(event)"
+		name="magic">magic</button>
+	<button class="fortune-type" onclick="hideOptions(event)"
+		name="medicine">medicine</button>
+	<button class="fortune-type" onclick="hideOptions(event)"
+		name="men-women">men-women</button>
+	<button class="fortune-type" onclick="hideOptions(event)"
+		name="miscellaneous">miscellaneous</button>
+	<button class="fortune-type" onclick="hideOptions(event)"
+		name="news">news</button>
+	<button class="fortune-type" onclick="hideOptions(event)"
+		name="paradoxum">paradoxum</button>
+	<button class="fortune-type" onclick="hideOptions(event)"
+		name="people">people</button>
+	<button class="fortune-type" onclick="hideOptions(event)"
+		name="perl">perl</button>
+	<button class="fortune-type" onclick="hideOptions(event)"
+		name="pets">pets</button>
+	<button class="fortune-type" onclick="hideOptions(event)"
+		name="platitudes">platitudes</button>
+	<button class="fortune-type" onclick="hideOptions(event)"
+		name="politics">politics</button>
+	<button class="fortune-type" onclick="hideOptions(event)"
+		name="pratchett">pratchett</button>
+	<button class="fortune-type" onclick="hideOptions(event)"
+		name="riddles">riddles</button>
+	<button class="fortune-type" onclick="hideOptions(event)"
+		name="science">science</button>
+	<button class="fortune-type" onclick="hideOptions(event)"
+		name="songs-poems">songs-poems</button>
+	<button class="fortune-type" onclick="hideOptions(event)"
+		name="sports">sports</button>
+	<button class="fortune-type" onclick="hideOptions(event)"
+		name="startrek">startrek</button>
+	<button class="fortune-type" onclick="hideOptions(event)"
+		name="tao">tao</button>
+	<button class="fortune-type" onclick="hideOptions(event)"
+		name="translate-me">translate-me</button>
+	<button class="fortune-type" onclick="hideOptions(event)"
+		name="ubuntu-server-tips">ubuntu-server-tips</button>
+	<button class="fortune-type" onclick="hideOptions(event)"
+		name="wisdom">wisdom</button>
+	<button class="fortune-type" onclick="hideOptions(event)"
+		name="work">work</button>
+	<button class="fortune-type" onclick="hideOptions(event)"
+		name="zippy">zippy</button>
+	</div>
+</div>
+<script src="fortune.js">
+</script>
+</body>
+</html>

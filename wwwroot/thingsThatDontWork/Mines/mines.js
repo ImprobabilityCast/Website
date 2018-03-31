@@ -221,7 +221,7 @@ function nMinesChange(evt) {
     nMines = Number(evt.currentTarget.value);
     newGame(nMines);
 }
-    
+
 function sizeChange(evt) {
     var options = evt.currentTarget.options;
     var target = options[options.selectedIndex];

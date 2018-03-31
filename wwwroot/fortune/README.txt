@@ -1,0 +1,1 @@
+Requires linux fortune package and acessories

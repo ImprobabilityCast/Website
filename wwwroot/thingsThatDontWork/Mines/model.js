@@ -3,6 +3,28 @@ var map = [];
 var nMines;
 
 
+function incrementIndex(x, y) {
+    map[x][y]++;
+}
+
+function setMine(row, col) {
+    mineIndices.add([row, col]);
+    map[row][col] = -10; // this way mines will always be < 0
+    var r = row - 1;
+    
+    // Increment the values around the mine
+    while (r <= row + 1 && r < maxRow) {
+        var c = col - 1;
+        while (c <= col + 1 && c < maxCol) {
+            if (c >= 0 && r >= 0) {
+                incrementIndex(r, c);
+            }
+            c++;
+        }
+        r++;
+    }
+}
+
 // Saves the current game.
 this.saveGame = function () {
     localStorage.setItem("map", map);

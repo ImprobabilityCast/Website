@@ -13,44 +13,7 @@ var nMines = 3;
 var maxCol = 8;
 var maxRow = 8;
 
-function showZeros(row, col) {
-    var lst = map[row][col].classList;
-    lst.remove("unseen");
-    lst.remove("flag");
-    
-    if (lst.contains("question")) {
-        lst.remove("question");
-        map[row][col].innerHTML = "";
-    }
 
-    if ("0" === map[row][col].getAttribute("value")) {
-        var r = row - 1;
-        while (r <= row + 1 && r < maxRow) {
-            var c = col - 1;
-            while (c <= col + 1 && c < maxCol) {
-                if (c >= 0 && r >= 0
-                        && map[r][c].classList.contains("unseen")) {
-                    showZeros(r, c);
-                }
-                c++;
-            }
-            r++;
-        }
-    } else {
-        map[row][col].innerHTML = map[row][col].getAttribute("value");
-    }
-}
-
-function createTd(row, col) {
-    var ele = document.createElement("td");
-    ele.onclick = handler;
-    ele.oncontextmenu = flagger;
-    ele.setAttribute("value", 0);
-    ele.setAttribute("row", row);
-    ele.setAttribute("col", col);
-    ele.classList.add("unseen");
-    return ele;
-}
 
 function setMine(row, col) {
     mineIndices.add([row, col]);

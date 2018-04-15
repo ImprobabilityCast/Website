@@ -1,5 +1,5 @@
 ////////////////////////////////////
-// 7 April 2018
+// 15 April 2018
 ////////////////////////////////////
 function Model() {
     map = [[0]];
@@ -22,8 +22,8 @@ function Model() {
     // Public functions
     ////////////////////////////////////
 
-    // requires row >= 0 and col >= 0
-    this.setMine = function (row, col) {
+    // requires col >= 0 and row >= 0
+    this.setMine = function (col, row) {
         map[row][col] = -10; // this way mines will always be < 0
         var r = row - 1;
 
@@ -84,19 +84,19 @@ function Model() {
     }
     
     this.flag = function (x, y) {
-        map[x][y] = 30 - map[x][y];
+        map[x][y] = 30 - map[y][x];
     }
 
     this.isFlag = function (x, y) {
-        return (10 < map[x][y]);
+        return (10 < map[y][x]);
     }
 
     this.isMine = function (x, y) {
-        return (map[x][y] < 0);
+        return (map[y][x] < 0);
     }
 
     this.isZero = function (x, y) {
-        return (map[x][y] === 0);
+        return (map[y][x] === 0);
     }
 
     this.getWidth = function () {
@@ -109,18 +109,18 @@ function Model() {
     
     // requires width & height to be > 0
     this.setMapSize = function (width, height) {
-        while (map.length < width) {
+        while (map.length < height) {
             map.push([]);
         }
-        while (map.length > width) {
+        while (map.length > height) {
             map.pop();
         }
 
         for (var i = 0; i < map.length; i++) {
-            while (map[i].length < height) {
+            while (map[i].length < width) {
                 map[i].push(0);
             }
-            while (map[i].length > height) {
+            while (map[i].length > width) {
                 map[i].pop();
             }
         }

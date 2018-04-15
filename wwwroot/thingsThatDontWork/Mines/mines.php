@@ -11,12 +11,6 @@
 </table>
 
 <button onclick="mines.newGame()">New</button>
-<!--<input name="numberOfMines" type="number" min="1" last-good-input=""
-    onchange="stopInvalid(event)" oninput="flagInvalid(event)"/>
-<input name="width" type="number" min="2" last-good-input=""
-    onchange="stopInvalid(event)" oninput="flagInvalid(event)"/>
-<input name="height" type="number" min="2" last-good-input=""
-    onchange="stopInvalid(event)" oninput="flagInvalid(event)"/>-->
 <form>
 <label for="size">Size: </label>
 <select name="size" onchange="mines.sizeChange(event)">

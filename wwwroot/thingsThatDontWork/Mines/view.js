@@ -1,10 +1,12 @@
 // handleLeftClick & handleRightClick - event handlers
-// requires rootNode to have one element child
-function View(rootNode, handleLeftClick, handleRightClick) {
-    var nodeMap = [[rootNode.children[0]]];
+// requires rootNode to have one element child that also has one element child
+function View(handleLeftClick, handleRightClick) {
+    var rootNode = document.getElementById("board");
+    var flagBox = document.getElementById("flagCounter");
+    var nodeMap = [[rootNode.children[0].children[0]]];
 
     ////////////////////////////////////
-    // Hidden Helper functions
+    // Hidden helper functions
     ////////////////////////////////////
     
     function createTd(x, y) {
@@ -20,22 +22,22 @@ function View(rootNode, handleLeftClick, handleRightClick) {
     function setRows(nRows) {
         while (nRows < rootNode.children.length) {
             rootNode.removeChild(rootNode.lastElementChild);
-            map.pop();
+            nodeMap.pop();
         }
         while (nRows > rootNode.children.length) {
             rootNode.appendChild(document.createElement("tr"));
-            map.push([]);
+            nodeMap.push([]);
         }
     }
 
     function addCol(nCols, row) {
         while (row.children.length < nCols) {
             row.appendChild(createTd(row.children.length, row));
-            map[rowIndex].push(row.lastElementChild);
+            nodeMap[rowIndex].push(row.lastElementChild);
         }
         while (row.children.length > nCols) {
             row.removeChild(row.lastElementChild);
-            map[rowIndex].pop();
+            nodeMap[rowIndex].pop();
         }
     }
 
@@ -43,22 +45,18 @@ function View(rootNode, handleLeftClick, handleRightClick) {
     // Public functions
     ////////////////////////////////////
 
+    this.getSquare = function (x, y) {
+        return nodeMap[y][x];
+    }
+    
+    this.setFlagCount = function (i) {
+        flagBox.textContent = i;
+    }
+
     this.reSize = function (cols, rows) {
         setRows(rows);
         for (var r = 0; r < rootNode.children.length; r++) {
             addCol(cols, rootNode.children[r]);
-        }
-    }
-
-    // resets game to begining
-    this.reset = function () {
-        for (var a = 0; a < map.length; a++) {
-            for (var b = 0; b < map[a].length; b++) {
-                map[a][b].textContent = "";
-                map[a][b].classList.remove("flag");
-                map[a][b].val = 0;
-                map[a][b].classList.add("unseen");
-            }
         }
     }
 }

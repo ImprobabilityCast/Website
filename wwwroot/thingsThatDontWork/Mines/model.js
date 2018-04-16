@@ -2,8 +2,8 @@
 // 15 April 2018
 ////////////////////////////////////
 function Model() {
-    map = [[0]];
-    nMines = 0;
+    var map = [[0]];
+    var nMines = 0;
 
     ////////////////////////////////////
     // Hidden Helper functions
@@ -15,7 +15,7 @@ function Model() {
     }
 
     function incrementIndex(x, y) {
-        map[x][y]++;
+        map[y][x]++;
     }
 
     ////////////////////////////////////
@@ -46,6 +46,11 @@ function Model() {
         localStorage.setItem("nMines", nMines);
     }
 
+    this.savedGameExists = function () {
+        return localStorage.getItem("map") !== undefined
+                    && localStorage.getItem("nMines") !== undefined;
+    }
+    
     // Loads a saved game.
     // requires a saved game to load
     this.loadGame = function () {
@@ -67,14 +72,14 @@ function Model() {
         
         for (var i = 0; i < map.length; i++) {
             for (var j = 0; j < map[0].length; j++) {
-                coords.push([i, j]);
+                coords.push([j, i]);
             }
         }
 
         // set the mines
         while (mines2set > 0) {
             var randIdx = randomInt(0, coords.length - 1);
-            // splice always retruns an array
+            // splice always returns an array
             var randCoord = coords.splice(randIdx, 1)[0];
             this.setMine(randCoord[0], randCoord[1]);
             mines2set--;
@@ -83,14 +88,31 @@ function Model() {
         nMines = numberOfMines;
     }
     
+    // requires map(x, y) is not a flag
     this.flag = function (x, y) {
-        map[x][y] = 30 - map[y][x];
+        map[y][x] = (map[y][x] + 11) * 13;
+    }
+    
+    // requires map(x, y) is a flag
+    this.unFlag = function (x, y) {
+        map[y][x] = (map[y][x] / 13) - 11;
     }
 
     this.isFlag = function (x, y) {
-        return (10 < map[y][x]);
+        return (map[y][x] >= 13 && map[y][x] <= 260);
     }
 
+    // requires map(x, y) is not seen
+    this.see = function (x, y) {
+        var val = map[y][x];
+        map[y][x] = (val + 11) * 261;
+        return val;
+    }
+
+    this.isSeen = function (x, y) {
+        return (map[y][x] >= 261);
+    }
+    
     this.isMine = function (x, y) {
         return (map[y][x] < 0);
     }

@@ -51,7 +51,7 @@ td:not(.unseen) {
     border-color: transparent;
 }
 td.flag {
-    background-image: url(/images/flag.png);
+    background-image: url(flag.png);
     background-size: cover;
     background-repeat: no-repeat;
 }
@@ -79,22 +79,22 @@ td:active {
     border-style: inset;
 }
 
-td[value="1"] {
+td[val="1"] {
     color: blue;
 }
-td[value="2"] {
+td[val="2"] {
     color: green;
 }
-td[value="3"] {
+td[val="3"] {
     color: red;
 }
-td[value="4"] {
+td[val="4"] {
     color: black;
 }
-td[value="5"] {
+td[val="5"] {
     color: darkred;
 }
-td[value="6"] {
+td[val="6"] {
     color: lightseagreen;
 }
 

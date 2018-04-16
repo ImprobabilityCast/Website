@@ -32,7 +32,9 @@ function Controller() {
             if (model.isMine(ele.col, ele.row)) {
                 ele.classList.add("explode");
             } else {
-                view.getSquare(x, y).textContent = model.see(x, y);
+                var val = model.see(x, y);
+                view.getSquare(x, y).textContent = val;
+                view.getSquare(x, y).setAttribute("val", val);
             }
         }
     }
@@ -55,7 +57,9 @@ function Controller() {
                     if (model.isZero(col, row)) {
                         showZeros(col, row);
                     } else {
-                        view.getSquare(x, y).textContent = model.see(x, y);
+                        var val = model.see(x, y);
+                        view.getSquare(x, y).textContent = val;
+                        view.getSquare(x, y).setAttribute("val", val);
                     }
                 }
                 row++;

@@ -39,13 +39,13 @@ function Controller() {
                 lst.remove("flag");
                 lst.add("question");
                 ele.textContent = "?";
-                model.setFlag(ele.cellIndex, ele.row, false);
+                model.setFlag(ele.cellIndex, ele.rowIndex, false);
             } else if (lst.contains("question")) {
                 lst.remove("question");
                 ele.textContent = "";
             } else {
                 lst.add("flag");
-                model.setFlag(ele.cellIndex, ele.row, true);
+                model.setFlag(ele.cellIndex, ele.rowIndex, true);
             }
             view.setFlagCount(model.mineCount() - model.flagCount());
         }
@@ -55,15 +55,15 @@ function Controller() {
     function handleLeftClick(evt) {
         var ele = evt.currentTarget;
 
-        if (!model.isFlag(ele.cellIndex, ele.row)
-                && !model.isSeen(ele.cellIndex, ele.row)) {
-            if (model.isMine(ele.cellIndex, ele.row)) {
+        if (!model.isFlag(ele.cellIndex, ele.rowIndex)
+                && !model.isSeen(ele.cellIndex, ele.rowIndex)) {
+            if (model.isMine(ele.cellIndex, ele.rowIndex)) {
                 ele.classList.remove("unseen");
                 ele.classList.remove("question");
                 ele.classList.add("explode");
                 ele.textContent = "";
             } else {
-                showZeros(ele.cellIndex, ele.row);
+                showZeros(ele.cellIndex, ele.rowIndex);
             }
         }
         model.saveGame();

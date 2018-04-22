@@ -13,7 +13,6 @@ function View(handleLeftClick, handleRightClick) {
         var ele = document.createElement("td");
         ele.onclick = handleLeftClick;
         ele.oncontextmenu = handleRightClick;
-        ele.row = y;
         ele.classList.add("unseen");
         return ele;
     }

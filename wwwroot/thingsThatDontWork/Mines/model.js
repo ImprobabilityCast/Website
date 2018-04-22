@@ -38,14 +38,14 @@ function Model() {
     ////////////////////////////////////
 
     // requires col >= 0 and row >= 0
-    this.setMine = function (col, row) {
-        map[row][col].isMine = true;
-        var r = row - 1;
+    this.setMine = function (x, y) {
+        map[y][x].isMine = true;
+        var r = y - 1;
 
         // Increment the values around the mine
-        while (r <= row + 1 && r < map.length) {
-            var c = col - 1;
-            while (c <= col + 1 && c < map[0].length) {
+        while (r <= y + 1 && r < map.length) {
+            var c = x - 1;
+            while (c <= x + 1 && c < map[0].length) {
                 if (c >= 0 && r >= 0) {
                     incrementIndex(c, r);
                 }

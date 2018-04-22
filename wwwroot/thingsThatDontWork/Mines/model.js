@@ -4,7 +4,22 @@
 function Model() {
     var map = [[0]];
     var nMines = 0;
+    var nFlags = 0;
 
+    function Tile() {
+        return {
+            isSeen : false,
+            isMine : false,
+            isFlag : false,
+            count : 0,
+            toString : function () {
+                return "{ isSeen: " + this.isSeen + ", isMine: "
+                    + this.isMine + ", isFlag: " + this.isFlag + ", count: "
+                    + this.count + " }";
+            }
+        }
+    }
+    
     ////////////////////////////////////
     // Hidden Helper functions
     ////////////////////////////////////
@@ -15,7 +30,7 @@ function Model() {
     }
 
     function incrementIndex(x, y) {
-        map[y][x]++;
+        map[y][x].count++;
     }
 
     ////////////////////////////////////
@@ -24,7 +39,7 @@ function Model() {
 
     // requires col >= 0 and row >= 0
     this.setMine = function (col, row) {
-        map[row][col] = -10; // this way mines will always be < 0
+        map[row][col].isMine = true;
         var r = row - 1;
 
         // Increment the values around the mine
@@ -32,7 +47,7 @@ function Model() {
             var c = col - 1;
             while (c <= col + 1 && c < map[0].length) {
                 if (c >= 0 && r >= 0) {
-                    incrementIndex(r, c);
+                    incrementIndex(c, r);
                 }
                 c++;
             }
@@ -42,27 +57,30 @@ function Model() {
 
     // Saves the current game.
     this.saveGame = function () {
-        localStorage.setItem("map", map);
-        localStorage.setItem("nMines", nMines);
+        localStorage.setItem("map", JSON.stringify(map));
+        localStorage.setItem("nMines", JSON.stringify(nMines));
+        localStorage.setItem("nFlags", JSON.stringify(nFlags));
     }
 
-    this.savedGameExists = function () {
-        return localStorage.getItem("map") !== undefined
-                    && localStorage.getItem("nMines") !== undefined;
-    }
-    
     // Loads a saved game.
     // requires a saved game to load
-    this.loadGame = function () {
-        map = localStorage.getItem("map");
-        nMines = localStorage.getItem("nMines");
+    this.tryLoadGame = function () {
+        var newMap = localStorage.getItem("map");
+        var newMines = localStorage.getItem("nMines");
+        var newFlags = localStorage.getItem("nFlags");
+        var result = (newMap != null && newMines != null && newFlags != null);
+        if (result) {
+            map = JSON.parse(newMap);
+            nMines = JSON.parse(newMines);
+            nFlags = JSON.parse(newFlags);
+        }
+        return result;
     }
 
-    this.eraseGame = function () {
-        localStorage.setItem("map", undefined);
-        localStorage.setItem("nMines", undefined);
-        map = [[0]];
-        nMines = 0;
+    this.eraseSavedGame = function () {
+        localStorage.removeItem("map");
+        localStorage.removeItem("nMines");
+        localStorage.removeItem("nFlags");
     }
 
     // requires numberOfMines <= |map|
@@ -87,50 +105,67 @@ function Model() {
 
         nMines = numberOfMines;
     }
-    
-    // requires map(x, y) is not a flag
-    this.flag = function (x, y) {
-        map[y][x] = (map[y][x] + 11) * 13;
-    }
-    
-    // requires map(x, y) is a flag
-    this.unFlag = function (x, y) {
-        map[y][x] = (map[y][x] / 13) - 11;
+
+    this.setFlag = function (x, y, bool) {
+        if (map[y][x].isFlag !== bool) {
+            if (bool) {
+                nFlags++;
+            } else {
+                nFlags--;
+            }
+        }
+        map[y][x].isFlag = bool;
     }
 
     this.isFlag = function (x, y) {
-        return (map[y][x] >= 13 && map[y][x] <= 260);
+        return map[y][x].isFlag;
+    }
+    
+    this.flagCount = function () {
+        return nFlags;
     }
 
-    // requires map(x, y) is not seen
+    // returns the number field of map(x, y)
     this.see = function (x, y) {
-        var val = map[y][x];
-        map[y][x] = (val + 11) * 261;
-        return val;
+        map[y][x].isSeen = true;
+    }
+    
+    this.getNumber = function (x, y) {
+        return map[y][x].count;
     }
 
     this.isSeen = function (x, y) {
-        return (map[y][x] >= 261);
+        return map[y][x].isSeen;
     }
     
     this.isMine = function (x, y) {
-        return (map[y][x] < 0);
-    }
-
-    this.isZero = function (x, y) {
-        return (map[y][x] === 0);
+        return map[y][x].isMine;
     }
 
     this.getWidth = function () {
+        return map[0].length;
+    }
+
+    this.getHeight = function () {
         return map.length;
     }
     
-    this.getHeight = function () {
-        return map[0].length;
+    this.mineCount = function () {
+        return nMines;
+    }
+
+    this.clear = function () {
+        nMines = 0;
+        nFlags = 0;
+        for (var y = 0; y < map.length; y++) {
+            for (var x = 0; x < map[0].length; x++) {
+                map[y][x] = new Tile();
+            }
+        }
     }
     
     // requires width & height to be > 0
-    this.setMapSize = function (width, height) {
+    this.reSize = function (width, height) {
         while (map.length < height) {
             map.push([]);
         }
@@ -140,7 +175,7 @@ function Model() {
 
         for (var i = 0; i < map.length; i++) {
             while (map[i].length < width) {
-                map[i].push(0);
+                map[i].push(new Tile());
             }
             while (map[i].length > width) {
                 map[i].pop();
@@ -155,10 +190,13 @@ function Model() {
     this.printMap = function () {
         for (var i of map) {
             var str = "";
-            for (var j of i) {
-                str += j + ", ";
+            for (var j = 0; j < i.length; j++) {
+                str += i[j].toString();
             }
             console.log(str);
         }
+    }
+    this.getMap = function () {
+        return map;
     }
 }

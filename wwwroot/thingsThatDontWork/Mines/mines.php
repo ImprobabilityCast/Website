@@ -10,17 +10,19 @@
 
 
 <div id="left">
-<button onclick="">New</button>
+<button onclick="controller.newGame(10)">New</button>
 
 <div id="flagCounter">
 10
 </div>
 </div>
 
-<table id="board">
+<!-- <table id="board">
 <tr><td></td><td class="unseen"></td><td class="explode"></td></tr>
 <tr><td></td><td></td><td></td></tr>
 <tr><td></td><td></td><td></td></tr>
+</table>-->
+<table id="board">
 </table>
 
 
@@ -28,7 +30,7 @@
 <script src="view.js" ></script>
 <script src="controller.js" ></script>
 <script>
-
+var controller = new Controller();
 </script>
 </body>
 </html>

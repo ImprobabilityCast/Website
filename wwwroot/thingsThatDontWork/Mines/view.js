@@ -3,17 +3,16 @@
 function View(handleLeftClick, handleRightClick) {
     var rootNode = document.getElementById("board");
     var flagBox = document.getElementById("flagCounter");
-    var nodeMap = [[rootNode.children[0].children[0]]];
+    var nodeMap = [[]];
 
     ////////////////////////////////////
     // Hidden helper functions
     ////////////////////////////////////
-    
-    function createTd(x, y) {
+
+    function createTd(y) {
         var ele = document.createElement("td");
         ele.onclick = handleLeftClick;
         ele.oncontextmenu = handleRightClick;
-        ele.col = x;
         ele.row = y;
         ele.classList.add("unseen");
         return ele;
@@ -30,9 +29,10 @@ function View(handleLeftClick, handleRightClick) {
         }
     }
 
-    function addCol(nCols, row) {
+    function addCol(nCols, rowIndex) {
+        var row = rootNode.children[rowIndex];
         while (row.children.length < nCols) {
-            row.appendChild(createTd(row.children.length, row));
+            row.appendChild(createTd(rowIndex));
             nodeMap[rowIndex].push(row.lastElementChild);
         }
         while (row.children.length > nCols) {
@@ -48,15 +48,26 @@ function View(handleLeftClick, handleRightClick) {
     this.getSquare = function (x, y) {
         return nodeMap[y][x];
     }
-    
+
     this.setFlagCount = function (i) {
         flagBox.textContent = i;
     }
 
-    this.reSize = function (cols, rows) {
-        setRows(rows);
-        for (var r = 0; r < rootNode.children.length; r++) {
-            addCol(cols, rootNode.children[r]);
+    this.clear = function () {
+        for (var nodes of nodeMap) {
+            for (var node of nodes) {
+                node.classList = ["unseen"];
+                node.textContent = "";
+                node.setAttribute("val", 0);
+            }
         }
     }
+    
+    this.reSize = function (width, height) {
+        setRows(width);
+        for (var r = 0; r < rootNode.children.length; r++) {
+            addCol(height, r);
+        }
+    }
+
 }

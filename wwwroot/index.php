@@ -70,7 +70,8 @@ $len = count($dir_array);
 for ($i = 1; $i < $len; $i++) {
 	echo "<ul>";
     while ($i % 15 != 0 && $i < $len) {
-        echo "<li><a href='$dir_array[$i]'>$dir_array[$i]</a></li>\n";
+        $url = str_replace(" ","%20", $dir_array[$i]);
+        echo "<li><a href='$url'>$dir_array[$i]</a></li>\n";
         $i++;
     }
     echo "</ul>";

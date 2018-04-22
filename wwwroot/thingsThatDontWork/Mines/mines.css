@@ -3,31 +3,36 @@
     box-shadow: 0 0 4px 1px red;
 }
 
+button {
+    height: 36pt;
+    width:36pt;
+    float: left;
+}
+
+#left {
+    width: 30%;
+    max-width: 200px;
+    min-width: 100px;
+    position: fixed;
+}
+
 #flagCounter {
     border: 5px solid #eee;
     padding: 5px;
-    float: right;
     color: red;
     font-family: monospace;
     font-weight: bold;
     font-size: 20pt;
     background: #500;
+    height: 36pt;
+    float: left;
 }
 
 table {
     background-color: #eee;
     margin: auto;
-}
-
-td.flag {
-    background-image: url(/images/flag.png);
-    background-size: cover;
-    background-repeat: no-repeat;
-}
-
-td.flag:hover {
-    border-color: lightcyan;
-    border-style: solid;
+    position: relative;
+    top: 40pt;
 }
 
 td {
@@ -45,6 +50,26 @@ td:not(.unseen) {
     background-color: white;
     border-color: transparent;
 }
+td.flag {
+    background-image: url(flag.png);
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+td.flag:hover {
+    border-color: lightcyan;
+    border-style: solid;
+}
+
+td.explode {
+    background-image: url(explode.png);
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+td.explode:hover {
+    background-color: red;
+}
 
 td:hover {
     background-color: lightcyan;
@@ -54,22 +79,22 @@ td:active {
     border-style: inset;
 }
 
-td[value="1"] {
+td[val="1"] {
     color: blue;
 }
-td[value="2"] {
+td[val="2"] {
     color: green;
 }
-td[value="3"] {
+td[val="3"] {
     color: red;
 }
-td[value="4"] {
+td[val="4"] {
     color: black;
 }
-td[value="5"] {
+td[val="5"] {
     color: darkred;
 }
-td[value="6"] {
+td[val="6"] {
     color: lightseagreen;
 }
 

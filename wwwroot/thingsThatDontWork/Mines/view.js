@@ -3,7 +3,7 @@
 function View(handleLeftClick, handleRightClick) {
     var rootNode = document.getElementById("board");
     var flagBox = document.getElementById("flagCounter");
-    var nodeMap = [[]];
+    var nodeMap = [];
 
     ////////////////////////////////////
     // Hidden helper functions
@@ -18,17 +18,17 @@ function View(handleLeftClick, handleRightClick) {
     }
 
     function setRows(nRows) {
-        while (nRows < rootNode.children.length) {
+        while (nRows < nodeMap.length) {
             rootNode.removeChild(rootNode.lastElementChild);
             nodeMap.pop();
         }
-        while (nRows > rootNode.children.length) {
+        while (nRows > nodeMap.length) {
             rootNode.appendChild(document.createElement("tr"));
             nodeMap.push([]);
         }
     }
 
-    function addCol(nCols, rowIndex) {
+    function addCols(nCols, rowIndex) {
         var row = rootNode.children[rowIndex];
         while (row.children.length < nCols) {
             row.appendChild(createTd(rowIndex));
@@ -63,9 +63,9 @@ function View(handleLeftClick, handleRightClick) {
     }
     
     this.reSize = function (width, height) {
-        setRows(width);
-        for (var r = 0; r < rootNode.children.length; r++) {
-            addCol(height, r);
+        setRows(height);
+        for (var r = 0; r < width; r++) {
+            addCols(width, r);
         }
     }
 

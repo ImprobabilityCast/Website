@@ -2,9 +2,11 @@
 // 15 April 2018
 ////////////////////////////////////
 function Model() {
-    var map = [[0]];
+    var map = [[new Tile()]];
     var nMines = 0;
     var nFlags = 0;
+    var correctFlags = 0;
+    var unseenCount = map.length * map[0].length;
 
     function Tile() {
         return {
@@ -19,7 +21,7 @@ function Model() {
             }
         }
     }
-    
+
     ////////////////////////////////////
     // Hidden Helper functions
     ////////////////////////////////////
@@ -60,6 +62,7 @@ function Model() {
         localStorage.setItem("map", JSON.stringify(map));
         localStorage.setItem("nMines", JSON.stringify(nMines));
         localStorage.setItem("nFlags", JSON.stringify(nFlags));
+        localStorage.setItem("unseenCount", JSON.stringify(unseenCount));
     }
 
     // Loads a saved game.
@@ -68,11 +71,14 @@ function Model() {
         var newMap = localStorage.getItem("map");
         var newMines = localStorage.getItem("nMines");
         var newFlags = localStorage.getItem("nFlags");
-        var result = (newMap != null && newMines != null && newFlags != null);
+        var newUnseen = localStorage.getItem("unseenCount");
+        var result = (newMap !== null && newMines !== null
+                        && newFlags !== null && newUnseen !== null);
         if (result) {
             map = JSON.parse(newMap);
             nMines = JSON.parse(newMines);
             nFlags = JSON.parse(newFlags);
+            unseenCount = JSON.parse(newUnseen);
         }
         return result;
     }
@@ -81,6 +87,7 @@ function Model() {
         localStorage.removeItem("map");
         localStorage.removeItem("nMines");
         localStorage.removeItem("nFlags");
+        localStorage.removeItem("unseenCount");
     }
 
     // requires numberOfMines <= |map|
@@ -104,14 +111,21 @@ function Model() {
         }
 
         nMines = numberOfMines;
+        unseenCount = map.length * map[0].length;
     }
 
     this.setFlag = function (x, y, bool) {
         if (map[y][x].isFlag !== bool) {
             if (bool) {
                 nFlags++;
+                if (map[y][x].isMine) {
+                    correctFlags++;
+                }
             } else {
                 nFlags--;
+                if (map[y][x].isMine) {
+                    correctFlags--;
+                }
             }
         }
         map[y][x].isFlag = bool;
@@ -128,6 +142,7 @@ function Model() {
     // returns the number field of map(x, y)
     this.see = function (x, y) {
         map[y][x].isSeen = true;
+        unseenCount--;
     }
     
     this.getNumber = function (x, y) {
@@ -137,7 +152,7 @@ function Model() {
     this.isSeen = function (x, y) {
         return map[y][x].isSeen;
     }
-    
+
     this.isMine = function (x, y) {
         return map[y][x].isMine;
     }
@@ -149,21 +164,26 @@ function Model() {
     this.getHeight = function () {
         return map.length;
     }
-    
+
     this.mineCount = function () {
         return nMines;
+    }
+
+    this.isGameWon = function () {
+        return (unseenCount === nMines);
     }
 
     this.clear = function () {
         nMines = 0;
         nFlags = 0;
+        unseenCount = map.length * map[0].length;
         for (var y = 0; y < map.length; y++) {
             for (var x = 0; x < map[0].length; x++) {
                 map[y][x] = new Tile();
             }
         }
     }
-    
+
     // requires width & height to be > 0
     this.reSize = function (width, height) {
         while (map.length < height) {
@@ -181,22 +201,5 @@ function Model() {
                 map[i].pop();
             }
         }
-    }
-
-    ////////////////////////////
-    // DEBUG FUNCTIONS
-    ////////////////////////////
-
-    this.printMap = function () {
-        for (var i of map) {
-            var str = "";
-            for (var j = 0; j < i.length; j++) {
-                str += i[j].toString();
-            }
-            console.log(str);
-        }
-    }
-    this.getMap = function () {
-        return map;
     }
 }

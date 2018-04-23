@@ -1,0 +1,9 @@
+td {
+    min-width: 60px;
+    height: 60px;
+    text-align: center;
+    background-color: white;
+    border-color: transparent;
+    background-size: cover;
+    background-repeat: no-repeat;
+}

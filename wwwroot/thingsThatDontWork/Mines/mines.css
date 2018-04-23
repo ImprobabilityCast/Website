@@ -3,17 +3,29 @@
     box-shadow: 0 0 4px 1px red;
 }
 
-button {
+button#new {
     height: 36pt;
-    width:36pt;
+    width: 36pt;
     float: left;
 }
 
-#left {
-    width: 30%;
+button#size {
+    height: 36pt;
+    width: 62pt;
+    float: left;
+}
+
+select {
+    width: 100%;
     max-width: 200px;
-    min-width: 100px;
+    min-width: 88pt;
+}
+
+#left {
+    max-width: 200px;
+    min-width: 88pt;
     position: fixed;
+    z-index: 4;
 }
 
 #flagCounter {
@@ -26,19 +38,15 @@ button {
     background: #500;
     height: 36pt;
     float: left;
+    min-width: 52pt;
+    text-align: right;
 }
 
 table {
     background-color: #eee;
     margin: auto;
     position: relative;
-    top: 40pt;
-}
-
-td {
-    width: 30px;
-    height: 30px;
-    text-align: center;
+    top: 60pt;
 }
 
 td.unseen {
@@ -46,14 +54,8 @@ td.unseen {
     border: 2px outset lightgrey;
 }
 
-td:not(.unseen) {
-    background-color: white;
-    border-color: transparent;
-}
 td.flag {
     background-image: url(flag.png);
-    background-size: cover;
-    background-repeat: no-repeat;
 }
 
 td.flag:hover {
@@ -61,14 +63,34 @@ td.flag:hover {
     border-style: solid;
 }
 
-td.explode {
-    background-image: url(explode.png);
-    background-size: cover;
-    background-repeat: no-repeat;
+td.win {
+    background-color: green;
+    border-style: solid;
+    border-color: limegreen;
 }
 
-td.explode:hover {
+td.win:hover {
+    border-color: lightgreen;
+}
+
+td.explode {
+    background-image: url(explode.png);
+    background-color: lightcoral;
+    border-size: 0;
+}
+
+td.explode:hover, td.bomb:hover, td.wrong:hover {
     background-color: red;
+}
+
+td.bomb {
+    background-image: url(bomb.png);
+    background-color: lightcoral;
+    border-color: transparent;
+}
+
+td.wrong {
+    background-image: url(wrong.png);
 }
 
 td:hover {

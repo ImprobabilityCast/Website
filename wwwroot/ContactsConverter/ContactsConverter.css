@@ -1,0 +1,34 @@
+* { box-sizing: border-box; }
+body {
+	font-size: 18px;
+	background: aliceblue;
+	color: black;
+}
+#error {
+	font-size: 14px;
+	color: red;
+	clear: right;
+}
+fieldset {
+    background: linear-gradient(135deg, lightblue, palegreen);
+    box-shadow: 0 0 20px 1px turquoise;
+    border: none;
+}
+button {
+	margin: 10px;
+	float: right;
+    height: 48px;
+    width: 128px;
+    background-color: #97defa;
+    color: #444;
+    border: 2px outset lightblue;
+    border-radius: 4px;
+}
+button:hover, button:active { background-color: #a7eefa; }
+button:active				{ border: 2px inset aliceblue; }
+input:focus, button:focus	{ outline: none; }
+input { padding: 4px; }
+form { margin: 20%; }
+@media screen and (min-width: 250px) {
+	form { margin: 10%; }
+}

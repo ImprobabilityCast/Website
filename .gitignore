@@ -6,3 +6,6 @@ temp
 
 # Ignore a school project
 wwwroot/myself.html
+
+# Ignore cookies file
+wwwroot/ContactsConverter/cookies.txt

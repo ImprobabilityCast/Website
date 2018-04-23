@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<title>Integrity Contacts to Gmail Contacts</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="stylesheet" type="text/css" href="ContactsConverter.css" />
+<body>
+<form action="ContactsConverter.php" method="POST"
+	onsubmit="checkInput(event)">
+<fieldset>
+	<legend>Integrity.com</legend>
+	<input type="text" id="iuser" name="user" placeholder="Username"
+		autocomplete="off" autocorrect="off" autocapitalize="off"
+		spellcheck="false"/>
+	<br><br>
+	<input type="password" id="ikey" name="key" placeholder="password"
+		autocomplete="off" autocorrect="off" autocapitalize="off"
+		spellcheck="off" />
+	<br>
+	<span id="error"></span>
+	<br>
+</fieldset>
+<button type="submit">Submit</button>
+</form>
+<script src="ContactsConverter.js"></script>
+</body>
+</html>

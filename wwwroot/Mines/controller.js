@@ -1,3 +1,7 @@
+////////////////////////////////////
+// 22 April 2018
+////////////////////////////////////
+
 // Controller
 function Controller() {
     var model = new Model();
@@ -160,6 +164,10 @@ function Controller() {
         view.setFlagCount(model.mineCount() - model.flagCount());
     }
 
+    ////////////////////////////////////
+    // Public functions
+    ////////////////////////////////////
+    
     this.setCustomLevel = function (name, params) {
         levels.set(name, params);
     }

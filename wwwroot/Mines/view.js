@@ -1,3 +1,7 @@
+////////////////////////////////////
+// 22 April 2018
+////////////////////////////////////
+
 // handleLeftClick & handleRightClick - event handlers
 // requires rootNode to have one element child that also has one element child
 function View(handleLeftClick, handleRightClick) {

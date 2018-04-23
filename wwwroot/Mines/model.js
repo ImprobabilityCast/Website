@@ -1,5 +1,5 @@
 ////////////////////////////////////
-// 15 April 2018
+// 22 April 2018
 ////////////////////////////////////
 function Model() {
     var map = [[new Tile()]];
@@ -13,12 +13,7 @@ function Model() {
             isSeen : false,
             isMine : false,
             isFlag : false,
-            count : 0,
-            toString : function () {
-                return "{ isSeen: " + this.isSeen + ", isMine: "
-                    + this.isMine + ", isFlag: " + this.isFlag + ", count: "
-                    + this.count + " }";
-            }
+            count : 0
         }
     }
 

@@ -1,0 +1,10 @@
+CACHE MANIFEST
+# === comment line
+# change a comment line to trigger cache update
+#req. files to be cached
+#/doc2.html
+NETWORK:
+#never be cached
+# * to indicate all other files === no cache
+FALLBACK:
+#/online resource /cached fallback resouce

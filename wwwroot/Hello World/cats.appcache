@@ -1,0 +1,31 @@
+CACHE MANIFEST
+#that line is required
+#this is version 5
+#NOTE: Use service workers, however, ya need https if yer not gonna use
+#localhost
+
+NETWORK:
+#cats.php
+#these files should never be cached and therefore are not available offline
+
+CACHE:
+#these files are cached and can be used offline
+cats/P1450990.JPG  
+cats/P1470050.JPG  
+cats/P1480053.JPG  
+cats/P1480584.JPG  
+cats/shot0001.png
+cats/P1460048.JPG  
+cats/P1470282.JPG  
+cats/P1480061.JPG  
+cats/P1480589.JPG
+cats/P1470049.JPG  
+cats/P1470390.JPG  
+cats/P1480577.JPG  
+cats/P1480594.JPG
+
+FALLBACK:
+#these are the files to send when the other files are not available or
+#were not cached successfully
+
+# 4/2018 - So glad that this is being deprecated.

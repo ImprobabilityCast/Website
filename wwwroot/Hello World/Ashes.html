@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html manifest="ash.appcashe">
+<title></title>
+<meta name="viewport" content="width=device-width, inital-scale=1.0">
+<style>
+*  {
+    box-sizing: border-box;
+}
+@font-face  {
+    font-family: GiffordsHand;
+    src: url(GIFFRD-H.TTF);
+}
+@keyframes delta  {
+    0%  {background-color: red; }
+    33%  {background-color: yellow; }
+    66%  {background-color: green; }
+    100%  {opacity: 0.4; }
+}
+body  {
+    background-color: red;
+    animation-name: delta;
+    animation-duration: 100s;
+    animation-iteration-count: 3;
+    animation-direction: alternate;
+    animation-timing-function: linear;
+}
+/*animation: name duration timing-function delay iteration-count direction */
+div  {
+    width: 200px;
+    height: 160px;
+    border: 1px solid grey;
+    float: left;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+div:hover  {
+    overflow: visible;
+    z-index: 1;
+}
+p  {
+    font-family: GiffordsHand;
+    word-wrap: break-word;
+}
+
+#d1  {background: linear-gradient(to top, yellow, red); }
+#d2  {background: linear-gradient(to right, blue, green); }
+#d3  {background: linear-gradient(to bottom left, darkblue, cyan); }
+#d4  {background: linear-gradient(75deg, violet, darkred); }
+#d5  {background: linear-gradient(red, yellow, blue); }
+#d5  {background: linear-gradient(90deg, red, orange, yellow, green, blue, violet); }
+#d6  {
+    background: linear-gradient(45deg, rgba(0, 0, 255, 0), rgba(0, 0, 255, 1));
+}
+#d7  {
+    background: repeating-linear-gradient(green, blue 5%, aqua 10%);
+}
+#d8  { background: radial-gradient(red, yellow, orange); }
+#d9  { background: radial-gradient(blue 10%, yellow 20%, red 80%); }
+#dA  { background: radial-gradient(ellipse, blue, green, violet); }
+#dB  { background: radial-gradient(circle, violet, red, darkred); }
+#dC  {
+    background: radial-gradient(farthest-corner at 40% 35%, black, red, black);
+    transition: height 1s, width 2s;
+    transition-timing-function: ease-in-out;
+    transition-delay: 0.5s;
+}
+#dD  {
+    background: radial-gradient(closest-side at 30% 60%, white, turquoise, indigo);
+    transition: transform 3s;
+}
+#dE  { background: repeating-radial-gradient(green, blue 4%, darkgreen 8%, green 16%); }
+#dF  { box-shadow: 3px 3px 6px cyan; }
+#dF  { box-shadow: 0 3px 3px 6px cyan, 0 10px 20px 0 rgba(0, 0, 0, 0.2); }
+
+#d1:hover  { transform: translate(10px, 40px); }
+#d2:hover  { transform: rotate(-25deg); }
+#d3:hover  { transform: scale(0.8, 1.3); }
+#d4:hover  { transform: skewX(10deg); }
+#d5:hover  { transform: skewY(10deg); }
+#d6:hover  { transform: skew(10deg, 5deg); }
+#d8:hover  { transform: rotateX(45deg); }
+#d9:hover  { transform: rotateY(45deg); }
+#dA:hover  { transform: rotateZ(45deg); }
+#dB:hover  { perspective: 80px; perspective-origin: 25% 30%; }
+#dC:hover  { height: 320px; width: 400px; }
+#dD:hover  {
+    transform: rotate3d(180, 180, 180), scale(2, 2);
+}
+#p2  { text-shadow: 7px 7px 7px seagreen); }
+#p3  { text-shadow: 0 0 5px orange); }
+#p4  { text-shadow: 0 0 3px red, 2px 2px 6px orange, 1px 1px 15px black; }
+#co1  {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 800px;
+    height: 640px;
+}
+.ci  {
+    margin: 3px;
+}
+.special  {
+    background: linear-gradient(55deg, rgba(0, 0, 0, 0), 
+rgba(100, 100, 255, 1), rgba(0, 0, 0, 0);
+    order: -1;
+}
+#co2  {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: space-between;
+    align-items: center;
+    width: 800px;
+    height: 640px;
+}
+#co3  {
+    display: flex;
+    justify-content: space-around;
+    align-items: stretch;
+    flex-content: center;
+    flex-wrap: wrap;
+    width: 500px;
+    height: 1000px;
+}
+.ci4  {
+    margin: auto;
+}
+#co4  {
+    display: flex;
+    width: 500px;
+    height: 1000px;
+}
+#ci4:first-child  {
+    align-self: stretch;
+    flex: 3;
+}
+#ci4:last-child  {
+    align-self: baseline;
+    flex: 1;
+}
+</style>
+<body>
+<div id="d1" ondragover="putItHere(event)" ondrop="nowLetGo(event)">
+<p id="p1" draggable="true" ondragstart="slide(event)">Boogly Oogly</p>
+</div>
+<div id="d2" ondragover="putItHere(event)" ondrop="nowLetGo(event)"></div>
+<div id="d3" ondragover="putItHere(event)" ondrop="nowLetGo(event)"></div>
+<div id="d4" ondragover="putItHere(event)" ondrop="nowLetGo(event)"></div>
+<div id="d6" ondragover="putItHere(event)" ondrop="nowLetGo(event)"></div>
+<div id="d7" ondragover="putItHere(event)" ondrop="nowLetGo(event)" onmouseover="twirl()"></div>
+<div id="d8" ondragover="putItHere(event)" ondrop="nowLetGo(event)"></div>
+<div id="d9" ondragover="putItHere(event)" ondrop="nowLetGo(event)"></div>
+<div id="dA" ondragover="putItHere(event)" ondrop="nowLetGo(event)">
+<p id="p2" draggable="true" ondragstart="slide(event)">The Great Wishy Washy Washer Maching</p>
+</div>
+<div id="dB" ondragover="putItHere(event)" ondrop="nowLetGo(event)"></div>
+<div id="dC" ondragover="putItHere(event)" ondrop="nowLetGo(event)"></div>
+<div id="dD" ondragover="putItHere(event)" ondrop="nowLetGo(event)"></div>
+<div id="dE" ondragover="putItHere(event)" ondrop="nowLetGo(event)">
+<p id="p3" draggable="true" ondragstart="slide(event)">Mu hoooooo ha ah HAAAAA heeeeeeeee lalalalalala!</p>
+</div>
+<div id="dF" ondragover="putItHere(event)" ondrop="nowLetGo(event)">
+<p id="p4" draggable="true" ondragstart="slide(event)">um. . .  uh. . .  I. . . duh. . . LA! LA! LA! LA! LA!</p>
+</div>
+<div id="co1">
+<div class="ci"></div>
+<div class="ci"></div>
+<div class="ci"></div>
+<div class="ci"></div>
+</div>
+<div id="co2">
+<div class="ci"></div>
+<div class="ci"></div>
+<div class="ci"></div>
+<div class="ci"></div>
+</div>
+<div id="co3">
+<div class="ci"></div>
+<div class="ci special"></div>
+<div class="ci"></div>
+<div class="ci"></div>
+</div>
+<div id="co4">
+<div class="ci4"></div>
+<div class="ci4 special"></div>
+<div class="ci4"></div>
+<div class="ci4"></div>
+</div>
+<div id="dO"></div>
+<div id="dP"></div>
+<div id="dQ"></div>
+<input id="i1" name="pig" type="text">
+<input id="i2" name="lamb" type="text">
+<button type="button" onclick="stor(true)">Store</button>
+<button type="button" onclick="stor(false)">Read</button>
+<button type="button" onclick="work()">work</button>
+<button type="button" onclick="clear()">kill</button>
+<script>
+function stor(con) {
+if(typeof(Storage) !== "undefined")  {
+     var nam = document.getElementById("i1").value;
+     var val = document.getElementById("i2").value;
+     if(con === true) {localStorage.setItem(nam, val); }
+         else {
+            document.getElementById("p1").innerHTML = 
+            localStorage.getItem(nam);
+         }
+     } else {
+     document.getElementById("p1").innerHTML = 
+     "No localStorage";
+     }
+}
+var q;
+function work() {
+    if(typeof(Worker) !== "undefined")  {
+        q = new Worker("WW.js");
+        w.onmessage = function(goop)  {
+            document.getElementById("p1").innerHTML = 
+            goop.data;
+        };
+    } else {
+    document.getElementById("p1").innerHTML = 
+    "Ooops.";
+    }
+}
+function clear()  {
+    q.terminate();
+    q = undefined;
+}
+function slide(e)  {
+    e.dataTransfer.setData("lemon", e.target.id);
+}
+function putItHere(e)  {
+    e.preventDefault();
+}
+function nowLetGo(e)  {
+    e.preventDefault();
+    var eggs = e.dataTransfer.getData("lemon");
+    document.getElementById(eggs).style.color="green";
+    e.target.appendChild(document.getElementById(eggs));
+}
+var sk, wi, ig, jip;
+function twirl()  {
+    clearInterval(ig);
+    sk = 0.1;
+    wi = document.getElementById("d7");
+    ig = setInterval("twirl2()", 50);
+}
+function twirl2()  {
+    wi.style = "transform: matrix(1, " + sk + ", " + sk + ", 1, 0, 0);";
+    if(jip !== true)  {
+    sk += 0.05;
+    if(sk > 1)  { jip = true; }
+    } else { sk -= 0.05; }
+    if(sk < -0.05)  {clearInterval(ig); jip = false; }
+}
+</script>
+<script src="script.js"></script>
+</body>
+</html>

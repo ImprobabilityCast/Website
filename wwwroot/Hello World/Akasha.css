@@ -1,0 +1,368 @@
+/*  selector  {prop:val; prop:val;}
+id name cannot start with un numero
+class name no start con un numero
+p  {
+        text-align: right;
+        color: pink;
+}
+id
+#P01  {
+        color: blue;
+}
+class
+.class  {
+         color: black;
+}
+p.pok  {
+         color: green;
+}
+only "p" elements of class "pok" will get colored green
+<p class="pol pok">text op</p>
+p is in class pol and class pok
+h1, h2, p  {
+        color: brown;
+}
+h1 + h2 + p = color brown
+No '20 px'  yes '20px'
+background-image: url("name.ext");
+background-repeat: repeat-x;  =horizontally rep   y= vertical rep
+background-repeat: no-repeat;
+background-position: left bottom;
+background-attachment: fixed;     =doesn't scroll con page
+
+short version order
+background: color image repeat attachment position;
+
+border-style: dashed
+border-width: thin;
+
+border-style: groove;
+border-width: 30px;
+
+border-style: ridge;
+border-width: 3px 0px 0px 12px;
+border-color: red;
+
+border-style: inset;
+border-color: red green blue black;
+if only one value for any 2 parallel borders = same as one value specified
+
+border-width: 12px;
+border-style: outset;
+border-color: pink;
+
+is the same as
+
+border: 12px outset pink;
+
+border-right-prop: value;
+border-top-prop: value;
+
+margin-top: 80px;
+margin-right: 50px;
+
+length or auto or
+inherit-spec margin should be inherited from parent element
+
+margin: top right bottom left;
+
+width: 600px;
+margin: auto;      element will take up 600px of space and the remaining splace is evenly split between r & l margins
+
+padding = same rules
+
+width: 40px;
+height: 12px;
+
+max-width: 100px;  resizes element according to window size up to 100px max
+max-height: none;  no limit
+
+if color || background color is defined: define el otro
+
+text-align: right;
+
+text-decoration: underline;
+text-decoration: none;
+
+text-transform: lowercase;
+text-transform: capitalize; --Capitalizes The First Letter Of Each Word
+
+text-indent: 20px; spec indent of first line of text
+
+letter-spacing: 5px;
+letter-spacing: -7px;
+
+line-height: 1.5;
+line-height: 0.2;    space between lines
+
+direction: rtl;  text direction
+
+word-spacing: 20px;
+word-spacing: -10px;
+
+white-space: nowrap; === disable txt wrpin
+
+img
+vertical-align: text-top;
+
+X   text-shadow: 1px 1px green;           IE9 and earlier no supp dis method
+
+serif=with serifs
+sans-serif=without serifs
+monospace=each char width = same
+
+font-family: "Arial Narrow", Veranda, serif;
+
+font-style: normal;
+font-style: italic;
+font-style: oblique;
+
+default font size = 16px;    default font size == 1em  usually = 16px
+
+font-size: 100%;
+
+font-weight: bold;
+font-weight: normal;
+
+font-variant: small-caps;
+font-variant: normal;
+
+a:link  {
+}
+a:visited  {
+}
+a:hover  {
+}
+a:active  {
+}
+a must be in this general order
+
+list-style-type: lower-alpha;
+list-style-type: upper-roman;
+
+list-style-type: square;
+list-style-type: circle;
+
+list-style-image: url("name.ext");
+
+list-style-position: inside;
+list-style-position: outside;
+
+list-style: type position image;
+
+tables   {
+    border-collapse: collapse;
+}
+
+vertical-align: top;
+text-align: left;
+padding: 23px;
+
+border-bottom: 12px solid red;
+
+tr:hover  {color: pink}
+
+<div style="overflow-x: auto;">
+<table><caption></caption></table>
+</div>
+
+outline-style: none;
+outline-color: invert;
+outline-width: thin;
+
+outline-style: hidden;
+outline-color: red;
+outline-width: 12px;
+
+outline: 10px ridge pink;
+
+outline-offset: 3px;   spec space between outline and the edge of the element
+
+display: block;  h2 p div
+display: inline;   a img span
+display: none;        takes up no space
+
+max-width: 120px;         no horizon scrollbar
+width: 120px;                  horizon scrollbar
+
+position: static;   normal positioning
+
+position: relative;
+top: 100px;                     100px down from top of normal position     gap where it should be
+
+position: fixed;
+left: 23;
+bottom: 10;                positioned relative to viewport        no gap where it should be
+
+position: absolute;      relative to container
+right: 0;
+top: 0;
+
+z-index: -1;  stack order
+
+clip: rect(0px, 100px, 50px, 0px);        puts element in a shape no scroll
+
+overflow: hidden;
+overflow: scroll;
+overflow: auto;
+overflow: visible;    default
+
+overflow-y: scroll;
+overflow-x: auto;
+
+cursor: point;
+cursor: auto;
+cursor: progress;
+cursor: w-resize;
+
+float: right;    float to the right
+
+clear: right;    no floating elements on the right side
+
+if element is taller than it's container then add    overlow: auto   to container
+
+display: inline-block;
+
+body div     selects all div descendents of the body
+body > div         selects all immediate div children of body
+p + div        selects each div immediately following a p element
+div ~ p      selects all p elements that are sibs de la div
+
+p:first-child        all p that are first kiddos
+div:hover
+a.jk:hover
+p b:first-child       selects first b   in all   p
+p:first-child b       selects all b   in p that are 1st kid of another element
+
+q:lang(bug)  {
+    quotes: "-" "-";
+}
+
+<q lang="bug">bugger</q>
+
+element:focus {
+}
+
+p::first-line  {     CSS3       stupid IE8
+}
+p:first-line  {      CSS1  CSS2
+}
+
+h3::before  {          inserts things before h3
+}
+h3::after  {          inserts things after h3
+}
+
+::selection      evil  IE8
+
+input:out-of-range          selects input con val = out de range
+
+ul  {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+li a  {
+    display: block;
+    width: 50px;
+}
+
+.active
+
+position: fixed;
+overflow: auto;
+
+display: inline;
+
+float: right;
+
+position: fixed;
+bottom: 0;
+
+opacity: 0.7;
+filter: alpha(opacity=70);   IE8
+
+p[color]
+p[color="red"]
+[title~="pig"]  all   with the word pig value of the title attrib.
+[class|="right"]    all  in class that starts with the word right.
+[class^="right"]   all in class that start with right   --not has to b whole word--
+[class$="bug"]   all in class that ends with bug     --not have 2 b whole word--
+[class*="re"]      all in class that has  re  in it        --not have 2 b wholw word--
+
+input[type="button"]  {
+}
+
+resize: none;
+
+counter-reset: section;
+
+counter-reset: dohicky;
+
+counter-increment: dohicky;
+p:before  {
+content: counter(dohicky) " petrol";
+}
+p:before {
+content: counters(dohicky,".") " ";
+}
+
+
+*/
+
+body   {
+    background-color: green;
+    color: white;
+}
+/*
+CSS3
+
+border-radius: 10px 2px 40px 3px;
+border-radius: 30px/12px;
+border-radius: 50%;
+
+border-image: url(piglatin.gif) 400 round;  =repeated middle sections
+border-image: url(piglatin.gif) 400 stretch;  =streched middle sections
+corners of img are sliced and set as corners
+
+border-image:
+=
+border-image-source:
+border-image-slice:
+border-image-width:
+brder-image-outset:
+border-image-repeat:
+
+background: url(spit.jpg) right top repeat, url(tree.jpg) left bottom no-repeat;
+background-image: 1, 2;
+background-position: 1, 2;
+background-repeat: 1, 2;
+the 1st is on top
+
+background-size: 10px;
+background-size: 10px 30px;
+background-size: cover;
+background-size: contain;
+
+background: url(gig.gif) no-repeat center fixed;
+background-size: cover;
+full page background img
+
+background-origin: border-box;
+background-origin: padding-box;    default
+background-origin: content-box;
+
+background-clip: border-box;     default
+background-clip: padding-box;
+background-clip: content-box;
+
+red green blue opacity
+color: rgba(0, 0, 200, 0.5);
+hue saturation lightness
+color: hsl(350, 90%, 50%);
+hue saturation lighness opacity
+color: hsla(240, 100%, 50%, 0.7);
+
+
+

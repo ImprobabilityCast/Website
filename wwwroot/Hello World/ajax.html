@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<body>
+<button type="button" onclick="get()" id="b1" >
+	Send an AJAX request</button>
+<button type="button" onclick="getXML()" id="b2" >
+	Send an xml AJAX request</button>
+<input type="text" id="in" value="ajax.xml" />
+<pre id="viewer"></pre>
+<script>
+var request = new XMLHttpRequest();
+var request2 = new XMLHttpRequest();
+request.onreadystatechange = function () {
+	// if request has completed
+	if(this.readyState === 4){
+		// if HTTP response code = 200 OK
+		if(this.status === 200)
+			document.getElementById("viewer").innerHTML =
+				this.responseText;
+		else
+			document.getElementById("viewer").innerHTML =
+				this.status + " " + this.statusText +
+				"\n" + this.getAllResponseHeaders();
+		document.getElementById("b1").disabled = false;
+	}
+	else
+		document.getElementById("b1").disabled = true;
+}
+request2.onreadystatechange = function () {
+	if(this.readyState === 4){
+		if(this.status === 200)
+			showXML();
+		else
+			document.getElementById("viewer").innerHTML =
+				this.status + " " + this.statusText +
+				"\n" + this.getAllResponseHeaders();
+		document.getElementById("b2").disabled = false;
+	}
+	else
+		document.getElementById("b2").disabled = true;
+}
+function get() {
+	if(request.readyState === 4 || request.readyState == 0){
+		var url = document.getElementById("in").value;
+		request.open("GET", url, true);
+		request.send();
+	}
+}
+function getXML() {
+	if(request2.readyState === 4 || request2.readyState == 0){
+		var url = document.getElementById("in").value;
+		request2.open("GET", url, true);
+		request2.send();
+	}
+}
+function showXML() {
+	var XMLDoc = request2.responseXML;
+	var colors = XMLDoc.getElementsByTagName("COLOR");
+	var outStr = "<table><tbody><tr><th>COLORS</th></tr>";
+	for(i=0; i<colors.length; i++)
+		outStr += "<tr><td style='background-color: " +
+					colors[i].childNodes[0].nodeValue+ "'>"+
+					colors[i].childNodes[0].nodeValue + "</td></tr>";
+	outStr += "</tbody></table>";
+	document.getElementById("viewer").innerHTML = outStr;
+}
+</script>
+</body>
+</html>

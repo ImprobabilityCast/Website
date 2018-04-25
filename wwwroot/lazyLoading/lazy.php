@@ -10,9 +10,7 @@ img {
     width: 100%;
     margin: 10px auto;
     box-shadow: 4px 4px 4px 0px #555;
-}
-div {
-    text-align: center;
+    display: block;
 }
 </style>
 <body onscroll='scrolled()'>

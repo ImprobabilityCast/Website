@@ -21,10 +21,10 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
 			CURLOPT_POSTFIELDS => http_build_query($login_array),
 			CURLOPT_COOKIEJAR => "cookies.txt",
 			CURLOPT_COOKIEFILE => "cookies.txt",
-			CURLOPT_USERAGENT => 
-				"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36
-				 (KHTML, like Gecko) Ubuntu Chromium/58.0.3029.110
-				 Chrome/58.0.3029.110 Safari/537.36"
+			CURLOPT_USERAGENT => "Spider"
+				//"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36
+				// (KHTML, like Gecko) Ubuntu Chromium/58.0.3029.110
+				// Chrome/58.0.3029.110 Safari/537.36"
 		);
 
 		$ch = curl_init();

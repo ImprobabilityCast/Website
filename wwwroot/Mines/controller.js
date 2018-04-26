@@ -8,7 +8,7 @@ function Controller() {
     var view = new View(handleLeftClick, handleRightClick);
     var lost = false;
     var levels = new Map([[0, {width: 8, height: 8, mines: 10}],
-                    [1, {width: 16, height: 16, mines: 40}],
+                    [1, {width: 16, height: 12, mines: 35}],
                     [2, {width: 32, height: 24, mines: 150}],
                     [3, {width: 64, height: 48, mines: 500}]]);
 
@@ -38,12 +38,18 @@ function Controller() {
     }
     view.setFlagCount(model.mineCount() - model.flagCount());
 
+    // did we win already?
+    if (model.isGameWon()) {
+        winEffects();
+    }
+
 
     function winEffects() {
         var flags = document.getElementsByClassName("unseen");
         for (var f of flags) {
             f.classList.add("win");
             f.classList.add("flag");
+            model.setFlag(f.cellIndex, f.parentNode.rowIndex, true);
         }
     }
 

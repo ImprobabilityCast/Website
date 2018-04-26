@@ -68,7 +68,7 @@ function View(handleLeftClick, handleRightClick) {
     
     this.reSize = function (width, height) {
         setRows(height);
-        for (var r = 0; r < width; r++) {
+        for (var r = 0; r < height; r++) {
             addCols(width, r);
         }
     }

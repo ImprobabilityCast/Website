@@ -1,0 +1,14 @@
+table {
+    border-collapse: collapse;
+    margin: auto;
+}
+
+td, th {
+    padding: 10px;
+    margin: 0;
+    border: 1px dashed black;
+}
+
+td:last-child {
+    text-align: right;
+}

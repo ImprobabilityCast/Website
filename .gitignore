@@ -9,3 +9,10 @@ wwwroot/myself.html
 
 # Ignore cookies file
 wwwroot/ContactsConverter/cookies.txt
+
+# Ignore downloaded documentation
+wwwroot/git-doc/
+wwwroot/grub.html
+wwwroot/libc/
+wwwroot/make.html_node/
+wwwroot/php-manual-en/

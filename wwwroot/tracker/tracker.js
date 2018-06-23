@@ -5,7 +5,7 @@
             console.log(this.responseText);
         }
     }
-    tracker.open("POST", "http://localhost/tracker/tracker.php", true);
+    tracker.open("POST", "http://localhost/tracker/", true);
     tracker.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
     tracker.send("location=" + encodeURI(window.location.href));
 }

@@ -10,7 +10,7 @@ function Controller() {
     var levels = new Map([[0, {width: 8, height: 8, mines: 10}],
                     [1, {width: 16, height: 12, mines: 35}],
                     [2, {width: 32, height: 24, mines: 150}],
-                    [3, {width: 64, height: 48, mines: 500}]]);
+                    [3, {width: 64, height: 48, mines: 600}]]);
 
     // restore saved game
     if (model.tryLoadGame()) {

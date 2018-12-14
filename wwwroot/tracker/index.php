@@ -31,6 +31,7 @@ try {
         $sql = "SELECT * FROM localhost_stats.tracking";
         $stmt = $connection->query($sql);
         
+        echo "<!DOCTYPE html>";
         echo "<html lang='en-US'>";
         echo "<meta charset='UTF-8' />";
         echo "<meta name='viewport'
@@ -39,7 +40,7 @@ try {
         require $_SERVER['DOCUMENT_ROOT'] . "/meta-pages/includes.php";
         
         echo "<link rel='stylesheet' type='text/css' href='tracker.css' />";
-        echo "<body><a href='\\'>Home</a><table><thead>";
+        echo "<body><a href='/'>Home</a><table><thead>";
         echo "<tr><th>URL</th><th>Visits</th><tr>";
         echo "</thead><tbody>";
         

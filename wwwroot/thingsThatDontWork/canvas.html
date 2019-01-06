@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<style>
+canvas {
+    border: 1px solid black;
+}
+</style>
+<body>
+<canvas id="canvas1">
+Your browser does not support the canvas element
+</canvas>
+
+<script>
+
+window.onload = function () {
+    var canvas1 = document.getElementById("canvas1");
+    canvas1.ontouchstart = touchStart;
+    canvas1.ontouchmove = touchMove;
+    canvas1.ontouchend = touchEnd;
+    canvas1.onclick = clickCanvas;
+    
+    var rect = canvas1.getBoundingClientRect();
+    // Magic
+    var xOffset = rect.left + 100;
+    var yOffset = rect.top + 100;
+    canvas1.width = window.innerWidth - xOffset;
+    canvas1.height = window.innerHeight - yOffset;
+}
+
+var chickenHouse = {};
+var points = []
+
+function clickCanvas(evt) {
+    var ctx = evt.currentTarget.getContext("2d");
+    var rect = evt.currentTarget.getBoundingClientRect();
+    var xOffset = rect.left;
+    var yOffset = rect.top;
+
+    ctx.beginPath();
+    ctx.lineWidth = 10;
+    console.log(`x: ${evt.clientX}\ty: ${evt.clientY}`);
+    console.log(`xOffset: ${xOffset}\tyOffset: ${yOffset}`);
+    ctx.moveTo(chickenHouse.x, chickenHouse.y);
+    chickenHouse.x = evt.clientX - xOffset;
+    chickenHouse.y = evt.clientY - yOffset;
+    points.push({"x": chickenHouse.x, "y": chickenHouse.y});
+    ctx.lineTo(chickenHouse.x, chickenHouse.y);
+    ctx.stroke();
+}
+
+
+// this stuff doesn't work
+
+var ongoingTouches;
+
+function touchMove(evt) {
+	evt.preventDefault();
+	var ctx = evt.currentTarget.getContext("2d");
+	var touches = evt.changedTouches;
+	
+	for(i=0; i<touches.length; i++) {
+		ctx.beginPath();
+		ctx.moveTo(ongoingTouches[i].pageX, ongoingTouches[i].pageY);
+		ctx.lineTo(touches[i].pageX, touches[i].pageY, 4, 0, 2 * Math.PI);
+		ctx.stroke();
+	}
+}
+
+function touchEnd(evt) {
+	evt.preventDefault();
+	var ctx = evt.currentTarget.getContext("2d");
+	var touches = evt.changedTouches;
+	
+	for(i=0; i<touches.length; i++) {
+		ctx.beginPath();
+		ctx.moveTo(ongoingTouches[i].pageX, ongoingTouches[i].pageY);
+		ctx.lineTo(touches[i].pageX, touches[i].pageY, 4, 0, 2 * Math.PI);
+		ctx.stroke();
+	}
+}
+
+function touchStart(evt) {
+	var ctx = evt.currentTarget.getContext("2d");
+	var touches = evt.changedTouches;
+	ongoingTouches = touches;
+	
+	for(i=0; i<touches.length; i++) {
+		ctx.beginPath();
+		ctx.moveTo(ongoingTouches[i].pageX, ongoingTouches[i].pageY);
+		ctx.arc(touches[i].pageX, touches[i].pageY, 4, 0, 2 * Math.PI);
+		ctx.stroke();
+	}
+}
+
+</script>
+</body>
+</html>

@@ -5,7 +5,7 @@ use PDO;
 use PDOException;
 
 
-$url = urldecode($_POST['location']);
+$url = strtolower(urldecode($_POST['location']));
 $server_name = "localhost";
 $port = "3306";
 $db_name = "localhost_stats";

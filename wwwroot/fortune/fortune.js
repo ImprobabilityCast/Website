@@ -28,7 +28,7 @@ function newFortune() {
      if (arg !== "any") {
          request.open("GET", "updateFortune.php?cat=" + arg);
      } else {
-	 request.open("GET", "updateFortune.php");
+	     request.open("GET", "updateFortune.php");
      }
      request.send();
 }
@@ -51,7 +51,11 @@ function hideOptions(e) {
 			current[i].className = "fortune-type";
 		}
 		e.currentTarget.className = "fortune-type current";
-		document.getElementById("next-btn").name = val;
+        
+        if (document.getElementById("next-btn").name !== val) {
+            document.getElementById("next-btn").name = val;
+            newFortune();
+        }
 	}
 
 	var category = document.getElementById("category");

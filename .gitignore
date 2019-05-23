@@ -7,6 +7,9 @@ temp
 # Ignore a school project
 wwwroot/myself.html
 
+# Ignore very old stuffs
+wwwroot/Ancient Coding/
+
 # Ignore cookies file
 wwwroot/ContactsConverter/cookies.txt
 
@@ -16,3 +19,4 @@ wwwroot/grub.html
 wwwroot/libc/
 wwwroot/make.html_node/
 wwwroot/php-manual-en/
+wwwroot/thingsThatDontWork/libcurl/

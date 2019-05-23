@@ -20,3 +20,11 @@ wwwroot/libc/
 wwwroot/make.html_node/
 wwwroot/php-manual-en/
 wwwroot/thingsThatDontWork/libcurl/
+
+# Ignore pics
+*.jpg
+*.png
+*.ico
+
+# Ignore vscode stuff
+*.vscode

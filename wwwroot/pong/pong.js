@@ -85,8 +85,10 @@
         // draw score
         ctx.beginPath();
         ctx.fillStyle = "#79e";
-        ctx.fillText(p1Score, 100, 175);
-        ctx.fillText(p2Score, canvas.width / 2 + 100, 175);
+        var shift = (p1Score >= 100) ? 25 : 100;
+        ctx.fillText(p1Score, shift, 175);
+        var shift = (p2Score >= 100) ? 25 : 100;
+        ctx.fillText(p2Score, canvas.width / 2 + shift, 175);
 
         // draw ball
         ctx.beginPath();

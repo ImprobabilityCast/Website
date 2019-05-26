@@ -18,16 +18,3 @@ canvas {
     height: 100%;
     border: 1px solid black;
 }
-
-#p1Score, #p2Score {
-    position: absolute;
-    top: 50px;
-    font-size: 200px;
-    margin: 0;
-}
-#p1Score {
-    left: 100px;
-}
-#p2Score {
-    right: 100px;
-}

@@ -1,5 +1,4 @@
-(function () {
-    var canvas = document.getElementById("canvas");
+function pong (canvas) {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 
@@ -292,4 +291,6 @@
     window.onwheel = pLeftMove;
     // the # of milliseconds in 1s / 60 = 16.6667
     var thing = setInterval(update, 20, 20);
-})();
+}
+
+pong(document.getElementById("canvas"));

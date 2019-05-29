@@ -5,18 +5,19 @@
 
     var ctx = canvas.getContext("2d");
 
-    var ScoreFontSize = canvas.wi;
+    var ScoreFontSize = canvas.width;
     if (ScoreFontSize > 600) {
         ScoreFontSize = 600;
     }
     ctx.font = ScoreFontSize + "% PressStart2P";
 
-    const INITIAL_VX = -240; // px per sec
-    const INITIAL_VY = 240; // +y is down
+    const INITIAL_VX = -400; // px per sec
+    const INITIAL_VY = 400; // +y is down
     const PADDLE_HEIGHT = 40;
     const BALL_RADIUS = 5;
     const R2 = BALL_RADIUS * BALL_RADIUS;
     const MID_SCREEN_X = canvas.width / 2;
+    const SCORE_COLOR = "#79e";
 
     var ball = newBall();
 
@@ -30,8 +31,8 @@
         y2: canvas.height / 2 + PADDLE_HEIGHT
     };
 
-    var p1Score = 100;
-    var p2Score = 98;
+    var p1Score = 0;
+    var p2Score = 0;
     
     function newBall() {
         return {
@@ -153,34 +154,60 @@
 
     function drawScore() {
         ctx.beginPath();
-        ctx.fillStyle = "#79e";
-        if (Math.log10(p1Score) == draw.p1Spaces
-                && (draw.p1Spaces + 1) * draw.shift < MID_SCREEN_X) {
-            draw.p1Spaces += 1;
+        ctx.fillStyle = SCORE_COLOR;
+        if (Math.log10(p1Score) == drawScore.p1Spaces
+                && (drawScore.p1Spaces + 1) * drawScore.shift < MID_SCREEN_X) {
+            drawScore.p1Spaces += 1;
         }
-        var p1 = MID_SCREEN_X - (draw.shift * draw.p1Spaces + window.innerWidth / 15);
+        var p1 = MID_SCREEN_X - (drawScore.shift * drawScore.p1Spaces + window.innerWidth / 15);
         ctx.fillText(p1Score, p1, window.innerHeight / 6,
                 MID_SCREEN_X - window.innerWidth / 15);
 
-        if (Math.log10(p2Score) == draw.p2Spaces
-                && (draw.p2Spaces + 1) * draw.shift < MID_SCREEN_X) {
-            draw.p2Spaces += 1;
+        if (Math.log10(p2Score) == drawScore.p2Spaces) {
+                //&& (drawScore.p2Spaces + 1) * drawScore.shift < MID_SCREEN_X) {
+            drawScore.p2Spaces += 1;
         }
-        var p2 = window.innerWidth - (draw.shift * draw.p2Spaces + window.innerWidth / 15);
+        var p2 = window.innerWidth - (drawScore.shift * drawScore.p2Spaces + window.innerWidth / 15);
         ctx.fillText(p2Score, p2, window.innerHeight / 6,
                 MID_SCREEN_X - window.innerWidth / 15);
     }
+    drawScore.p1Spaces = 1;
+    drawScore.p2Spaces = 1;
 
-    function draw() {
+    function pxStr2Int(str) {
+        return parseInt(str.substr(0, str.length - 2));
+    }
+
+    {
+        let style = window.getComputedStyle(document.documentElement);
+        drawScore.shift = pxStr2Int(style.fontSize) * ScoreFontSize / 120;
+        var lineHeight = pxStr2Int(style.lineHeight);
+    }
+
+    function drawMiddleLine() {
+        ctx.beginPath();
+        ctx.strokeStyle = SCORE_COLOR;
+        ctx.setLineDash([12, 18]);
+        ctx.lineWidth = 4;
+        ctx.moveTo(MID_SCREEN_X, 0);
+        ctx.lineTo(MID_SCREEN_X, canvas.height);
+        ctx.stroke();
+    }
+
+    function drawBackground() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         ctx.beginPath();
         ctx.fillStyle = "#282828";
         ctx.rect(0, 0, canvas.width, canvas.height);
         ctx.fill();
+    }
+
+    function draw() {
+        drawBackground();
 
         drawScore();
-
-        // draw dividing line
+        
+        drawMiddleLine();
 
         // draw ball
         ctx.beginPath();
@@ -196,47 +223,12 @@
         // draw player 2
     }
 
-    draw.p1Spaces = 3;
-    draw.p2Spaces = 2;
-    {
-        let style = window.getComputedStyle(document.documentElement);
-        
-        let fStr = style.fontSize;
-        fStr = fStr.substr(0, fStr.length - 2);
-        draw.shift = parseInt(fStr) * ScoreFontSize / 100;
-
-        let lineStr = style.lineHeight;
-        lineStr = lineStr.substr(0, lineStr.length - 2);
-        var lineHeight = parseInt(lineStr);
-    }
-
     // eTime is elapsed time in milliseconds
     function updatePosition(eTime) {
         var secs = eTime / 1000;
         ball.x += ball.vx * secs;
         ball.y += ball.vy * secs;
     }
-
-    // function repeatPress(e) {
-    //     if (e.repeat) {
-    //         pLeft.y1 -= 5;
-    //         pLeft.y2 -= 5;
-    //         setTimeout(repeatPress, 200, e);
-    //     }
-    // }
-
-    // window.onkeypress = function (e) {
-    //     switch (e.key) {
-    //         case "w":
-    //             pLeft.y1 -= 5; // up is negative
-    //             pLeft.y2 -= 5;
-    //             repeatPress(e);
-    //     }
-    // };
-
-    // window.onkeyup = function (e) {
-
-    // };
 
     function getDeltaY(e) {
         return [
@@ -288,7 +280,7 @@
 
         // check bouncy things
         handleHitWall();
-        checkHitboxes(eTime);
+        checkHitboxes();
 
         // check win conditions
         checkGameOver();

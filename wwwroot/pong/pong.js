@@ -5,17 +5,18 @@
 
     var ctx = canvas.getContext("2d");
 
-    var ScoreFontSize = window.innerWidth;
+    var ScoreFontSize = canvas.wi;
     if (ScoreFontSize > 600) {
         ScoreFontSize = 600;
     }
     ctx.font = ScoreFontSize + "% PressStart2P";
 
-    const INITIAL_VX = -180; // px per sec
-    const INITIAL_VY = 180; // +y is down
+    const INITIAL_VX = -240; // px per sec
+    const INITIAL_VY = 240; // +y is down
     const PADDLE_HEIGHT = 40;
     const BALL_RADIUS = 5;
-    const MID_SCREEN_X = window.innerWidth / 2;
+    const R2 = BALL_RADIUS * BALL_RADIUS;
+    const MID_SCREEN_X = canvas.width / 2;
 
     var ball = newBall();
 
@@ -23,10 +24,10 @@
         deltaY: 0,
         deltaT: 0,
         vel: 0,
-        x1: window.innerWidth / 15,
-        x2: window.innerWidth / 15 + 8,
-        y1: window.innerHeight / 2,
-        y2: window.innerHeight / 2 + PADDLE_HEIGHT
+        x1: canvas.width / 15,
+        x2: canvas.width / 15 + 6,
+        y1: canvas.height / 2,
+        y2: canvas.height / 2 + PADDLE_HEIGHT
     };
 
     var p1Score = 100;
@@ -41,44 +42,85 @@
         };
     }
 
-    function inBackHitbox(hitbox, ball) {
-        var lowerDist = (hitbox.y2 - ball.y) * (hitbox.y2 - ball.y)
-            + (hitbox.x1 - ball.x) * (hitbox.x1 - ball.x);
-        var upperDist = (hitbox.y1 - ball.y) * (hitbox.y1 - ball.y)
-            + (hitbox.x1 - ball.x) * (hitbox.x1 - ball.x);
-        return lowerDist < BALL_RADIUS * BALL_RADIUS
-            || upperDist < BALL_RADIUS * BALL_RADIUS;
+    function inVBound(hitbox, hDist, ball) {
+        var result = false;
+
+        var topY = hitbox.y1 - ball.y;
+        var bottomY = hitbox.y2 - ball.y;
+
+        // handle edges
+        result |= R2 >= topY * topY + hDist * hDist ;
+        result |= R2 >= bottomY * bottomY + hDist * hDist;
+
+        // handle long flat part
+        // Not inluding radius so that near corner bounces
+        // don'tact like corner bounces.
+        result |= ball.y > hitbox.y1 && ball.y < hitbox.y2
+
+        return result;
     }
 
-    function inFrontHitbox(hitbox, ball) {
-        var lowerDist = (hitbox.y2 - ball.y) * (hitbox.y2 - ball.y)
-            + (hitbox.x2 - ball.x) * (hitbox.x2 - ball.x);
-        var upperDist = (hitbox.y1 - ball.y) * (hitbox.y1 - ball.y)
-            + (hitbox.x2 - ball.x) * (hitbox.x2 - ball.x);
-        return lowerDist < BALL_RADIUS * BALL_RADIUS
-            || upperDist < BALL_RADIUS * BALL_RADIUS;
+    function inHBound(hitbox, vDist, ball) {
+        var result = false;
+
+        var leftX = hitbox.x1 - ball.x;
+        var rightX = hitbox.x2 - ball.x;
+
+        // handle edges
+        result |= R2 >= leftX * leftX + vDist * vDist;
+        result |= R2 >= rightX * rightX + vDist * vDist;
+
+        // handle flat part
+        // Not inluding radius so that near corner bounces
+        // don'tact like corner bounces.
+        result |= ball.x > hitbox.x1 && ball.x < hitbox.x2
+
+        return result;
+    }
+
+    function checkTopBound(hitbox, ball) {
+        var vDist = hitbox.y1 - (ball.y + BALL_RADIUS);
+        if (vDist <= 0 && ball.y - hitbox.y1 < BALL_RADIUS) {
+            return inHBound(hitbox, vDist, ball);
+        } else {
+            return false;
+        }
+    }
+
+    function checkBottomBound(hitbox, ball) {
+        var vDist = ball.y - (BALL_RADIUS + hitbox.y2);
+        if (vDist <= 0 && hitbox.y2 - ball.y < BALL_RADIUS) {
+            return inHBound(hitbox, vDist, ball);
+        } else {
+            return false;
+        }
+    }
+
+    function checkRightBound(hitbox, ball) {
+        var hDist = ball.x - (hitbox.x2 + BALL_RADIUS);
+        if (hDist <= 0 && hitbox.x2 - ball.x < BALL_RADIUS) {
+            return inVBound(hitbox, hDist, ball);
+        } else {
+            return false;
+        }
     }
 
     function checkHitboxes() {
         // idk if this will work over velocity 480 px per sec b/c of how hit box is checked
-        if (inFrontHitbox(pLeft, ball)) {
-            //ball.x += 2 * (pLeft.x2 - ball.x);
-            ball.vx = -ball.vx;
+        var top = checkTopBound(pLeft, ball);
+        var bottom = checkBottomBound(pLeft, ball);
+        var side = checkRightBound(pLeft, ball);
+        if (top || bottom) {
+            ball.vy = -ball.vy;
             ball.vy += pLeft.vel;
         }
-        if (inBackHitbox(pLeft, ball)) {
-            if (pLeft.vel == 0) {
-                ball.vy *= -1;
-            } else if (pLeft.vel < 0 == ball.vy < 0) {
-                ball.vy += pLeft.vel;
-            } else {
-                ball.vy = (ball.vy - pLeft.vel) * -1;
-            }
+        if (side) {
+            ball.vx = -ball.vx;
+            ball.vy += pLeft.vel;
         }
     }
 
     function handleHitWall() {
-
         while (true) {
             if (ball.x > canvas.width) {
                 ball.x -= 2 * (ball.x - canvas.width);
@@ -157,28 +199,23 @@
     draw.p1Spaces = 3;
     draw.p2Spaces = 2;
     {
-        let fStr = window.getComputedStyle(document.documentElement).fontSize;
+        let style = window.getComputedStyle(document.documentElement);
+        
+        let fStr = style.fontSize;
         fStr = fStr.substr(0, fStr.length - 2);
         draw.shift = parseInt(fStr) * ScoreFontSize / 100;
+
+        let lineStr = style.lineHeight;
+        lineStr = lineStr.substr(0, lineStr.length - 2);
+        var lineHeight = parseInt(lineStr);
     }
 
-    function updatePosition() {
-        var time = new Date().getTime();
-        var et = (time - updatePosition.lastTime) / 1000;
-        ball.x += ball.vx * et;
-        ball.y += ball.vy * et;
-        handleHitWall();
-
-        checkHitboxes();
-        checkGameOver();
-
-        draw();
-        updatePosition.lastTime = time;
-        console.log(ball.vy);
+    // eTime is elapsed time in milliseconds
+    function updatePosition(eTime) {
+        var secs = eTime / 1000;
+        ball.x += ball.vx * secs;
+        ball.y += ball.vy * secs;
     }
-
-    updatePosition.lastTime = new Date().getTime();
-
 
     // function repeatPress(e) {
     //     if (e.repeat) {
@@ -200,12 +237,20 @@
     // window.onkeyup = function (e) {
 
     // };
+
+    function getDeltaY(e) {
+        return [
+            e.deltaY,
+            e.deltaY * lineHeight,
+            e.deltaY * window.innerHeight][e.deltaMode];
+    }
     
     function pLeftMove(e) {
-        pLeft.y1 += e.deltaY * 10;
-        pLeft.y2 += e.deltaY * 10;
+        var deltaY = getDeltaY(e);
+        pLeft.y1 += deltaY;
+        pLeft.y2 += deltaY;
 
-        pLeft.deltaY += e.deltaY * 10;
+        pLeft.deltaY += deltaY;
         
         var time = new Date().getTime();
         pLeft.deltaT += time - pLeftMove.lastTime;
@@ -225,7 +270,7 @@
 
     function updatePVel() {
         if (pLeft.deltaT > 0) {
-            pLeft.vel = (pLeft.deltaY / pLeft.deltaT) * 3000;
+            pLeft.vel = (pLeft.deltaY / pLeft.deltaT) * 1000;
         }
         if ((new Date().getTime() - pLeftMove.lastTime) > 400) {
             pLeft.vel = 0;
@@ -233,8 +278,26 @@
             pLeft.deltaT = 0;
         }
     }
+
+    function update(eTime) {
+        // move ball
+        updatePosition(eTime);
+
+        // move paddles
+        updatePVel();
+
+        // check bouncy things
+        handleHitWall();
+        checkHitboxes(eTime);
+
+        // check win conditions
+        checkGameOver();
+
+        // update display
+        draw();
+    }
     
     window.onwheel = pLeftMove;
-    setInterval(updatePVel, 300);
-    var thing = setInterval(updatePosition, 16.6667, ball); // the # of milliseconds in 1s / 60
+    // the # of milliseconds in 1s / 60 = 16.6667
+    var thing = setInterval(update, 20, 20);
 })();

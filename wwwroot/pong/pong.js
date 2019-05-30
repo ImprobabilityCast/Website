@@ -12,26 +12,21 @@ function pong (canvas) {
 
     const INITIAL_VX = -400; // px per sec
     const INITIAL_VY = 400; // +y is down
-    const PADDLE_HEIGHT = 40;
+    const PADDLE_HEIGHT = 40
+    const HALF_PADDLE_HEIGHT = PADDLE_HEIGHT / 2;
     const BALL_RADIUS = 5;
     const R2 = BALL_RADIUS * BALL_RADIUS;
     const MID_SCREEN_X = canvas.width / 2;
     const SCORE_COLOR = "#79e";
 
     var ball = newBall();
-
-    var pLeft = {
-        deltaY: 0,
-        deltaT: 0,
-        vel: 0,
-        x1: canvas.width / 15,
-        x2: canvas.width / 15 + 6,
-        y1: canvas.height / 2,
-        y2: canvas.height / 2 + PADDLE_HEIGHT
-    };
+    var pLeft = newPlayerLeft();
 
     var p1Score = 0;
     var p2Score = 0;
+
+    // the # of milliseconds in 1s / 60 = 16.6667
+    var interval = setInterval(update, 20, 20);
     
     function newBall() {
         return {
@@ -39,6 +34,18 @@ function pong (canvas) {
             y: 0,
             vx: INITIAL_VX,
             vy: INITIAL_VY
+        };
+    }
+
+    function newPlayerLeft() {
+        return {
+            deltaY: 0,
+            deltaT: 0,
+            vel: 0,
+            x1: canvas.width / 15,
+            x2: canvas.width / 15 + 6,
+            y1: canvas.height / 2 - HALF_PADDLE_HEIGHT,
+            y2: canvas.height / 2 + HALF_PADDLE_HEIGHT
         };
     }
 
@@ -53,8 +60,8 @@ function pong (canvas) {
         result |= R2 >= bottomY * bottomY + hDist * hDist;
 
         // handle long flat part
-        // Not inluding radius so that near corner bounces
-        // don'tact like corner bounces.
+        // Not inluding radius so that near-corner bounces
+        // don't act like corner bounces.
         result |= ball.y > hitbox.y1 && ball.y < hitbox.y2
 
         return result;
@@ -71,8 +78,8 @@ function pong (canvas) {
         result |= R2 >= rightX * rightX + vDist * vDist;
 
         // handle flat part
-        // Not inluding radius so that near corner bounces
-        // don'tact like corner bounces.
+        // Not inluding radius so that near-corner bounces
+        // don't act like corner bounces.
         result |= ball.x > hitbox.x1 && ball.x < hitbox.x2
 
         return result;
@@ -154,16 +161,14 @@ function pong (canvas) {
     function drawScore() {
         ctx.beginPath();
         ctx.fillStyle = SCORE_COLOR;
-        if (Math.log10(p1Score) == drawScore.p1Spaces
-                && (drawScore.p1Spaces + 1) * drawScore.shift < MID_SCREEN_X) {
+        if (Math.log10(p1Score) === drawScore.p1Spaces) {
             drawScore.p1Spaces += 1;
         }
         var p1 = MID_SCREEN_X - (drawScore.shift * drawScore.p1Spaces + window.innerWidth / 15);
         ctx.fillText(p1Score, p1, window.innerHeight / 6,
                 MID_SCREEN_X - window.innerWidth / 15);
 
-        if (Math.log10(p2Score) == drawScore.p2Spaces) {
-                //&& (drawScore.p2Spaces + 1) * drawScore.shift < MID_SCREEN_X) {
+        if (Math.log10(p2Score) === drawScore.p2Spaces) {
             drawScore.p2Spaces += 1;
         }
         var p2 = window.innerWidth - (drawScore.shift * drawScore.p2Spaces + window.innerWidth / 15);
@@ -287,10 +292,45 @@ function pong (canvas) {
         // update display
         draw();
     }
-    
-    window.onwheel = pLeftMove;
-    // the # of milliseconds in 1s / 60 = 16.6667
-    var thing = setInterval(update, 20, 20);
-}
 
-pong(document.getElementById("canvas"));
+    window.onwheel = pLeftMove;
+    canvas.oncontextmenu = function (e) {
+        e.preventDefault();
+        if (window.onwheel === null) {
+            pong.resume();
+        } else {
+            pong.pause();
+        }
+    }
+
+    ///////////////////////
+    // Public functions.
+    ///////////////////////
+
+    pong.resume = function () {
+        // only resume if paused
+        if (window.onwheel === null) {
+            window.onwheel = pLeftMove
+            interval = setInterval(update, 20, 20);
+        }
+    }
+
+    pong.pause = function () {
+        window.onwheel = null;
+        clearInterval(interval);
+    }
+
+    pong.restart = function () {
+        clearInterval(interval);
+        ball = newBall();
+        pLeft = newPlayerLeft();
+        p1Score = 0;
+        p2Score = 0;
+        window.onwheel = pLeftMove
+        interval = setInterval(update, 20, 20);
+    }
+
+    pong.screensaver = function () {
+
+    }
+}

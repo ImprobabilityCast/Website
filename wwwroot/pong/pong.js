@@ -10,11 +10,11 @@ function pong (canvas) {
     }
     ctx.font = ScoreFontSize + "% PressStart2P";
 
-    const INITIAL_VX = -400; // px per sec
-    const INITIAL_VY = 400; // +y is down
+    const INITIAL_VX = -100; // px per sec
+    const INITIAL_VY = 100; // +y is down
     const PADDLE_HEIGHT = 40
     const HALF_PADDLE_HEIGHT = PADDLE_HEIGHT / 2;
-    const BALL_RADIUS = 5;
+    const BALL_RADIUS = 4;
     const R2 = BALL_RADIUS * BALL_RADIUS;
     const MID_SCREEN_X = canvas.width / 2;
     const SCORE_COLOR = "#79e";
@@ -43,87 +43,68 @@ function pong (canvas) {
             deltaT: 0,
             vel: 0,
             x1: canvas.width / 15,
-            x2: canvas.width / 15 + 6,
+            x2: canvas.width / 15 + 8,
             y1: canvas.height / 2 - HALF_PADDLE_HEIGHT,
             y2: canvas.height / 2 + HALF_PADDLE_HEIGHT
         };
     }
 
-    function inVBound(hitbox, hDist, ball) {
-        var result = false;
-
-        var topY = hitbox.y1 - ball.y;
-        var bottomY = hitbox.y2 - ball.y;
-
-        // handle edges
-        result |= R2 >= topY * topY + hDist * hDist ;
-        result |= R2 >= bottomY * bottomY + hDist * hDist;
-
-        // handle long flat part
-        // Not inluding radius so that near-corner bounces
-        // don't act like corner bounces.
-        result |= ball.y > hitbox.y1 && ball.y < hitbox.y2
-
-        return result;
+    function didXIntercept(hitbox, coords) {
+        var deltaY = hitbox.y1 - coords.y;
+        var deltaT = deltaY / ball.vy;
+        var posX = coords.x + deltaT * ball.vx;
+        return  (posX >= hitbox.x1 && posX <= hitbox.x2);
     }
 
-    function inHBound(hitbox, vDist, ball) {
-        var result = false;
-
-        var leftX = hitbox.x1 - ball.x;
-        var rightX = hitbox.x2 - ball.x;
-
-        // handle edges
-        result |= R2 >= leftX * leftX + vDist * vDist;
-        result |= R2 >= rightX * rightX + vDist * vDist;
-
-        // handle flat part
-        // Not inluding radius so that near-corner bounces
-        // don't act like corner bounces.
-        result |= ball.x > hitbox.x1 && ball.x < hitbox.x2
-
-        return result;
+    function didYIntercept(y, ballCoord, coords) {
+        return (y > coords.y) && (y < ballCoord.y);
     }
 
-    function checkTopBound(hitbox, ball) {
-        var vDist = hitbox.y1 - (ball.y + BALL_RADIUS);
-        if (vDist <= 0 && ball.y - hitbox.y1 < BALL_RADIUS) {
-            return inHBound(hitbox, vDist, ball);
-        } else {
-            return false;
+    function didSurroundTop(hitbox, coordLeft, coordRight) {
+        return (coordLeft.x <= hitbox.x1 && coordRight.x >= hitbox.x1)
+            || (coordLeft.x >= hitbox.x1 && coordRight.x <= hitbox.x1)
+            || (coordLeft.x <= hitbox.x2 && coordRight.x >= hitbox.x2)
+            || (coordLeft.x >= hitbox.x2 && coordRight.x <= hitbox.x2);
+    }
+
+    function checkTopBound(hitbox, ballLeft, ballRight, coordLeft, coordRight) {
+        if (didYIntercept(hitbox.y1, ballLeft, coordLeft)) {
+            console.log("crosssed Y on left");
+            return didXIntercept(hitbox, coordLeft)
+                || didSurroundTop(hitbox, coordLeft, coordRight);
+        } else if (didYIntercept(hitbox.y1, ballRight, coordRight)) {
+            console.log("crossed Y on right");
+            return didXIntercept(hitbox, coordRight)
+                || didSurroundTop(hitbox, coordLeft, coordRight);
         }
+        return false;
     }
 
-    function checkBottomBound(hitbox, ball) {
-        var vDist = ball.y - (BALL_RADIUS + hitbox.y2);
-        if (vDist <= 0 && hitbox.y2 - ball.y < BALL_RADIUS) {
-            return inHBound(hitbox, vDist, ball);
-        } else {
-            return false;
-        }
-    }
+    function checkHitboxes(oldBall) {
+        var hyp = Math.sqrt(ball.vy * ball.vy + ball.vx * ball.vx);
 
-    function checkRightBound(hitbox, ball) {
-        var hDist = ball.x - (hitbox.x2 + BALL_RADIUS);
-        if (hDist <= 0 && hitbox.x2 - ball.x < BALL_RADIUS) {
-            return inVBound(hitbox, hDist, ball);
-        } else {
-            return false;
-        }
-    }
-
-    function checkHitboxes() {
+        var shiftX = BALL_RADIUS * ball.vy / hyp;
+        var shiftY = BALL_RADIUS * ball.vx / hyp;
+        var coordLeft = { x: oldBall.x + shiftX, y: oldBall.y - shiftY };
+        var coordRight = { x: oldBall.x - shiftX, y: oldBall.y + shiftY };
+        var ballLeft = { x: ball.x + shiftX, y: ball.y - shiftY };
+        var ballRight = { x: ball.x - shiftX, y: ball.y + shiftY };
         // idk if this will work over velocity 480 px per sec b/c of how hit box is checked
-        var top = checkTopBound(pLeft, ball);
-        var bottom = checkBottomBound(pLeft, ball);
-        var side = checkRightBound(pLeft, ball);
-        if (top || bottom) {
+        var top = checkTopBound(pLeft, ballLeft, ballRight, coordLeft, coordRight);
+        //var side = checkRightBound(pLeft, ball);
+        //var bottom = checkBottomBound(oldX, oldY, pLeft, ball);
+        
+        // if (side) {
+        //     ball.vx = -ball.vx;
+        //     //ball.vy += pLeft.vel;
+        // }
+        if (top){// || bottom) {
+            console.log("fixing top");
             ball.vy = -ball.vy;
-            ball.vy += pLeft.vel;
-        }
-        if (side) {
-            ball.vx = -ball.vx;
-            ball.vy += pLeft.vel;
+            ball.y = pLeft.y1 - BALL_RADIUS;
+            // ball.x += ball.vx * 0.02;
+            // ball.y += ball.vy * 0.02;
+            //ball.vy += pLeft.vel;
         }
     }
 
@@ -276,6 +257,10 @@ function pong (canvas) {
     }
 
     function update(eTime) {
+        var oldBall = {
+            x: ball.x,
+            y: ball.y
+        }
         // move ball
         updatePosition(eTime);
 
@@ -284,7 +269,7 @@ function pong (canvas) {
 
         // check bouncy things
         handleHitWall();
-        checkHitboxes();
+        checkHitboxes(oldBall);
 
         // check win conditions
         checkGameOver();

@@ -118,7 +118,7 @@ function pong (canvas) {
         var bottom = checkBottomBound(pLeft, ballLeft, ballRight, oldLeft, oldRight);
         var right = checkRightBound(pLeft, ballLeft, ballRight, oldLeft, oldRight);
         
-        if (top){
+        if (top) {
             console.log("fixing top");
             ball.vy = -ball.vy;
             ball.y = pLeft.y1 - BALL_RADIUS;
@@ -139,19 +139,26 @@ function pong (canvas) {
     }
 
     function handleHitWall() {
+        var i = 100;
         while (true) {
-            if (ball.x > canvas.width) {
-                ball.x -= 2 * (ball.x - canvas.width);
+            if (i === 0) {
+                console.log("AAAAA");
+                pong.pause();
+                break;
+            }
+            i--;
+            if (ball.x + BALL_RADIUS > canvas.width) {
+                ball.x -= 2 * (ball.x + BALL_RADIUS - canvas.width);
                 ball.vx = -ball.vx;
                 continue;
             }
-            if (ball.y < 0) {
-                ball.y = -ball.y;
+            if (ball.y - BALL_RADIUS < 0) {
+                ball.y = BALL_RADIUS;
                 ball.vy = -ball.vy;
                 continue;
             }
-            if (ball.y > canvas.height) {
-                ball.y -=  2 * (ball.y - canvas.height);
+            if (ball.y + BALL_RADIUS > canvas.height) {
+                ball.y -=  2 * (ball.y + BALL_RADIUS - canvas.height);
                 ball.vy = -ball.vy;
                 continue;
             }
@@ -176,14 +183,14 @@ function pong (canvas) {
             drawScore.p1Spaces += 1;
         }
         var p1 = MID_SCREEN_X - (drawScore.shift * drawScore.p1Spaces + window.innerWidth / 15);
-        ctx.fillText(p1Score, p1, window.innerHeight / 6,
+        ctx.fillText(p1Score, p1, window.innerHeight / 4,
                 MID_SCREEN_X - window.innerWidth / 15);
 
         if (Math.log10(p2Score) === drawScore.p2Spaces) {
             drawScore.p2Spaces += 1;
         }
         var p2 = window.innerWidth - (drawScore.shift * drawScore.p2Spaces + window.innerWidth / 15);
-        ctx.fillText(p2Score, p2, window.innerHeight / 6,
+        ctx.fillText(p2Score, p2, window.innerHeight / 4,
                 MID_SCREEN_X - window.innerWidth / 15);
     }
     drawScore.p1Spaces = 1;

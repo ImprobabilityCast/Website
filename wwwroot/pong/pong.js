@@ -49,33 +49,51 @@ function pong (canvas) {
         };
     }
 
-    function didXIntercept(hitbox, coords) {
-        var deltaY = hitbox.y1 - coords.y;
+    function getXIntercept(yLine, coords) {
+        var deltaY = yLine - coords.y;
         var deltaT = deltaY / ball.vy;
-        var posX = coords.x + deltaT * ball.vx;
-        return  (posX >= hitbox.x1 && posX <= hitbox.x2);
+        return coords.x + deltaT * ball.vx;
     }
 
     function didYIntercept(y, ballCoord, coords) {
         return (y > coords.y) && (y < ballCoord.y);
     }
 
-    function didSurroundTop(hitbox, coordLeft, coordRight) {
-        return (coordLeft.x <= hitbox.x1 && coordRight.x >= hitbox.x1)
-            || (coordLeft.x >= hitbox.x1 && coordRight.x <= hitbox.x1)
-            || (coordLeft.x <= hitbox.x2 && coordRight.x >= hitbox.x2)
-            || (coordLeft.x >= hitbox.x2 && coordRight.x <= hitbox.x2);
+    function didSurroundXRange(hitbox, intLeft, intRight) {
+        return (intLeft <= hitbox.x1 && intRight >= hitbox.x1)
+            || (intLeft >= hitbox.x1 && intRight <= hitbox.x1)
+            || (intLeft <= hitbox.x2 && intRight >= hitbox.x2)
+            || (intLeft >= hitbox.x2 && intRight <= hitbox.x2);
     }
 
     function checkTopBound(hitbox, ballLeft, ballRight, coordLeft, coordRight) {
+        var intLeft = getXIntercept(hitbox.y1, coordLeft);
+        var intRight = getXIntercept(hitbox.y1, coordRight);
+
         if (didYIntercept(hitbox.y1, ballLeft, coordLeft)) {
             console.log("crosssed Y on left");
-            return didXIntercept(hitbox, coordLeft)
-                || didSurroundTop(hitbox, coordLeft, coordRight);
+            return (intLeft >= hitbox.x1 && intLeft <= hitbox.x2)
+                || didSurroundXRange(hitbox, intLeft, intRight);
         } else if (didYIntercept(hitbox.y1, ballRight, coordRight)) {
             console.log("crossed Y on right");
-            return didXIntercept(hitbox, coordRight)
-                || didSurroundTop(hitbox, coordLeft, coordRight);
+            return (intRight >= hitbox.x1 && intRight <= hitbox.x2)
+                || didSurroundXRange(hitbox, intLeft, intRight);
+        }
+        return false;
+    }
+
+    function checkBottomBound(hitbox, ballLeft, ballRight, coordLeft, coordRight) {
+        var intLeft = getXIntercept(hitbox.y2, coordLeft);
+        var intRight = getXIntercept(hitbox.y2, coordRight);
+
+        if (didYIntercept(hitbox.y2, coordLeft, ballLeft)) {
+            console.log("crosssed Y on left");
+            return (intLeft >= hitbox.x1 && intLeft <= hitbox.x2)
+                || didSurroundXRange(hitbox, intLeft, intRight);
+        } else if (didYIntercept(hitbox.y2, coordRight, ballRight)) {
+            console.log("crossed Y on right");
+            return (intRight >= hitbox.x1 && intRight <= hitbox.x2)
+                || didSurroundXRange(hitbox, intLeft, intRight);
         }
         return false;
     }
@@ -92,19 +110,22 @@ function pong (canvas) {
         // idk if this will work over velocity 480 px per sec b/c of how hit box is checked
         var top = checkTopBound(pLeft, ballLeft, ballRight, coordLeft, coordRight);
         //var side = checkRightBound(pLeft, ball);
-        //var bottom = checkBottomBound(oldX, oldY, pLeft, ball);
+        var bottom = checkBottomBound(pLeft, ballLeft, ballRight, coordLeft, coordRight);
         
         // if (side) {
         //     ball.vx = -ball.vx;
         //     //ball.vy += pLeft.vel;
         // }
-        if (top){// || bottom) {
+        if (top){
             console.log("fixing top");
             ball.vy = -ball.vy;
             ball.y = pLeft.y1 - BALL_RADIUS;
-            // ball.x += ball.vx * 0.02;
-            // ball.y += ball.vy * 0.02;
             //ball.vy += pLeft.vel;
+        }
+        if (bottom) {
+            console.log("fixing bottom");
+            ball.vy = -ball.vy;
+            ball.y = pLeft.y2 + BALL_RADIUS;
         }
     }
 

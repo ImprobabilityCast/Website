@@ -17,6 +17,8 @@ function pong (canvas) {
     const BALL_RADIUS = 4;
     const MID_SCREEN_X = canvas.width / 2;
     const SCORE_COLOR = "#79e";
+    const BG_COLOR = "#282828";
+    const MOVING_PARTS_COLOR = "#eee";
 
     var ball = newBall();
     var pLeft = newPlayerLeft();
@@ -194,7 +196,6 @@ function pong (canvas) {
     {
         let style = window.getComputedStyle(document.documentElement);
         drawScore.shift = pxStr2Int(style.fontSize) * ScoreFontSize / 120;
-        var lineHeight = pxStr2Int(style.lineHeight);
     }
 
     function drawMiddleLine() {
@@ -210,8 +211,16 @@ function pong (canvas) {
     function drawBackground() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         ctx.beginPath();
-        ctx.fillStyle = "#282828";
+        ctx.fillStyle = BG_COLOR;
         ctx.rect(0, 0, canvas.width, canvas.height);
+        ctx.fill();
+    }
+
+    function drawPlayer(player) {
+        ctx.beginPath();
+        ctx.fillStyle = MOVING_PARTS_COLOR;
+        ctx.rect(player.x1, player.y1,
+            player.x2 - player.x1, player.y2 - player.y1);
         ctx.fill();
     }
 
@@ -224,54 +233,22 @@ function pong (canvas) {
 
         // draw ball
         ctx.beginPath();
-        ctx.fillStyle = "#eee";
+        ctx.fillStyle = MOVING_PARTS_COLOR;
         ctx.arc(ball.x, ball.y, BALL_RADIUS, 0, 360);
         ctx.fill();
 
         // draw player 1
-        ctx.rect(pLeft.x1, pLeft.y1,
-                pLeft.x2 - pLeft.x1, pLeft.y2 - pLeft.y1);
-        ctx.fill();
+        drawPlayer(pLeft);
 
         // draw player 2
     }
 
     // eTime is elapsed time in milliseconds
     function updatePosition(eTime) {
-        var secs = eTime / 1000;
+        var secs = eTime / 1000; // velocity is in px per sec
         ball.x += ball.vx * secs;
         ball.y += ball.vy * secs;
     }
-
-    function getDeltaY(e) {
-        return [
-            e.deltaY,
-            e.deltaY * lineHeight,
-            e.deltaY * window.innerHeight][e.deltaMode];
-    }
-    
-    function pLeftMove(e) {
-        var deltaY = getDeltaY(e);
-        pLeft.y1 += deltaY;
-        pLeft.y2 += deltaY;
-
-        pLeft.deltaY += deltaY;
-        
-        var time = new Date().getTime();
-        pLeft.deltaT += time - pLeftMove.lastTime;
-        pLeftMove.lastTime = time;
-        
-        if (pLeft.y1 < 0) {
-            pLeft.y1 = 0;
-            pLeft.y2 = PADDLE_HEIGHT;
-        }
-        if (pLeft.y2 > canvas.height) {
-            pLeft.y1 = canvas.height - PADDLE_HEIGHT;
-            pLeft.y2 = canvas.height;
-        }
-    };
-
-    pLeftMove.lastTime = new Date().getTime();
 
     function updatePVel() {
         if (pLeft.deltaT > 0) {
@@ -306,15 +283,43 @@ function pong (canvas) {
         draw();
     }
 
-    window.onwheel = pLeftMove;
-    canvas.oncontextmenu = function (e) {
+    ///////////////////////
+    // Event listeners
+    ///////////////////////
+    
+    function pLeftMove(e) {
+        var deltaY = e.movementY;
+        pLeft.y1 += deltaY;
+        pLeft.y2 += deltaY;
+
+        pLeft.deltaY += deltaY;
+        
+        var time = new Date().getTime();
+        pLeft.deltaT += time - pLeftMove.lastTime;
+        pLeftMove.lastTime = time;
+        
+        if (pLeft.y1 < 0) {
+            pLeft.y1 = 0;
+            pLeft.y2 = PADDLE_HEIGHT;
+        }
+        if (pLeft.y2 > canvas.height) {
+            pLeft.y1 = canvas.height - PADDLE_HEIGHT;
+            pLeft.y2 = canvas.height;
+        }
+
+        drawPlayer(pLeft, MOVING_PARTS_COLOR);
+    }
+    pLeftMove.lastTime = new Date().getTime();
+    
+    window.addEventListener("mousemove", pLeftMove);
+    canvas.addEventListener("contextmenu", function (e) {
         e.preventDefault();
-        if (window.onwheel === null) {
+        if (interval === -1) {
             pong.resume();
         } else {
             pong.pause();
         }
-    }
+    });
 
     ///////////////////////
     // Public functions.
@@ -322,24 +327,26 @@ function pong (canvas) {
 
     pong.resume = function () {
         // only resume if paused
-        if (window.onwheel === null) {
-            window.onwheel = pLeftMove
+        if (interval === -1) {
+            window.addEventListener("mousemove", pLeftMove);
             interval = setInterval(update, 20, 20);
         }
     }
 
     pong.pause = function () {
-        window.onwheel = null;
+        window.removeEventListener("mousemove", pLeftMove);
         clearInterval(interval);
+        interval = -1;
     }
 
     pong.restart = function () {
         clearInterval(interval);
+        window.removeEventListener("mousemove", pLeftMove);
         ball = newBall();
         pLeft = newPlayerLeft();
         p1Score = 0;
         p2Score = 0;
-        window.onwheel = pLeftMove
+        window.addEventListener("mousemove", pLeftMove);
         interval = setInterval(update, 20, 20);
     }
 

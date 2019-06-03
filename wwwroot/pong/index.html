@@ -13,6 +13,7 @@
             </ul>
         </div>
         <canvas id="canvas" oncontextmenu="toggleMenu(event)">
+            Your browser does not support the canvas element.
         </canvas>
 
         <p id="hint"></p>
@@ -91,16 +92,19 @@
             toggleHints.on = true;
 
             function setHint(hintNumber) {
-                hint.style.right = 0;
+                hint.style.opacity = 1;
                 hint.innerHTML = hints[hintNumber];
             }
+
             function hintCycle() {
-                setHint(Math.floor(Math.random() * hints.length));
+                hint.style.opacity = 0;
+                // allow time for transition
+                setTimeout(setHint, 1500, Math.floor(Math.random() * hints.length));
             }
 
             // always show the controls hint first
             setHint(0);
-
+            // change hint every 30s
             setInterval(hintCycle, 30000);
         </script>
     </body>

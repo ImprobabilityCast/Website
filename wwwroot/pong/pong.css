@@ -136,6 +136,8 @@ canvas {
     animation: 1s linear infinite alternate aniHint, 30s linear infinite normal shift;
     font-style: italic;
     font-family: serif;
+    z-index: 15;
+    transition: opacity 1s;
 }
 
 .hidden {

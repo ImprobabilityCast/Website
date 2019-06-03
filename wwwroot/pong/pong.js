@@ -1,7 +1,7 @@
 (function () {
     var ctx, scoreFontSize, midScreenX, ball, pLeft, pRight;
 
-    const PADDLE_HEIGHT = 40;
+    const PADDLE_HEIGHT = 50;
     const HALF_PADDLE_HEIGHT = PADDLE_HEIGHT / 2;
     const BALL_RADIUS = 4;
     const SCORE_COLOR = "#79e";
@@ -325,8 +325,8 @@
     
     function pLeftMove(e) {
         var deltaY = e.movementY;
-        pLeft.y1 += deltaY;
-        pLeft.y2 += deltaY;
+        pLeft.y1 = e.clientY - HALF_PADDLE_HEIGHT;
+        pLeft.y2 = pLeft.y1 + PADDLE_HEIGHT;
 
         pLeft.deltaY += deltaY;
         
@@ -346,15 +346,6 @@
         drawPlayer(pLeft, MOVING_PARTS_COLOR);
     }
     pLeftMove.lastTime = new Date().getTime();
-    
-    function pauseGame(e) {
-        e.preventDefault();
-        if (interval === -1) {
-            pong.resume();
-        } else {
-            pong.pause();
-        }
-    }
 
     function pxStr2Float(str) {
         return parseFloat(str.substr(0, str.length - 2));
@@ -402,13 +393,11 @@
     window.pong.restart = function () {
         clearInterval(interval);
         window.removeEventListener("mousemove", pLeftMove);
-        window.removeEventListener("contextmenu", pLeftMove);
         ball = newBall();
         pLeft = newPlayerLeft();
         p1Score = 0;
         p2Score = 0;
         window.addEventListener("mousemove", pLeftMove);
-        canvas.addEventListener("contextmenu", pauseGame);
         interval = setInterval(update, TICK, TICK);
     }
 
@@ -422,4 +411,9 @@
     window.pong.stopScreensaver = function () {
         clearInterval(ssInterval);
     }
+
+    window.pong.isPaused = function () {
+        return interval === -1;
+    }
+
 })();

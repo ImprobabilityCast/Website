@@ -8,8 +8,27 @@
     src: url(PressStart2P-Regular.ttf);
 }
 
+@keyframes aniHint {
+    from {
+        color: lightblue;
+    }
+    to {
+        color: silver
+    }
+}
+
+@keyframes shift {
+    from {
+        right: -100%;
+    }
+    to {
+        right: 100%;
+    }
+}
+
 body {
     margin: 0;
+    overflow: hidden;
 }
 
 canvas {
@@ -56,4 +75,13 @@ canvas {
 #startBtn:active {
     background: linear-gradient(darkgreen, limegreen, darkgreen);
     text-shadow: limegreen 0em -0.075em 0em;
+}
+
+#hint {
+    position: absolute;
+    bottom: 0;
+    width: 50%;
+    animation: 1s linear infinite alternate aniHint, 30s linear infinite normal shift;
+    font-style: italic;
+    transition: padding 1s;
 }

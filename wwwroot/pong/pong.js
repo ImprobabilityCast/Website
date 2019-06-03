@@ -305,18 +305,27 @@
     }
 
     function screensaver() {
+        var oldBall = {
+            x: ball.x,
+            y: ball.y
+        }
         // move ball
         updatePosition(TICK);
+
+        // move paddles
+        updatePVel();
 
         // check bouncy things
         handleHitTBWalls();
         handleHitRLWalls();
+        checkHitboxes(pLeft, oldBall);
 
         // update display
         drawBackground();
         drawScore();
         drawMiddleLine();
         drawBall(ball);
+        drawPlayer(pLeft);
     }
 
     ///////////////////////
@@ -373,7 +382,6 @@
         ball = newBall();
         pLeft = newPlayerLeft();
         pRight = newPlayerRight();
-        
     }
 
     window.pong.resume = function () {
@@ -403,6 +411,7 @@
 
     window.pong.startScreensaver = function () {
         if (ssInterval === -1) {
+            window.addEventListener("mousemove", pLeftMove);
             ball = newBall();
             ssInterval = setInterval(screensaver, TICK);
         }
@@ -410,6 +419,7 @@
 
     window.pong.stopScreensaver = function () {
         clearInterval(ssInterval);
+        window.removeEventListener("mousemove", pLeftMove);
     }
 
     window.pong.isPaused = function () {

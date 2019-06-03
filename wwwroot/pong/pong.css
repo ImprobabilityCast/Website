@@ -29,6 +29,7 @@
 body {
     margin: 0;
     overflow: hidden;
+    font-family: sans-serif;
 }
 
 canvas {
@@ -48,28 +49,47 @@ canvas {
     z-index: 5;
 }
 
-#startBtn {
+#menu {
+    list-style-type: none;
+    position: relative;
     z-index: 10;
-    position: absolute;
-    width: 50%;
+    width: 100%;
     height: 25%;
-    margin-top: 15%;
-    margin-left: 25%;
+    margin: 0;
+    padding-top: 15%;
+    padding-left: 30%;
+    padding-right: 30%
+}
+
+#menu button {
+    border: none;
+    width: 100%;
     margin-right: auto;
     margin-bottom: auto;
-    background: linear-gradient(green, palegreen, green);
-    border: none;
-    box-shadow: green 0em 0em 1em;
     border-radius: 1em;
-    font-size: 3em;
-    text-shadow: lightgreen 0em -0.075em 0em;
     font-weight: bold;
     color: black;
+    padding: 0.25em;
+}
+
+#menu button:hover {
+    color: #333;
+}
+
+#menu li {
+    margin-top: 0.25em;
+    margin-bottom: 0.25em;
+}
+
+#startBtn {
+    background: linear-gradient(green, palegreen, green);
+    box-shadow: green 0em 0em 1em;
+    font-size: 3em;
+    text-shadow: lightgreen 0em -0.075em 0em;
 }
 
 #startBtn:hover {
     box-shadow: palegreen 0em 0em 1em;
-    color: #333;
 }
 
 #startBtn:active {
@@ -77,11 +97,51 @@ canvas {
     text-shadow: limegreen 0em -0.075em 0em;
 }
 
+#hintToggleBtn {
+    background: linear-gradient(darkred, red, darkred);
+    box-shadow: maroon 0em 0em 1em;
+    font-size: 2em;
+    text-shadow: orangered 0em -0.075em 0em;
+}
+
+#hintToggleBtn:hover {
+    box-shadow: hotpink 0em 0em 1em;
+}
+
+#hintToggleBtn:active {
+    background: linear-gradient(maroon, crimson, maroon);
+    text-shadow: crimson 0em -0.075em 0em;
+}
+
+#resumeBtn {
+    background: linear-gradient(blue, deepskyblue, blue);
+    box-shadow: mediumblue 0em 0em 1em;
+    font-size: 2em;
+    text-shadow: deepskyblue 0em -0.075em 0em;
+}
+
+#resumeBtn:hover {
+    box-shadow: skyblue 0em 0em 1em;
+}
+
+#resumeBtn:active {
+    background: linear-gradient(mediumblue, cornflowerblue, mediumblue);
+    text-shadow: cornflowerblue 0em -0.075em 0em;
+}
+
 #hint {
     position: absolute;
     bottom: 0;
-    width: 50%;
+    width: 100%;
     animation: 1s linear infinite alternate aniHint, 30s linear infinite normal shift;
     font-style: italic;
-    transition: padding 1s;
+    font-family: serif;
+}
+
+.hidden {
+    visibility: hidden;
+}
+
+noscript {
+    padding: 1em;
 }

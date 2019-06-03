@@ -19,10 +19,10 @@
     
     function newBall() {
         return {
-            x: midScreenX, // spawn ball in middle of top of window
-            y: canvas.height,
+            x: midScreenX + midScreenX / 2,
+            y: Math.random() * canvas.height,
             vx: -canvas.width / 2, // px per sec
-            vy: canvas.height / 2  // +y is down
+            vy: Math.random() * canvas.height / 2  // +y is down
         };
     }
 
@@ -352,7 +352,7 @@
             pLeft.y2 = canvas.height;
         }
 
-        drawPlayer(pLeft, MOVING_PARTS_COLOR);
+        drawPlayer(pLeft);
     }
     pLeftMove.lastTime = new Date().getTime();
 

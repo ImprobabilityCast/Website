@@ -5,13 +5,19 @@
     <link rel="stylesheet" href="pong.css" type="text/css" />
 
     <body>
-        <div id="overlay"></div>
-        <button id="startBtn" onclick="startGame(event)">Start</button>
-        <!-- <p id="instructions">Instructions:</p> -->
-        <canvas id="canvas" oncontextmenu="togglePause(event)">
+        <div id="overlay">
+            <ul id="menu">
+                <li><button id="startBtn" onclick="startGame(event)">New Game</button></li>
+                <li><button id="hintToggleBtn" onclick="toggleHints()">Hints: ON</button></li>
+                <li><button id="resumeBtn" class="hidden" onclick="toggleMenu(event)">Resume</button></li>
+            </ul>
+        </div>
+        <canvas id="canvas" oncontextmenu="toggleMenu(event)">
         </canvas>
 
         <p id="hint"></p>
+
+        <noscript>JavaScript must be enabled for this page to work properly.</noscript>
 
         <!-- site tracking -->
         <script src="/tracker/tracker.js"></script>
@@ -19,40 +25,83 @@
         <script src="pong.js"></script>
         <script>
             var hints = [
-                "Move the mouse up and down to move your small rectangle.",
-                "Right click to pause. Right click again to resume."
-            ]
+                "Move the mouse up and down to move your small white rectangle. "
+                    + "Right click to pause the game.",
+                "\"I keep pressing the space bar, but I'm still on Earth.\""
+                    + " - CoolFunnyQuotes.com",
+                "\"Your secrets are safe with me... I wasn't even listening\""
+                    + " - CoolFunnyQuotes.com",
+                "\"We are going to be best friends forever... Besides, "
+                    + "you already know too much.\" - CoolFunnyQuotes.com",
+                "\"I know I'm a handful, but that's why you have two hands.\""
+                    + " - CoolFunnyQuotes.com",
+                "\"I never make the same mistake twice. I make it three or four "
+                    + "times, you know, just to be sure.\" - CoolFunnyQuotes.com",
+                "\"I just wanted you to know that somebody cares. Not me, "
+                    + "but somebody does.\" - CoolFunnyQuotes.com",
+                "\"When nothing is going right, go left.\" - CoolFunnyQuotes.com",
+                "\"If we shouldn't eat at night, why is there a light in the "
+                    + "fridge?\" - CoolFunnyQuotes.com",
+                "My high score is -1, beat that.",
+                ".&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
+                    + "Follow that dot!",
+                "Original Atari PONG (1972): <a href='https://youtu.be/fiShX2pTz9A'>"
+                    + "https://youtu.be/fiShX2pTz9A</a>"
+
+            ];
             var canvas = document.getElementById("canvas");
             var hint = document.getElementById("hint");
+            var hintBtn = document.getElementById("hintToggleBtn");
+            var overlay = document.getElementById("overlay");
+            var resumeBtn = document.getElementById("resumeBtn");
+
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
             pong.init(canvas);
             pong.startScreensaver();
 
-            function startGame() {
+            function startGame(e) {
                 pong.stopScreensaver();
-                document.getElementById("overlay").style.visibility = "hidden";
-                document.getElementById("startBtn").style.visibility = "hidden";
+                overlay.classList.add("hidden");
+                resumeBtn.classList.remove("hidden");
                 pong.restart();
             }
 
-            function togglePause(e) {
+            function toggleMenu(e) {
                 e.preventDefault();
                 if (pong.isPaused()) {
+                    overlay.classList.add("hidden");
                     pong.resume();
                 } else {
                     pong.pause();
+                    overlay.classList.remove("hidden");
                 }
             }
 
-            function hintCycle(hintNumber) {
+            function toggleHints() {
+                if (toggleHints.on) {
+                    hint.classList.add("hidden");
+                    hintBtn.innerText = "Hints: OFF";
+                } else {
+                    hint.classList.remove("hidden");
+                    hintBtn.innerText = "Hints: ON";
+                }
+                toggleHints.on = !toggleHints.on;
+            }
+            toggleHints.on = true;
+
+            function setHint(hintNumber) {
                 hint.style.right = 0;
-                hint.innerText = hints[hintNumber];
+                hint.innerHTML = hints[hintNumber];
+            }
+            function hintCycle() {
+                setHint(Math.floor(Math.random() * hints.length));
             }
 
-            hintCycle(0);
+            // always show the controls hint first
+            setHint(0);
 
-            setInterval(hintCycle, 30000, Math.round(Math.random()));
+            setInterval(hintCycle, 30000);
         </script>
     </body>
 </html>

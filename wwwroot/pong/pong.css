@@ -14,7 +14,46 @@ body {
 
 canvas {
     position: absolute;
+    right: 0;
+    top: 0;
     width: 100%;
     height: 100%;
     border: 1px solid black;
+}
+
+#overlay {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 2555, 0.25);
+    z-index: 5;
+}
+
+#startBtn {
+    z-index: 10;
+    position: absolute;
+    width: 50%;
+    height: 25%;
+    margin-top: 15%;
+    margin-left: 25%;
+    margin-right: auto;
+    margin-bottom: auto;
+    background: linear-gradient(green, palegreen, green);
+    border: none;
+    box-shadow: green 0em 0em 1em;
+    border-radius: 1em;
+    font-size: 3em;
+    text-shadow: lightgreen 0em -0.075em 0em;
+    font-weight: bold;
+    color: black;
+}
+
+#startBtn:hover {
+    box-shadow: palegreen 0em 0em 1em;
+    color: #333;
+}
+
+#startBtn:active {
+    background: linear-gradient(darkgreen, limegreen, darkgreen);
+    text-shadow: limegreen 0em -0.075em 0em;
 }

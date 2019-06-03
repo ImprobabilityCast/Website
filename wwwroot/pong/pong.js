@@ -1,40 +1,28 @@
-function pong (canvas) {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+(function () {
+    var ctx, scoreFontSize, midScreenX, ball, pLeft, pRight;
 
-    var ctx = canvas.getContext("2d");
-
-    var ScoreFontSize = canvas.width;
-    if (ScoreFontSize > 600) {
-        ScoreFontSize = 600;
-    }
-    ctx.font = ScoreFontSize + "% PressStart2P";
-
-    const INITIAL_VX = - canvas.width / 2; // px per sec
-    const INITIAL_VY = canvas.height / 2; // +y is down
-    const PADDLE_HEIGHT = 40
+    const PADDLE_HEIGHT = 40;
     const HALF_PADDLE_HEIGHT = PADDLE_HEIGHT / 2;
     const BALL_RADIUS = 4;
-    const MID_SCREEN_X = canvas.width / 2;
     const SCORE_COLOR = "#79e";
     const BG_COLOR = "#282828";
     const MOVING_PARTS_COLOR = "#eee";
 
-    var ball = newBall();
-    var pLeft = newPlayerLeft();
+    // the # of milliseconds in 1s / 60 = 16.6667
+    const TICK = 20; // milliseconds
 
     var p1Score = 0;
     var p2Score = 0;
 
-    // the # of milliseconds in 1s / 60 = 16.6667
-    var interval = setInterval(update, 20, 20);
+    var interval = -1;
+    var ssInterval = -1;
     
     function newBall() {
         return {
-            x: MID_SCREEN_X, // spawn ball in middle of top of window
+            x: midScreenX, // spawn ball in middle of top of window
             y: canvas.height,
-            vx: INITIAL_VX,
-            vy: INITIAL_VY
+            vx: -canvas.width / 2, // px per sec
+            vy: canvas.height / 2  // +y is down
         };
     }
 
@@ -47,6 +35,18 @@ function pong (canvas) {
             x2: canvas.width / 15 + 8,
             y1: canvas.height / 2 - HALF_PADDLE_HEIGHT,
             y2: canvas.height / 2 + HALF_PADDLE_HEIGHT
+        };
+    }
+
+    function newPlayerRight() {
+        return {
+            deltaY: 0,
+            deltaT: 0,
+            vel: 0,
+            x1: canvas.width - canvas.width / 15,
+            x2: canvas.width - canvas.width / 15 + 8,
+            y1: PADDLE_HEIGHT,
+            y2: canvas.height - PADDLE_HEIGHT
         };
     }
 
@@ -104,7 +104,18 @@ function pong (canvas) {
         return false;
     }
 
-    function checkHitboxes(oldBall) {
+    function checkLeftBound(hitbox, ballLeft, ballRight, oldLeft, oldRight) {
+        if ((hitbox.x1 > oldLeft.x && hitbox.x1 < ballLeft.x)
+                || (hitbox.x1 > oldRight.x && hitbox.x1 < ballRight.x)) {
+            console.log("crossed left bound");
+            var intLeft = getYIntercept(hitbox.x1, oldLeft);
+            var intRight = getYIntercept(hitbox.x1, oldRight);
+            return doRangesIntersect(hitbox.y1, hitbox.y2, intLeft, intRight)
+        }
+        return false;
+    }
+
+    function checkHitboxes(hitbox, oldBall) {
         var hyp = Math.sqrt(ball.vy * ball.vy + ball.vx * ball.vx);
 
         var shiftX = BALL_RADIUS * ball.vy / hyp;
@@ -114,44 +125,39 @@ function pong (canvas) {
         var ballLeft = { x: ball.x + shiftX, y: ball.y - shiftY };
         var ballRight = { x: ball.x - shiftX, y: ball.y + shiftY };
 
-        var top = checkTopBound(pLeft, ballLeft, ballRight, oldLeft, oldRight);
-        var bottom = checkBottomBound(pLeft, ballLeft, ballRight, oldLeft, oldRight);
-        var right = checkRightBound(pLeft, ballLeft, ballRight, oldLeft, oldRight);
+        var top = checkTopBound(hitbox, ballLeft, ballRight, oldLeft, oldRight);
+        var bottom = checkBottomBound(hitbox, ballLeft, ballRight, oldLeft, oldRight);
+        var right = checkRightBound(hitbox, ballLeft, ballRight, oldLeft, oldRight);
+        var left = checkLeftBound(hitbox, ballLeft, ballRight, oldLeft, oldRight);
         
         if (top) {
             console.log("fixing top");
             ball.vy = -ball.vy;
-            ball.y = pLeft.y1 - BALL_RADIUS;
-            ball.vy += pLeft.vel;
+            ball.y = hitbox.y1 - BALL_RADIUS;
+            ball.vy += hitbox.vel;
         }
         if (bottom) {
             console.log("fixing bottom");
             ball.vy = -ball.vy;
-            ball.y = pLeft.y2 + BALL_RADIUS;
-            ball.vy += pLeft.vel;
+            ball.y = hitbox.y2 + BALL_RADIUS;
+            ball.vy += hitbox.vel;
         }
         if (right) {
             console.log("fixing right");
             ball.vx = -ball.vx;
-            ball.x = pLeft.x2 + BALL_RADIUS;
-            ball.vy += pLeft.vel;
+            ball.x = hitbox.x2 + BALL_RADIUS;
+            ball.vy += hitbox.vel;
+        }
+        if (left) {
+            console.log("fixing left");
+            ball.vx = -ball.vx;
+            ball.x = hitbox.x1 - BALL_RADIUS;
+            ball.vy += hitbox.vel;
         }
     }
 
-    function handleHitWall() {
-        var i = 100;
+    function handleHitTBWalls() {
         while (true) {
-            if (i === 0) {
-                console.log("AAAAA");
-                pong.pause();
-                break;
-            }
-            i--;
-            if (ball.x + BALL_RADIUS > canvas.width) {
-                ball.x -= 2 * (ball.x + BALL_RADIUS - canvas.width);
-                ball.vx = -ball.vx;
-                continue;
-            }
             if (ball.y - BALL_RADIUS < 0) {
                 ball.y = BALL_RADIUS;
                 ball.vy = -ball.vy;
@@ -160,6 +166,22 @@ function pong (canvas) {
             if (ball.y + BALL_RADIUS > canvas.height) {
                 ball.y -=  2 * (ball.y + BALL_RADIUS - canvas.height);
                 ball.vy = -ball.vy;
+                continue;
+            }
+            break;
+        }
+    }
+
+    function handleHitRLWalls() {
+        while (true) {
+            if (ball.x - BALL_RADIUS < 0) {
+                ball.x = BALL_RADIUS;
+                ball.vx = -ball.vx;
+                continue;
+            }
+            if (ball.x + BALL_RADIUS > canvas.width) {
+                ball.x -=  2 * (ball.x + BALL_RADIUS - canvas.width);
+                ball.vx = -ball.vx;
                 continue;
             }
             break;
@@ -182,36 +204,27 @@ function pong (canvas) {
         if (Math.log10(p1Score) === drawScore.p1Spaces) {
             drawScore.p1Spaces += 1;
         }
-        var p1 = MID_SCREEN_X - (drawScore.shift * drawScore.p1Spaces + window.innerWidth / 15);
-        ctx.fillText(p1Score, p1, window.innerHeight / 4,
-                MID_SCREEN_X - window.innerWidth / 15);
+        var p1 = midScreenX - (drawScore.shift * drawScore.p1Spaces + canvas.width / 15);
+        ctx.fillText(p1Score, p1, canvas.height / 4,
+                midScreenX - window.innerWidth / 15);
 
         if (Math.log10(p2Score) === drawScore.p2Spaces) {
             drawScore.p2Spaces += 1;
         }
-        var p2 = window.innerWidth - (drawScore.shift * drawScore.p2Spaces + window.innerWidth / 15);
-        ctx.fillText(p2Score, p2, window.innerHeight / 4,
-                MID_SCREEN_X - window.innerWidth / 15);
+        var p2 = window.innerWidth - (drawScore.shift * drawScore.p2Spaces + canvas.width / 15);
+        ctx.fillText(p2Score, p2, canvas.height / 4,
+                midScreenX - canvas.width / 15);
     }
     drawScore.p1Spaces = 1;
     drawScore.p2Spaces = 1;
-
-    function pxStr2Int(str) {
-        return parseInt(str.substr(0, str.length - 2));
-    }
-
-    {
-        let style = window.getComputedStyle(document.documentElement);
-        drawScore.shift = pxStr2Int(style.fontSize) * ScoreFontSize / 120;
-    }
 
     function drawMiddleLine() {
         ctx.beginPath();
         ctx.strokeStyle = SCORE_COLOR;
         ctx.setLineDash([12, 18]);
         ctx.lineWidth = 4;
-        ctx.moveTo(MID_SCREEN_X, 0);
-        ctx.lineTo(MID_SCREEN_X, canvas.height);
+        ctx.moveTo(midScreenX, 0);
+        ctx.lineTo(midScreenX, canvas.height);
         ctx.stroke();
     }
 
@@ -231,23 +244,23 @@ function pong (canvas) {
         ctx.fill();
     }
 
-    function draw() {
-        drawBackground();
-
-        drawScore();
-        
-        drawMiddleLine();
-
-        // draw ball
+    function drawBall(ball) {
         ctx.beginPath();
         ctx.fillStyle = MOVING_PARTS_COLOR;
         ctx.arc(ball.x, ball.y, BALL_RADIUS, 0, 360);
         ctx.fill();
+    }
+
+    function draw() {
+        drawBackground();
+        drawScore();
+        drawMiddleLine();
+        drawBall(ball);
 
         // draw player 1
         drawPlayer(pLeft);
-
         // draw player 2
+        drawPlayer(pRight);
     }
 
     // eTime is elapsed time in milliseconds
@@ -280,14 +293,30 @@ function pong (canvas) {
         updatePVel();
 
         // check bouncy things
-        handleHitWall();
-        checkHitboxes(oldBall);
+        handleHitTBWalls();
+        checkHitboxes(pLeft, oldBall);
+        checkHitboxes(pRight, oldBall);
 
         // check win conditions
         checkGameOver();
 
         // update display
         draw();
+    }
+
+    function screensaver() {
+        // move ball
+        updatePosition(TICK);
+
+        // check bouncy things
+        handleHitTBWalls();
+        handleHitRLWalls();
+
+        // update display
+        drawBackground();
+        drawScore();
+        drawMiddleLine();
+        drawBall(ball);
     }
 
     ///////////////////////
@@ -318,46 +347,79 @@ function pong (canvas) {
     }
     pLeftMove.lastTime = new Date().getTime();
     
-    window.addEventListener("mousemove", pLeftMove);
-    canvas.addEventListener("contextmenu", function (e) {
+    function pauseGame(e) {
         e.preventDefault();
         if (interval === -1) {
             pong.resume();
         } else {
             pong.pause();
         }
-    });
+    }
+
+    function pxStr2Float(str) {
+        return parseFloat(str.substr(0, str.length - 2));
+    }
 
     ///////////////////////
     // Public functions.
     ///////////////////////
+    window.pong = {};
 
-    pong.resume = function () {
+    window.pong.init = function (canvasElement) {
+        canvas = canvasElement;
+        ctx = canvas.getContext("2d");
+
+        scoreFontSize = canvas.width;
+        if (scoreFontSize > 600) {
+            scoreFontSize = 600;
+        }
+        let style = window.getComputedStyle(document.documentElement);
+        drawScore.shift = pxStr2Float(style.fontSize) * scoreFontSize / 120;
+
+        ctx.font = scoreFontSize + "% PressStart2P";
+        midScreenX = canvas.width / 2;
+
+        ball = newBall();
+        pLeft = newPlayerLeft();
+        pRight = newPlayerRight();
+        
+    }
+
+    window.pong.resume = function () {
         // only resume if paused
         if (interval === -1) {
             window.addEventListener("mousemove", pLeftMove);
-            interval = setInterval(update, 20, 20);
+            interval = setInterval(update, TICK, TICK);
         }
     }
 
-    pong.pause = function () {
+    window.pong.pause = function () {
         window.removeEventListener("mousemove", pLeftMove);
         clearInterval(interval);
         interval = -1;
     }
 
-    pong.restart = function () {
+    window.pong.restart = function () {
         clearInterval(interval);
         window.removeEventListener("mousemove", pLeftMove);
+        window.removeEventListener("contextmenu", pLeftMove);
         ball = newBall();
         pLeft = newPlayerLeft();
         p1Score = 0;
         p2Score = 0;
         window.addEventListener("mousemove", pLeftMove);
-        interval = setInterval(update, 20, 20);
+        canvas.addEventListener("contextmenu", pauseGame);
+        interval = setInterval(update, TICK, TICK);
     }
 
-    pong.screensaver = function () {
-
+    window.pong.startScreensaver = function () {
+        if (ssInterval === -1) {
+            ball = newBall();
+            ssInterval = setInterval(screensaver, TICK);
+        }
     }
-}
+
+    window.pong.stopScreensaver = function () {
+        clearInterval(ssInterval);
+    }
+})();

@@ -5,6 +5,9 @@
     <link rel="stylesheet" href="pong.css" type="text/css" />
 
     <body>
+        <div id="overlay"></div>
+        <button id="startBtn" onclick="startGame()">Start</button>
+        <!-- <p id="instructions">Instructions:</p> -->
         <canvas id="canvas">
         </canvas>
 
@@ -13,8 +16,18 @@
 
         <script src="pong.js"></script>
         <script>
-            pong(document.getElementById("canvas"));
-            pong.pause();
+            var canvas = document.getElementById("canvas");
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            pong.init(canvas);
+            pong.startScreensaver();
+
+            function startGame() {
+                pong.stopScreensaver();
+                document.getElementById("overlay").style.visibility = "hidden";
+                document.getElementById("startBtn").style.visibility = "hidden";
+                pong.restart();
+            }
         </script>
     </body>
 </html>

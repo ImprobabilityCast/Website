@@ -7,8 +7,10 @@
     <body>
         <div id="overlay">
             <ul id="menu">
+				<li class="menu-text">Move the mouse up and down to move your small white rectangle. Try to get the ball past your opponent. Right click to pause the game.
+				</li>
                 <li><button id="startBtn" onclick="startGame(event)">New Game</button></li>
-                <li><button id="hintToggleBtn" onclick="toggleHints()">Hints: ON</button></li>
+                <li><button id="hintToggleBtn" onclick="toggleHints()">Silly Hints: ON</button></li>
                 <li><button id="resumeBtn" class="hidden" onclick="toggleMenu(event)">Resume</button></li>
             </ul>
         </div>
@@ -26,8 +28,6 @@
         <script src="pong.js"></script>
         <script>
             var hints = [
-                "Move the mouse up and down to move your small white rectangle. "
-                    + "Right click to pause the game.",
                 "\"I keep pressing the space bar, but I'm still on Earth.\""
                     + " - CoolFunnyQuotes.com",
                 "\"Your secrets are safe with me... I wasn't even listening\""
@@ -82,10 +82,10 @@
             function toggleHints() {
                 if (toggleHints.on) {
                     hint.classList.add("hidden");
-                    hintBtn.innerText = "Hints: OFF";
+                    hintBtn.innerText = "Silly Hints: OFF";
                 } else {
                     hint.classList.remove("hidden");
-                    hintBtn.innerText = "Hints: ON";
+                    hintBtn.innerText = "Silly Hints: ON";
                 }
                 toggleHints.on = !toggleHints.on;
             }
@@ -102,8 +102,6 @@
                 setTimeout(setHint, 1500, Math.floor(Math.random() * hints.length));
             }
 
-            // always show the controls hint first
-            setHint(0);
             // change hint every 30s
             setInterval(hintCycle, 30000);
         </script>

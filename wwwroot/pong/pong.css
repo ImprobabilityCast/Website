@@ -147,3 +147,14 @@ canvas {
 noscript {
     padding: 1em;
 }
+
+.menu-text {
+	text-align: center;
+	font-size: 1.25em;
+	color: white;
+	text-shadow: 2px 2px 0 black,
+				-2px -2px 0 black,
+				2px -2px 0 black,
+				-2px 2px 0 black;
+	padding-bottom: 1em;
+}

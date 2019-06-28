@@ -21,8 +21,8 @@
         return {
             x: midScreenX + midScreenX / 2,
             y: Math.random() * canvas.height,
-            vx: -canvas.width / 2, // px per sec
-            vy: Math.random() * canvas.height / 2  // +y is down
+            vx: -canvas.width  * 2 / 3, // px per sec
+            vy: Math.random() * canvas.height  * 2 / 3  // +y is down
         };
     }
 

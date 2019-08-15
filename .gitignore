@@ -28,3 +28,6 @@ wwwroot/thingsThatDontWork/libcurl/
 
 # Ignore vscode stuff
 *.vscode
+
+# No reason to include bootstrap
+bootstrap*

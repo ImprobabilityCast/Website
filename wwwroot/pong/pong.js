@@ -9,7 +9,6 @@
     const MOVING_PARTS_COLOR = "#eee";
 
     // the # of milliseconds in 1s / 60 = 16.6667
-    const TICK = 20; // milliseconds
 
     var p1Score = 0;
     var p2Score = 0;
@@ -22,7 +21,7 @@
             x: midScreenX + midScreenX / 2,
             y: Math.random() * canvas.height,
             vx: -canvas.width  * 2 / 3, // px per sec
-            vy: Math.random() * canvas.height  * 2 / 3  // +y is down
+            vy: (Math.random() - 0.5) * canvas.height * 2 / 3  // +y is down
         };
     }
 
@@ -281,13 +280,18 @@
         }
     }
 
-    function update(eTime) {
+    function update(timestamp) {
         var oldBall = {
             x: ball.x,
             y: ball.y
         }
+
         // move ball
-        updatePosition(eTime);
+        if (update.lastTime === 0) {
+            update.lastTime = timestamp;
+        }
+        updatePosition(timestamp - update.lastTime);
+        update.lastTime = timestamp;
 
         // move paddles
         updatePVel();
@@ -302,15 +306,23 @@
 
         // update display
         draw();
+
+        // once more around the park
+        interval = window.requestAnimationFrame(update);
     }
 
-    function screensaver() {
+    function screensaver(timestamp) {
         var oldBall = {
             x: ball.x,
             y: ball.y
         }
+
         // move ball
-        updatePosition(TICK);
+        if (screensaver.lastTime === 0) {
+            screensaver.lastTime = timestamp;
+        }
+        updatePosition(timestamp - screensaver.lastTime);
+        screensaver.lastTime = timestamp;
 
         // move paddles
         updatePVel();
@@ -326,7 +338,11 @@
         drawMiddleLine();
         drawBall(ball);
         drawPlayer(pLeft);
+
+        // once more around the park
+        ssInterval = window.requestAnimationFrame(screensaver);
     }
+    screensaver.lastTime = 0; // it will count ms since start, so 0 = start
 
     ///////////////////////
     // Event listeners
@@ -351,8 +367,6 @@
             pLeft.y1 = canvas.height - PADDLE_HEIGHT;
             pLeft.y2 = canvas.height;
         }
-
-        drawPlayer(pLeft);
     }
     pLeftMove.lastTime = new Date().getTime();
 
@@ -388,37 +402,40 @@
         // only resume if paused
         if (interval === -1) {
             window.addEventListener("mousemove", pLeftMove);
-            interval = setInterval(update, TICK, TICK);
+            update.lastTime = 0;
+            interval = window.requestAnimationFrame(update);
         }
     }
 
     window.pong.pause = function () {
         window.removeEventListener("mousemove", pLeftMove);
-        clearInterval(interval);
+        window.cancelAnimationFrame(interval);
         interval = -1;
     }
 
     window.pong.restart = function () {
-        clearInterval(interval);
+        window.cancelAnimationFrame(interval);
         window.removeEventListener("mousemove", pLeftMove);
         ball = newBall();
         pLeft = newPlayerLeft();
         p1Score = 0;
         p2Score = 0;
         window.addEventListener("mousemove", pLeftMove);
-        interval = setInterval(update, TICK, TICK);
+        update.lastTime = 0;
+        interval = window.requestAnimationFrame(update);
     }
 
     window.pong.startScreensaver = function () {
         if (ssInterval === -1) {
             window.addEventListener("mousemove", pLeftMove);
             ball = newBall();
-            ssInterval = setInterval(screensaver, TICK);
+            screensaver.lastTime = 0;
+            ssInterval = window.requestAnimationFrame(screensaver);
         }
     }
 
     window.pong.stopScreensaver = function () {
-        clearInterval(ssInterval);
+        window.cancelAnimationFrame(ssInterval);
         window.removeEventListener("mousemove", pLeftMove);
     }
 

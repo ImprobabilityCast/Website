@@ -140,6 +140,10 @@ canvas {
     transition: opacity 1s;
 }
 
+#hint a {
+    color: turquoise;
+}
+
 .hidden {
     visibility: hidden;
 }

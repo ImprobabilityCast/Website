@@ -29,5 +29,6 @@ wwwroot/thingsThatDontWork/libcurl/
 # Ignore vscode stuff
 *.vscode
 
-# No reason to include bootstrap
-bootstrap*
+# No reason to include libs
+wwwroot/bootstrap*
+wwwroot/js/jquery*

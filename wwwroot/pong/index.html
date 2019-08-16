@@ -93,9 +93,14 @@
             }
             toggleHints.on = true;
 
+            function hideHint() {
+                hint.style.opacity = 0;
+            }
+
             function setHint(hintNumber) {
                 hint.style.opacity = 1;
                 hint.innerHTML = hints[hintNumber];
+                setTimeout(hideHint, 20000);
             }
 
             function hintCycle() {
@@ -104,8 +109,9 @@
                 setTimeout(setHint, 1500, Math.floor(Math.random() * hints.length));
             }
 
-            // change hint every 30s
-            setInterval(hintCycle, 30000);
+            // change hint every 15min
+            setInterval(hintCycle, 15 * 60 * 1000);
+            hintCycle();
         </script>
     </body>
 </html>

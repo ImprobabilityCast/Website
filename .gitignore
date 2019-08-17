@@ -31,4 +31,4 @@ wwwroot/thingsThatDontWork/libcurl/
 
 # No reason to include libs
 wwwroot/bootstrap*
-wwwroot/js/jquery*
+wwwroot/js/

@@ -39,13 +39,15 @@ canvas {
     width: 100%;
     height: 100%;
     border: 1px solid black;
+    filter: blur(0.25em);
 }
 
 #overlay {
     position: absolute;
     width: 100%;
     height: 100%;
-    background-color: rgba(255, 255, 2555, 0.25);
+    background: radial-gradient(rgba(255, 255, 2555, 0.4),
+                                rgba(255, 255, 2555, 0.1));
     z-index: 5;
 }
 
@@ -60,72 +62,38 @@ canvas {
     padding-right: 30%
 }
 
+#menu li {
+    margin-top: 1em;
+    margin-bottom: 1em;
+}
+
 #menu button {
     border: none;
     width: 100%;
     margin-right: auto;
     margin-bottom: auto;
-    border-radius: 1em;
     font-weight: bold;
-    color: black;
-    padding: 0.25em;
+    color: #ddd;
+    background: #333;
+    padding: 0.4em;
+    border-radius: 0.25em;
+}
+
+.btn-norm {
+    font-size: 1.5em;
 }
 
 #menu button:hover {
-    color: #333;
+    box-shadow: white 0em 0em 0.5em;
+    background: #222;
 }
 
-#menu li {
-    margin-top: 0.25em;
-    margin-bottom: 0.25em;
+#menu button:active  {
+    background: #000;
 }
 
 #startBtn {
-    background: linear-gradient(green, palegreen, green);
-    box-shadow: green 0em 0em 1em;
-    font-size: 3em;
-    text-shadow: lightgreen 0em -0.075em 0em;
-}
-
-#startBtn:hover {
-    box-shadow: palegreen 0em 0em 1em;
-}
-
-#startBtn:active {
-    background: linear-gradient(darkgreen, limegreen, darkgreen);
-    text-shadow: limegreen 0em -0.075em 0em;
-}
-
-#hintToggleBtn {
-    background: linear-gradient(darkred, red, darkred);
-    box-shadow: maroon 0em 0em 1em;
     font-size: 2em;
-    text-shadow: orangered 0em -0.075em 0em;
-}
-
-#hintToggleBtn:hover {
-    box-shadow: hotpink 0em 0em 1em;
-}
-
-#hintToggleBtn:active {
-    background: linear-gradient(maroon, crimson, maroon);
-    text-shadow: crimson 0em -0.075em 0em;
-}
-
-#resumeBtn {
-    background: linear-gradient(blue, deepskyblue, blue);
-    box-shadow: mediumblue 0em 0em 1em;
-    font-size: 2em;
-    text-shadow: deepskyblue 0em -0.075em 0em;
-}
-
-#resumeBtn:hover {
-    box-shadow: skyblue 0em 0em 1em;
-}
-
-#resumeBtn:active {
-    background: linear-gradient(mediumblue, cornflowerblue, mediumblue);
-    text-shadow: cornflowerblue 0em -0.075em 0em;
 }
 
 #hint {
@@ -160,14 +128,15 @@ noscript {
 				-2px 2px 0 black;
 }
 
-li.menu-text { 
+.menu-text { 
 	font-size: 1.25em;
-	padding-bottom: 1em;
+    padding-bottom: 1em;
 }
 
-h1.menu-text {
+.menu-text h1 {
     font-size: 3em;
     font-family: PressStart2P;
+    margin-bottom: 0;
 }
 
 @media only screen and (max-height: 500px) {

@@ -5,7 +5,7 @@
     const HALF_PADDLE_HEIGHT = PADDLE_HEIGHT / 2;
     const BALL_RADIUS = 4;
     const SCORE_COLOR = "#79e";
-    const BG_COLOR = "#282828";
+    const BG_COLOR = "#111";
     const MOVING_PARTS_COLOR = "#eee";
 
     // the # of milliseconds in 1s / 60 = 16.6667

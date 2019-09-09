@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en-US">
+<html lang="en-US" onkeypress="shortcuts(event)">
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="pong.css" type="text/css" />
@@ -8,12 +8,14 @@
     <body>
         <div id="overlay">
             <ul id="menu">
-                <li><h1 class="menu-text">Pong</h1></li>
-				<li class="menu-text">Move the mouse up and down to move your small white rectangle. Try to get the ball past your opponent. Right click to pause the game.
+                <li class="menu-text"><h1>Pong</h1></li>
+				<li class="menu-text">Move the mouse up and down to move your small white rectangle.
+                    Try to get the ball past your opponent. Right click or hit spacebar to pause the game.
 				</li>
                 <li><button id="startBtn" onclick="startGame(event)">New Game</button></li>
-                <li><button id="hintToggleBtn" onclick="toggleHints()">Silly Hints: ON</button></li>
-                <li><button id="resumeBtn" class="hidden" onclick="toggleMenu(event)">Resume</button></li>
+                <li><button id="hintToggleBtn" class="btn-norm" onclick="toggleHints()"
+                    title="toggles the occasional silly sayings at the bottom of the screen">Toggle Silly Hints: ON</button></li>
+                <li><button id="resumeBtn" class="btn-norm hidden" onclick="toggleMenu(event)">Resume</button></li>
             </ul>
         </div>
         <canvas id="canvas" oncontextmenu="toggleMenu(event)">
@@ -57,6 +59,7 @@
             var hintBtn = document.getElementById("hintToggleBtn");
             var overlay = document.getElementById("overlay");
             var resumeBtn = document.getElementById("resumeBtn");
+            var startedGame = false;
 
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
@@ -67,16 +70,26 @@
                 pong.stopScreensaver();
                 overlay.classList.add("hidden");
                 resumeBtn.classList.remove("hidden");
+                canvas.style.filter = "none";
+                startedGame = true;
                 pong.restart();
+            }
+
+            function shortcuts(e) {
+                if (e.key === ' ' && startedGame) {
+                    toggleMenu(e);
+                }
             }
 
             function toggleMenu(e) {
                 e.preventDefault();
                 if (pong.isPaused()) {
                     overlay.classList.add("hidden");
+                    canvas.style.filter = "none";
                     pong.resume();
                 } else {
                     pong.pause();
+                    canvas.style.filter = "blur(0.25em)";
                     overlay.classList.remove("hidden");
                 }
             }

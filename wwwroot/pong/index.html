@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en-US" onkeypress="shortcuts(event)">
+<html lang="en-US">
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="pong.css" type="text/css" />
@@ -8,21 +8,23 @@
     <body>
         <div id="overlay">
             <ul id="menu">
-                <li class="menu-text"><h1>Pong</h1></li>
-				<li class="menu-text">Move the mouse up and down to move your small white rectangle.
+                <li id="title" class="menu-text"><h1>Pong</h1></li>
+				<li id="help" class="menu-text">Move the mouse up and down to move your small white rectangle.
                     Try to get the ball past your opponent. Right click or hit spacebar to pause the game.
 				</li>
                 <li><button id="startBtn" onclick="startGame(event)">New Game</button></li>
                 <li><button id="hintToggleBtn" class="btn-norm" onclick="toggleHints()"
+					onmouseover="showHint()" onmouseleave="hideHintAfterHover()"
                     title="toggles the occasional silly sayings at the bottom of the screen">Toggle Silly Hints: ON</button></li>
                 <li><button id="resumeBtn" class="btn-norm hidden" onclick="toggleMenu(event)">Resume</button></li>
             </ul>
         </div>
-        <canvas id="canvas" oncontextmenu="toggleMenu(event)">
+        <canvas id="canvas" class="paused" oncontextmenu="toggleMenu(event)"
+			onkeypress="shortcuts(event)">
             Your browser does not support the canvas element.
         </canvas>
 
-        <p id="hint"></p>
+        <p id="hint" class="hidden"></p>
 
         <noscript>JavaScript must be enabled for this page to work properly.</noscript>
 
@@ -48,8 +50,7 @@
                 "\"If we shouldn't eat at night, why is there a light in the "
                     + "fridge?\" - CoolFunnyQuotes.com",
                 "My high score is -1, beat that.",
-                ".&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
-                    + "Follow that dot!",
+                "Follow that dot!",
                 "Original Atari PONG (1972): <a href='https://youtu.be/fiShX2pTz9A'>"
                     + "https://youtu.be/fiShX2pTz9A</a>"
             ];
@@ -60,6 +61,7 @@
             var overlay = document.getElementById("overlay");
             var resumeBtn = document.getElementById("resumeBtn");
             var startedGame = false;
+			var showingHint = true;
 
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
@@ -70,7 +72,7 @@
                 pong.stopScreensaver();
                 overlay.classList.add("hidden");
                 resumeBtn.classList.remove("hidden");
-                canvas.style.filter = "none";
+                canvas.classList.remove("paused");
                 startedGame = true;
                 pong.restart();
             }
@@ -85,21 +87,23 @@
                 e.preventDefault();
                 if (pong.isPaused()) {
                     overlay.classList.add("hidden");
-                    canvas.style.filter = "none";
+                    canvas.classList.remove("paused");
                     pong.resume();
                 } else {
                     pong.pause();
-                    canvas.style.filter = "blur(0.25em)";
                     overlay.classList.remove("hidden");
+                    canvas.classList.add("paused");
                 }
             }
 
             function toggleHints() {
                 if (toggleHints.on) {
-                    hint.classList.add("hidden");
+					hint.classList.add("hidden");
                     hintBtn.innerText = "Silly Hints: OFF";
                 } else {
-                    hint.classList.remove("hidden");
+					if (showingHint) {
+						hint.classList.remove("hidden");
+					}
                     hintBtn.innerText = "Silly Hints: ON";
                 }
                 toggleHints.on = !toggleHints.on;
@@ -107,17 +111,29 @@
             toggleHints.on = true;
 
             function hideHint() {
-                hint.style.opacity = 0;
+				hint.classList.add("hidden");
+				showingHint = false;
             }
+			
+			function hideHintAfterHover() {
+				if (!showingHint || !toggleHints.on) {
+					hint.classList.add("hidden");
+				}
+			}
+			
+			function showHint() {
+                hint.classList.remove("hidden");
+			}
 
             function setHint(hintNumber) {
-                hint.style.opacity = 1;
+				showHint();
+				showingHint = true;
                 hint.innerHTML = hints[hintNumber];
                 setTimeout(hideHint, 20000);
             }
 
             function hintCycle() {
-                hint.style.opacity = 0;
+                hint.classList.add("hidden");
                 // allow time for transition
                 setTimeout(setHint, 1500, Math.floor(Math.random() * hints.length));
             }

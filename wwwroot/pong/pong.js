@@ -205,12 +205,12 @@
         }
         var p1 = midScreenX - (drawScore.shift * drawScore.p1Spaces + canvas.width / 15);
         ctx.fillText(p1Score, p1, canvas.height / 4,
-                midScreenX - window.innerWidth / 15);
+                midScreenX - canvas.width / 15);
 
         if (Math.log10(p2Score) === drawScore.p2Spaces) {
             drawScore.p2Spaces += 1;
         }
-        var p2 = window.innerWidth - (drawScore.shift * drawScore.p2Spaces + canvas.width / 15);
+        var p2 = canvas.width - (drawScore.shift * drawScore.p2Spaces + canvas.width / 15);
         ctx.fillText(p2Score, p2, canvas.height / 4,
                 midScreenX - canvas.width / 15);
     }
@@ -270,15 +270,17 @@
     }
 
     function updatePVel() {
-        if (pLeft.deltaT > 0) {
-            pLeft.vel = (pLeft.deltaY / pLeft.deltaT) * 1000;
-        }
-        if ((new Date().getTime() - pLeftMove.lastTime) > 400) {
-            pLeft.vel = 0;
-            pLeft.deltaY = 0;
-            pLeft.deltaT = 0;
-        }
+		var time = new Date().getTime();
+		var deltaT = time - updatePVel.lastTime;
+		updatePVel.lastTime = time;
+
+		// times 1000 to get px / s.
+		// div 5 because too fast.
+        pLeft.vel = (pLeft.deltaY / deltaT) * 200;
+		pLeft.deltaY = 0;
+		console.log("pVel: " + pLeft.vel);
     }
+    updatePVel.lastTime = new Date().getTime();
 
     function update(timestamp) {
         var oldBall = {
@@ -355,10 +357,6 @@
 
         pLeft.deltaY += deltaY;
         
-        var time = new Date().getTime();
-        pLeft.deltaT += time - pLeftMove.lastTime;
-        pLeftMove.lastTime = time;
-        
         if (pLeft.y1 < 0) {
             pLeft.y1 = 0;
             pLeft.y2 = PADDLE_HEIGHT;
@@ -368,7 +366,6 @@
             pLeft.y2 = canvas.height;
         }
     }
-    pLeftMove.lastTime = new Date().getTime();
 
     function pxStr2Float(str) {
         return parseFloat(str.substr(0, str.length - 2));

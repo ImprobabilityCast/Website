@@ -3,12 +3,16 @@
 
     const PADDLE_HEIGHT = 50;
     const HALF_PADDLE_HEIGHT = PADDLE_HEIGHT / 2;
+    const PADDLE_WIDTH = 8;
     const BALL_RADIUS = 4;
     const SCORE_COLOR = "#79e";
     const BG_COLOR = "#111";
     const MOVING_PARTS_COLOR = "#eee";
+    const VEL_TRANS_SCALE_FACTOR = 0.1;
 
-    // the # of milliseconds in 1s / 60 = 16.6667
+    // Note: The # of milliseconds in 1s / 60 = 16.6667
+    
+    var paddleWallDist = canvas.width / 15;
 
     var p1Score = 0;
     var p2Score = 0;
@@ -25,28 +29,23 @@
         };
     }
 
-    function newPlayerLeft() {
+    function newPlayer(upperLeftX) {
         return {
             deltaY: 0,
-            deltaT: 0,
             vel: 0,
-            x1: canvas.width / 15,
-            x2: canvas.width / 15 + 8,
+            x1: upperLeftX,
+            x2: upperLeftX + PADDLE_WIDTH,
             y1: canvas.height / 2 - HALF_PADDLE_HEIGHT,
             y2: canvas.height / 2 + HALF_PADDLE_HEIGHT
         };
     }
 
+    function newPlayerLeft() {
+        return newPlayer(paddleWallDist);
+    }
+
     function newPlayerRight() {
-        return {
-            deltaY: 0,
-            deltaT: 0,
-            vel: 0,
-            x1: canvas.width - canvas.width / 15,
-            x2: canvas.width - canvas.width / 15 + 8,
-            y1: PADDLE_HEIGHT,
-            y2: canvas.height - PADDLE_HEIGHT
-        };
+        return newPlayer(canvas.width - (paddleWallDist + PADDLE_WIDTH));
     }
 
     function getXIntercept(yLine, coords) {
@@ -134,8 +133,7 @@
             ball.vy = -ball.vy;
             ball.y = hitbox.y1 - BALL_RADIUS;
             ball.vy += hitbox.vel;
-        }
-        if (bottom) {
+        } else if (bottom) {
             console.log("fixing bottom");
             ball.vy = -ball.vy;
             ball.y = hitbox.y2 + BALL_RADIUS;
@@ -145,13 +143,16 @@
             console.log("fixing right");
             ball.vx = -ball.vx;
             ball.x = hitbox.x2 + BALL_RADIUS;
-            ball.vy += hitbox.vel;
-        }
-        if (left) {
+            if (!top && !bottom) {
+                ball.vy += VEL_TRANS_SCALE_FACTOR * hitbox.vel;
+            }
+        } else if (left) {
             console.log("fixing left");
             ball.vx = -ball.vx;
             ball.x = hitbox.x1 - BALL_RADIUS;
-            ball.vy += hitbox.vel;
+            if (!top && !bottom) {
+                ball.vy += VEL_TRANS_SCALE_FACTOR * hitbox.vel;
+            }
         }
     }
 
@@ -262,6 +263,22 @@
         drawPlayer(pRight);
     }
 
+    function movePlayerRight() {
+        pRight.deltaY = (ball.y - pRight.y1) - HALF_PADDLE_HEIGHT;
+        pRight.y1 = ball.y - HALF_PADDLE_HEIGHT;
+        pRight.y2 = pRight.y1 + PADDLE_HEIGHT;
+
+        // leave PADDLE_HEIGHT of space to score in at the edges
+        if (pRight.y1 < PADDLE_HEIGHT) {
+            pRight.y1 = PADDLE_HEIGHT;
+            pRight.y2 = 2 * PADDLE_HEIGHT;
+        }
+        if (pRight.y2 > canvas.height - PADDLE_HEIGHT) {
+            pRight.y1 = canvas.height - 2 * PADDLE_HEIGHT;
+            pRight.y2 = canvas.height - PADDLE_HEIGHT;
+        }
+    }
+
     // eTime is elapsed time in milliseconds
     function updatePosition(eTime) {
         var secs = eTime / 1000; // velocity is in px per sec
@@ -275,10 +292,11 @@
 		updatePVel.lastTime = time;
 
 		// times 1000 to get px / s.
-		// div 5 because too fast.
-        pLeft.vel = (pLeft.deltaY / deltaT) * 200;
+        pLeft.vel = (pLeft.deltaY / deltaT) * 1000;
 		pLeft.deltaY = 0;
-		console.log("pVel: " + pLeft.vel);
+        
+        pRight.vel = (pRight.deltaY / deltaT) * 1000;
+		pRight.deltaY = 0;
     }
     updatePVel.lastTime = new Date().getTime();
 
@@ -296,6 +314,7 @@
         update.lastTime = timestamp;
 
         // move paddles
+        movePlayerRight();
         updatePVel();
 
         // check bouncy things

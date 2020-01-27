@@ -73,6 +73,7 @@
                 overlay.classList.add("hidden");
                 resumeBtn.classList.remove("hidden");
                 canvas.classList.remove("paused");
+                hint.style.cursor = "none";
                 startedGame = true;
                 pong.restart();
             }
@@ -88,11 +89,13 @@
                 if (pong.isPaused()) {
                     overlay.classList.add("hidden");
                     canvas.classList.remove("paused");
+                    hint.style.cursor = "none";
                     pong.resume();
                 } else {
                     pong.pause();
                     overlay.classList.remove("hidden");
                     canvas.classList.add("paused");
+                    hint.style.cursor = "default";
                 }
             }
 

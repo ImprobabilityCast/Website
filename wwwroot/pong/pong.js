@@ -144,7 +144,7 @@
             ball.vx = -ball.vx;
             ball.x = hitbox.x2 + BALL_RADIUS;
             if (!top && !bottom) {
-                ball.vy += VEL_TRANS_SCALE_FACTOR * hitbox.vel;
+               ball.vy += VEL_TRANS_SCALE_FACTOR * hitbox.vel;
             }
         } else if (left) {
             console.log("fixing left");

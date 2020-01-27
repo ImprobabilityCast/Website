@@ -118,7 +118,6 @@ canvas.paused {
     transition: visibility 1s, opacity 1s;
 	padding: 0 1em;
     text-align: right;
-    cursor: none;
 }
 
 #hint a {

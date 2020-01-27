@@ -1,5 +1,5 @@
 ////////////////////////////////////
-// 22 April 2018
+// 27 January 2020
 ////////////////////////////////////
 function Model() {
     var map = [[new Tile()]];
@@ -80,7 +80,7 @@ function Model() {
 
     this.eraseSavedGame = function () {
         localStorage.removeItem("map");
-        localStorage.removeItem("nMines");
+        // keep nMines so that it keeps level difficulty between sessions
         localStorage.removeItem("nFlags");
         localStorage.removeItem("unseenCount");
     }

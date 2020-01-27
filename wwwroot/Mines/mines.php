@@ -8,19 +8,16 @@
 <link id="sizer" rel="stylesheet" type="text/css" href="tdNormal.css" />
 <body>
 
-
-
 <div id="left">
 <button type="button" id="new" onclick="controller.newGame(level)">New</button>
 <button type="button" id="size" onclick="toggleSize(event)">Large Tiles</button>
 <div id="flagCounter">
 10
 </div>
-<select onchange="level=event.currentTarget.selectedIndex">
-  <option>easy</option>
-  <option>intermediate</option>
-  <option>expert</option>
-  <option>world</option>
+<select id="levels" onchange="updateSavedMineCount(event)">
+  <option value="10">easy</option>
+  <option value="35">intermediate</option>
+  <option value="150">expert</option>
 </select>
 </div>
 
@@ -33,6 +30,11 @@
 <script>
 var switcher = true;
 var siz = document.getElementById('sizer');
+var level = (null === localStorage.getItem("nMines")) ? 10
+		: JSON.parse(localStorage.getItem("nMines"));
+var controller = new Controller();
+document.getElementById("levels").value = level;
+
 function toggleSize(evt) {
     if (switcher) {
         siz.setAttribute('href', "tdLarge.css");
@@ -43,8 +45,13 @@ function toggleSize(evt) {
     }
     switcher = !switcher;
 }
-var level = 0;
-var controller = new Controller();
+
+function updateSavedMineCount(event) {
+	localStorage.setItem("nMines",
+			JSON.stringify(event.currentTarget.value - 0));
+	level = event.currentTarget.value - 0;
+}
+
 </script>
 </body>
 </html>

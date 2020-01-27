@@ -1,3 +1,8 @@
+html {
+	height: 100%;
+	background: radial-gradient(aliceblue, skyblue);
+}
+
 .invalid {
     color: red;
     box-shadow: 0 0 4px 1px red;
@@ -30,28 +35,37 @@ select {
 
 #flagCounter {
     border: 5px solid #eee;
-    padding: 5px;
+    padding: 2pt;
     color: red;
     font-family: monospace;
     font-weight: bold;
     font-size: 20pt;
     background: #500;
-    height: 36pt;
+    height: 34pt;
     float: left;
-    min-width: 52pt;
+    min-width: 50pt;
     text-align: right;
+	margin: 1pt;
 }
 
 table {
-    background-color: #eee;
+    background-color: #eee8;
     margin: auto;
     position: relative;
     top: 60pt;
 }
 
+td {
+    text-align: center;
+    background-color: #fff8;
+    border-color: transparent;
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
 td.unseen {
-    background-color: lightgrey;
-    border: 2px outset lightgrey;
+    background-color: #aaa;
+    border: 2px outset #ccc;
 }
 
 td.flag {

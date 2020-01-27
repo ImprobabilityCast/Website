@@ -1,5 +1,5 @@
 ////////////////////////////////////
-// 22 April 2018
+// 27 January 2020
 ////////////////////////////////////
 
 // Controller
@@ -7,16 +7,16 @@ function Controller() {
     var model = new Model();
     var view = new View(handleLeftClick, handleRightClick);
     var lost = false;
-    var levels = new Map([[0, {width: 8, height: 8, mines: 10}],
-                    [1, {width: 16, height: 12, mines: 35}],
-                    [2, {width: 32, height: 24, mines: 150}],
-                    [3, {width: 64, height: 48, mines: 600}]]);
+    var levels = new Map();
+	levels.set(10, {width: 8, height: 8});
+    levels.set(35, {width: 16, height: 12});
+    levels.set(150, {width: 32, height: 24});
 
     // restore saved game
     if (model.tryLoadGame()) {
         view.reSize(model.getWidth(), model.getHeight());
     } else {
-        loadGame(0);
+        loadGame(level);
     }
 
     // make the view refect the model
@@ -93,7 +93,10 @@ function Controller() {
             }
             view.setFlagCount(model.mineCount() - model.flagCount());
         }
-        model.saveGame();
+		
+		if (!lost) {
+			model.saveGame();
+		}
     }
 
     function handleLeftClick(evt) {
@@ -114,20 +117,21 @@ function Controller() {
             } else {
                 showZeros(ele.cellIndex, row);
                 // check if we won
-                if (model.isGameWon() && !lost) {
-                    winEffects();
-                    model.eraseSavedGame();
-                    view.setFlagCount(0);
-                } else {
-                    model.saveGame();
-                    view.setFlagCount(model.mineCount() - model.flagCount());
-                }
+				if (!lost) {
+					if (model.isGameWon()) {
+						winEffects();
+						model.eraseSavedGame();
+					} else {
+						model.saveGame();
+					}
+				}
+                view.setFlagCount(model.mineCount() - model.flagCount());
             }
         }
     }
 
     // shows zeros and surrounding numbers
-    // requires (x, y) = 0
+    // requires (x, y) is not a mine
     function showZeros(x, y) {
         var lst = view.getSquare(x, y).classList;
         lst.remove("flag");
@@ -162,7 +166,7 @@ function Controller() {
         lost = false;
         model.clear();
         model.reSize(params.width, params.height);
-        model.randomGame(params.mines);
+        model.randomGame(level);
         model.eraseSavedGame();
 
         view.clear();

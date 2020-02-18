@@ -1,0 +1,9 @@
+<svg width="150" height="150"
+xmlns:xlink="http://www.w3.org/1999/xlink">
+<a xlink:href="http://localhost/cats.php"
+	target="_blank">
+	<text x="0" y="15" fill="blue">Revenge of the Cats</text>
+</a>
+<path d="M5 20 l215 0" stroke="black" stroke-linecap="round" />
+<path stroke="black" stroke-dasharray="4,8,16,4,16,8,4" d="M5 60 l215 0" />
+</svg>

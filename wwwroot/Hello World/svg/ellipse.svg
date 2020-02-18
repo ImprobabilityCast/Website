@@ -1,0 +1,7 @@
+<svg width="400" height="200">
+<ellipse cx="200" cy="100" rx="150" ry="90"
+	style="fill:limegreen; stroke-width:2; stroke:green;" />
+<line x1="0" y1="50" x2="400" y2="150"
+	style="stroke:darkgreen; stroke-width:4;"/>
+</svg>
+	

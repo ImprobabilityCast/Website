@@ -1,0 +1,6 @@
+<svg width="200" height="200">
+<polygon points="10,180 100,10 180,10"
+	style="fill:lime; stroke:grey; stroke-width:1;" />
+<polyline points="10,10 20,50 100,130 75,10"
+	style="fill:none; stroke:black; stroke-width:5;" />
+</svg>

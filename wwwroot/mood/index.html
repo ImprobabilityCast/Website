@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en-US">
+	<meta charset="utf-8" />
+	<meta id="viewport" content="width=device-width, initial-scale=1.0" />
+
+	<link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css" />
+
+	<body>
+		<div class="container">
+		<h2>Merry Christmas</h2>
+		<hr />
+		<form id="depressing-form">
+			<div class="form-group">
+				<label for="overall-mood">Overall mood:</label>
+				<input type="text" class="form-control" id="overall-mood"></input>
+				<label for="seconary-mood">Secondary mood:</label>
+				<input type="text" class="form-control" id="secondary-mood"></input>
+			</div>
+			
+			<label for="coping">Coping mechinisms:</label>
+			<div id="coping" class="btn-group">
+				<button type="button" class="btn btn-outline-primary">It helped</button>
+				<button type="button" class="btn btn-outline-primary">Did not help</button>
+				<button type="button" class="btn btn-outline-primary">Not used</button>
+			</div>
+		
+			<fieldset>
+				<legend>Suicide</legend>
+				<div class="form-group">
+					<label for="suicidal-thoughts">Suicidal thoughts:</label>
+					<div id="sucidal-thoughts" class="btn-group">
+						<button type="button" class="btn btn-outline-primary" onclick="radioBtnClick(event)">None</button>
+						<button type="button" class="btn btn-outline-primary" onclick="radioBtnClick(event)">1-5</button>
+						<button type="button" class="btn btn-outline-primary" onclick="radioBtnClick(event)">5-10</button>
+						<button type="button" class="btn btn-outline-primary" onclick="radioBtnClick(event)">Over 10</button>
+					</div>
+				</div>
+				
+				<div class="form-group">
+					<label for="suicidal-urges">Suicidal urges:</label>
+					<div id="sucidal-urges" class="btn-group form-group">
+						<button type="button" class="btn btn-outline-primary" onclick="radioBtnClick(event)">None</button>
+						<button type="button" class="btn btn-outline-primary" onclick="radioBtnClick(event)">1-5</button>
+						<button type="button" class="btn btn-outline-primary" onclick="radioBtnClick(event)">5-10</button>
+						<button type="button" class="btn btn-outline-primary" onclick="radioBtnClick(event)">Over 10</button>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="suicidal-steps">Suicidal steps</label>
+					<textarea class="form-control" rows="5" id="suicidal-steps"></textarea>
+				</div>
+			</fieldset>
+			
+			<fieldset>
+				<legend>Self-harm</legend>
+				<div class="form-group">
+					<label for="harm-where">Where:</label>
+					<textarea class="form-control" rows="5" id="harm-where"></textarea>
+				</div>
+				<div class="form-group">
+					<label for="harm-tool">Tool used:</label>
+					<textarea class="form-control" rows="5" id="harm-tool"></textarea>
+				</div>
+				<div class="form-group">
+					<label for="harm-depth">How deep:</label>
+					<textarea class="form-control" rows="5" id="harm-depth"></textarea>
+				</div>
+				<label for="harm-purpose">Purpose:</label>
+				<div class="form-group">
+					<div id="harm-purpose" class="btn-group">
+						<button type="button" class="btn btn-outline-primary" onclick="radioBtnClick(event)">To bleed</button>
+						<button type="button" class="btn btn-outline-primary" onclick="radioBtnClick(event)">To hurt</button>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="harm-emote-respose">Emotional Response:</label>
+					<textarea class="form-control" rows="5" id="harm-emote-respose"></textarea>
+				</div>
+			</fieldset>
+			
+			<fieldset>
+				<legend>Depression</legend>
+				<div class="form-group">
+					<label for="energy-level">Energy level:</label>
+					<div class="input-group">
+						<div class="container">
+							<div class="row">
+								<input type="range" class="custom-range" id="energy-level" min="0" max="100" />
+							</div>
+							<div class="row">
+								<div class="col">
+									<span>Low</span>
+								</div>
+								<div class="col" style="text-align: right">
+									<span>High</span>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="motivation">Motivation:</label>
+					<div class="input-group">
+						<div class="container">
+							<div class="row">
+								<input type="range" class="custom-range" id="motivation" min="0" max="100" />
+							</div>
+							<div class="row">
+								<div class="col">
+									<span>Low</span>
+								</div>
+								<div class="col" style="text-align: right">
+									<span>High</span>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="hygine">Basic needs/hygine:</label>
+					<div class="input-group">
+						<div class="container">
+							<div class="row">
+								<input type="range" class="custom-range" id="hygine" min="0" max="100" />
+							</div>
+							<div class="row">
+								<div class="col">
+									<span>Low</span>
+								</div>
+								<div class="col" style="text-align: right">
+									<span>High</span>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</fieldset>
+			
+			<fieldset>
+				<legend>Anxitity</legend>
+				<div class="form-group">
+					<label for="anx-where">Felt where:</label>
+					<textarea class="form-control" rows="5" id="anx-where"></textarea>
+				</div>
+				<div class="form-group">
+					<label for="anx-intensity">Intensity:</label>
+					<div class="input-group">
+						<div class="container">
+							<div class="row">
+								<input type="range" class="custom-range" id="anx-intensity" min="0" max="100" />
+							</div>
+							<div class="row">
+								<div class="col">
+									<span>Low</span>
+								</div>
+								<div class="col" style="text-align: right">
+									<span>High</span>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<label for="panic-attack">Panic attack:</label>
+				<div class="form-group">
+					<div id="panic-attack" class="btn-group">
+						<button type="button" class="btn btn-outline-primary" onclick="radioBtnClick(event)">Yes</button>
+						<button type="button" class="btn btn-outline-primary" onclick="radioBtnClick(event)">No</button>
+					</div>
+				</div>
+			</fieldset>
+			
+			<fieldset>
+				<legend>Fogginess</legend>
+				<div class="form-group">
+					<label for="fog-speed">Speed of comprehension:</label>
+					<div class="input-group">
+						<div class="container">
+							<div class="row">
+								<input type="range" class="custom-range" id="fog-speed" min="0" max="100" />
+							</div>
+							<div class="row">
+								<div class="col">
+									<span>Low</span>
+								</div>
+								<div class="col" style="text-align: right">
+									<span>High</span>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="forgets">Forgeting what I was thinking/saying/doing in the middle of it:</label>
+					<div id="forgets" class="btn-group form-group">
+						<button type="button" class="btn btn-outline-primary" onclick="radioBtnClick(event)">None</button>
+						<button type="button" class="btn btn-outline-primary" onclick="radioBtnClick(event)">1-5</button>
+						<button type="button" class="btn btn-outline-primary" onclick="radioBtnClick(event)">5-10</button>
+						<button type="button" class="btn btn-outline-primary" onclick="radioBtnClick(event)">Over 10</button>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="slurrs">Slurring words/stuttering:</label>
+					<div id="slurrs" class="btn-group form-group">
+						<button type="button" class="btn btn-outline-primary" onclick="radioBtnClick(event)">None</button>
+						<button type="button" class="btn btn-outline-primary" onclick="radioBtnClick(event)">1-5</button>
+						<button type="button" class="btn btn-outline-primary" onclick="radioBtnClick(event)">5-10</button>
+						<button type="button" class="btn btn-outline-primary" onclick="radioBtnClick(event)">Over 10</button>
+					</div>
+				</div>
+			</fieldset>
+			
+			<fieldset>
+				<legend>Anger</legend>
+				<div class="form-group">
+					<label for="anger-exp">Any alarming expression of anger:</label>
+					<textarea class="form-control" rows="5" id="anger-exp"></textarea>
+				</div>
+				<div class="form-group">
+					<label for="anger-thoughts">Any specific destructive thoughts:</label>
+					<textarea class="form-control" rows="5" id="anger-thoughts"></textarea>
+				</div>
+			</fieldset>
+			
+			<fieldset>
+				<legend>Eating</legend>
+				<label for="wake-to-eat-time">Eat how long after waking up:</label>
+				<div class="input-group">
+					<input class="form-control" type="number" id="wake-to-eat-time" placeholder="like, idk, 500" min="0" step="0.25" />
+					<div class="input-group-postpend">
+						<span class="input-group-text">Hrs</span>
+					</div>
+				</div>
+				<label for="food-to-food-time">How long between each food:</label>
+				<div class="input-group">
+					<input class="form-control" type="number" id="food-to-food-time" placeholder="like, idk, 500" min="0" step="0.25" />
+					<div class="input-group-postpend">
+						<span class="input-group-text">Hrs</span>
+					</div>
+				</div>
+				<label for="veggies">Any protien/veggies:</label>
+				<div class="form-group">
+					<div id="veggies" class="btn-group">
+						<button type="button" class="btn btn-outline-primary" onclick="radioBtnClick(event)">Yes</button>
+						<button type="button" class="btn btn-outline-primary" onclick="radioBtnClick(event)">No</button>
+					</div>
+				</div>
+			</fieldset>
+			
+			<fieldset>
+				<legend>Sleep</legend>
+				<label for="sleep-time">Time fell asleep:</label>
+				<div class="form-control">
+					<input type="time" id="sleep-time" />
+				</div>
+			sleep:
+			time fell alseep to time woke up
+			restless vs solid
+			how much time lying awake in bed
+			when meds were taken &amp; how much
+			</fieldset>
+			<label for="ap-time">Alone/People time</label>
+			<ul id="ap-time">
+				<li>thing</li>
+			</ul>
+
+			<div class="form-group">
+				<label for="note">Note:</label>
+				<textarea class="form-control" id="note" rows="5"></textarea>
+			</div>
+		</form>
+			<ul>
+			<li>categories</li>
+			<li>Rate specific thingies on a range</li>
+			<li>graphs of the past</li>
+			<li>overall mood</li>
+			<li>secondary/mixed mood</li>
+			<li>multiple chioce | yes/no</li>
+			<li>private notes</li>
+			<li>coping mechanisms used today and wether or not they helped</li>
+			<li>optoin to add/remove coping mechanisms</li>
+			
+			<li>suiciadl thouhgts: none, 1-5, 5-10, over 10</li>
+			<li> sudical urges, same as ablove</li>
+			<li>suicidal steps</li>
+			<li>self-harm: where: open thingy, tool used, how deep, purpose:mulitple choice: to hurt or too bleed, emotional repose</li>
+			<li>depression: energy-level: low to high<li>
+			<li>motiveation: same
+			belivef self worth same
+			basic needs/hygine: same
+			</li>
+			<li>anxiety: where felt - open, intesnity, low to high</li>
+			panic attack yes or no
+			foggyness: speed of copmrehension: low to high
+			forgeting what i was thinking/saying/doing in the middle of it: none, 1-5, 5-10, more than 10
+			slurring words/stuttering: same as aabove
+			anger:
+			open questionn - any alrming expressoin of anger
+			any specific destructive thoughts
+			eating:
+			how long after waking up:
+			how long between each food:
+			if any protin/veggies, yes/no
+			sleep:
+			time fell alseep to time woke up
+			restless vs solid
+			how much time lying awake in bed
+			when meds were taken &amp; how much
+			
+			alone/people time:
+			what u did? open q
+			what impact it had? open q
+			rate interactions heavy to life/fueling 1-5
+			
+			only need graphs for the scales
+			sleep with scale for #  hours of sleep: when fell sleep/when woke graph
+		</ul>
+	</div>
+	<footer class="container">
+		<hr />
+		<nav class="nav nav-justified">
+			<a class="nav-link nav-item" href="https://www.youtube.com/watch?v=dQw4w9WgXcQ">Tech Support</a>
+		</nav>
+	</footer>
+	<script src="/js/jquery-3.4.1.js"></script>
+	<script src="/js/popper.min.js"></script>
+	<script src="/bootstrap/js/bootstrap.min.js"></script>
+	
+	<script src="formTricks.js"></script>
+	<script src="/tracker/tracker.js"></script>
+	</body>
+</html>

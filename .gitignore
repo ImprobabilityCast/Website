@@ -20,15 +20,25 @@ wwwroot/libc/
 wwwroot/make.html_node/
 wwwroot/php-manual-en/
 wwwroot/thingsThatDontWork/libcurl/
+wwwroot/ruby-doc/
+wwwroot/syntax.html
+wwwroot/ConvertingwxString.html
 
 # Ignore pics
 *.jpg
 *.png
 *.ico
+*.gif
 
 # Ignore vscode stuff
-*.vscode
+.vscode
 
 # No reason to include libs
 wwwroot/bootstrap*
 wwwroot/js/
+
+# Ignore binaries
+obj
+bin
+*.exe
+Integrity2gmail

@@ -252,19 +252,59 @@
 				<div class="form-control">
 					<input type="time" id="sleep-time" />
 				</div>
-			sleep:
-			time fell alseep to time woke up
-			restless vs solid
-			how much time lying awake in bed
-			when meds were taken &amp; how much
+				<label for="sleep-type">Sleep quality:</label>
+				<div class="form-group">
+					<div id="sleep-type" class="btn-group">
+						<button type="button" class="btn btn-outline-primary" onclick="radioBtnClick(event)">Restless</button>
+						<button type="button" class="btn btn-outline-primary" onclick="radioBtnClick(event)">Solid</button>
+					</div>
+				</div>
+				<label for="time-lying-awake">Time spent lying awake:</label>
+				<div class="input-group">
+					<input class="form-control" type="number" id="time-lying-awake" placeholder="like, idk, 500" min="0" step="0.25" />
+					<div class="input-group-postpend">
+						<span class="input-group-text">Hrs</span>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="meds">When meds were taken and how much:</label>
+					<textarea class="form-control" rows="5" id="meds"></textarea>
+				</div>
 			</fieldset>
-			<label for="ap-time">Alone/People time</label>
-			<ul id="ap-time">
-				<li>thing</li>
-			</ul>
+			
+			<fieldset>
+				<legend>Alone/People time</legend>
+				<div class="form-group">
+					<label for="ap-time-what">What did you do:</label>
+					<textarea class="form-control" rows="5" id="ap-time-what"></textarea>
+				</div>
+				<div class="form-group">
+					<label for="ap-time-what">What impact did it have:</label>
+					<textarea class="form-control" rows="5" id="ap-time-what"></textarea>
+				</div>
+				<div class="form-group">
+					<label for="fog-speed">How would you rate your interactions:</label>
+					<div class="input-group">
+						<div class="container">
+							<div class="row">
+								<input type="range" class="custom-range" id="fog-speed" min="0" max="100" />
+							</div>
+							<div class="row">
+								<div class="col">
+									<span>Heavy</span>
+								</div>
+								<div class="col" style="text-align: right">
+									<span>Life Fueling</span>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</fieldset>
 
+			<hr />
 			<div class="form-group">
-				<label for="note">Note:</label>
+				<label for="note">Notes:</label>
 				<textarea class="form-control" id="note" rows="5"></textarea>
 			</div>
 		</form>

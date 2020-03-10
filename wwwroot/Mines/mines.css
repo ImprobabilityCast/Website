@@ -29,8 +29,8 @@ select {
 #left {
     max-width: 200px;
     min-width: 88pt;
-    position: fixed;
-    z-index: 4;
+	margin: auto;
+	margin-bottom: 6pt;
 }
 
 #flagCounter {
@@ -51,8 +51,6 @@ select {
 table {
     background-color: #eee8;
     margin: auto;
-    position: relative;
-    top: 60pt;
 }
 
 td {

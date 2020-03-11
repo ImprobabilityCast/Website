@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+<link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css" />
+<link rel="stylesheet" href="form.css" />
+<link rel="stylesheet" href="signup.css" />
+
+<body class="container d-flex flex-column justify-content-between">
+	<header>
+		<nav class="nav nav-justified">
+			<a class="nav-link nav-item" href="/mood/">Home</a>
+		</nav>
+		<hr />
+	</header>
+
+	<form action="signup_action.php" class="jumbotron align-self-center">
+		<fieldset>
+			<div class="form-row form-group">
+				<label for="email" class="col-sm-4 col-form-label">Email:</label>
+				<input type="text" id="email" class="col custom-control" placeholder="someone@example.com">
+			</div>
+			<div class="form-row form-group">
+				<label for="pass1" class="col-sm-4 col-form-label">Password:</label>
+				<input type="password" id="pass1" class="col custom-control" placeholder="hunter2">
+			</div>
+			<div class="form-row form-group">
+				<label for="pass2" class="col-sm-4 col-form-label">Re-enter password:</label>
+				<input type="password" id="pass2" class="col custom-control" placeholder="hunter2">
+			</div>
+		</fieldset>
+		
+		<!-- maybe security questions at a later date -->
+		<div class="form-row">
+			<button type="submit" id="btn-submit" class="btn btn-primary align-self-end col-sm-3" disabled>Signup</button>
+		</div>
+	</form>
+	
+	<footer>
+		<hr />
+		<nav class="nav nav-justified">
+			<a class="nav-link nav-item" href="https://www.youtube.com/watch?v=dQw4w9WgXcQ">Tech Support</a>
+		</nav>
+	</footer>
+</body>
+</html>

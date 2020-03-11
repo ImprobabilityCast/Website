@@ -2,14 +2,10 @@
 	font-weight: bold;
 }
 
-.right-col {
-	text-align: right
-}
-
-#depressing-form {
+form {
 	max-width: 512pt;
 }
 
-#depressing-form fieldset {
+form fieldset {
 	margin-bottom: 24pt;
 }

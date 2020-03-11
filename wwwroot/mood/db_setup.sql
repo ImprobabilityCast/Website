@@ -15,6 +15,6 @@ CREATE TABLE Users (
 );
 
 INSERT INTO Users (email_mask)
-	VALUES("s**********@osu.edu");
+	VALUES("a****@sugarfairyland.com");
 
 SELECT * FROM Users;

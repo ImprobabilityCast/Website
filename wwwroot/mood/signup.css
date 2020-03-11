@@ -9,3 +9,27 @@ html, body {
 form {
 	width: 100%;
 }
+
+.hidden {
+	visibility: hidden;
+	position: absolute;
+	z-index: 1;
+	background: lightblue;
+	width: 100%;
+	border-bottom-right-radius: 4pt;
+	border-bottom-left-radius: 4pt;
+	padding: 4pt;
+}
+
+.hidden ul {
+	padding-left: 12pt;
+	margin: 0;
+}
+
+#pass1:focus + .hidden {
+	visibility: visible;
+}
+
+.input-col {
+	padding: 0 !important;
+}

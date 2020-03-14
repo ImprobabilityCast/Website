@@ -6,6 +6,7 @@
 <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css" />
 <link rel="stylesheet" href="form.css" />
 <link rel="stylesheet" href="signup.css" />
+<title>Sign up</title>
 
 <body class="container d-flex flex-column justify-content-between">
 	<header>
@@ -15,18 +16,18 @@
 		<hr />
 	</header>
 
-	<form action="signup_action.php" class="jumbotron align-self-center needs-validation" oninput="canSubmit()">
+	<form action="signup_action.php" method="post" class="jumbotron align-self-center needs-validation" oninput="canSubmit()">
 		<h3>Sign up</h3>
 		<hr />
 		<fieldset>
 			<div class="form-row form-group">
 				<label for="email" class="col-sm-4 col-form-label">Email:</label>
-				<input type="text" id="email" class="col form-control" placeholder="someone@example.com">
+				<input type="text" name="email" id="email" class="col form-control" placeholder="someone@example.com">
 			</div>
 			<div class="form-row form-group">
 				<label for="pass1" class="col-sm-4 col-form-label">Password:</label>
 				<div class="col input-col">
-					<input type="password" id="pass1" class="form-control" oninput="checkPasswordsMatch()">
+					<input type="password" name="pass1" id="pass1" class="form-control" oninput="checkPasswordsMatch()">
 					<div class="hidden">
 						<span>Password requirements:</span>
 						<ul>
@@ -51,7 +52,7 @@
 		
 		<!-- maybe security questions at a later date -->
 		<div class="form-row">
-			<button type="submit" id="btn-submit" class="btn btn-primary align-self-end col-sm-3" disabled>Submit</button>
+			<input type="submit" id="btn-submit" class="btn btn-primary align-self-end col-sm-3" value="Submit" disabled>
 		</div>
 	</form>
 	

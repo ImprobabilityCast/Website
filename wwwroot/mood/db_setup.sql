@@ -1,32 +1,55 @@
+-- delte the old stuff if it exists
+DROP USER 'php'@'localhost';
+DROP DATABASE mood;
+
 -- db setup script
 
 CREATE DATABASE mood;
 
-USE mood;
-
-CREATE TABLE Users (
-	id int UNSIGNED AUTO_INCREMENT NOT NULL,
-	recovery_dkey char(128),
-	pwd_dkey char(128),
-	pwd_hash char(60),
-	email_hash char(60),
-	PRIMARY KEY(id)
+CREATE TABLE mood.users (
+	nonce char(48) NOT NULL, -- SODIUM_CRYPTO_SECRETBOX_NONCEBYTES * 2
+	-- SODIUM_CRYPTO_PWHASH_SCRYPTSALSA208SHA256_SALTBYTES * 2
+	salt char(64) NOT NULL,
+	recovery_dkey char(64) NOT NULL, -- SODIUM_CRYPTO_SECRETBOX_KEYBYTES * 2
+	pwd_dkey char(64) NOT NULL, -- SODIUM_CRYPTO_SECRETBOX_KEYBYTES * 2
+	pwd_hash char(60) NOT NULL,
+	email varchar(254) NOT NULL,
+	PRIMARY KEY(email)
 );
 
-CREATE PROCEDURE mood.add_user
-		(IN recovery_dkey, IN pwd_dkey, IN pwd_hash, IN email_hash)
+CREATE USER 'php'@'localhost'
+	IDENTIFIED BY 'bcsdhj%^763SVOW+p2#S';
+GRANT EXECUTE ON mood.* TO 'php'@'localhost';
+
+delimiter /
+CREATE PROCEDURE mood.add_user (
+		IN nonce char(48),
+		IN salt char(64),
+		IN recovery_dkey char(64),
+		IN pwd_dkey char(64),
+		IN pwd_hash char(60),
+		IN email varchar(254)
+	)
 BEGIN
-	INSERT INTO mood.Users (recovery_dkey, pwd_dkey, pwd_hash, email_hash)
-		VALUES(recovery_dkey, pwd_dkey, pwd_hash, email_hash);
-END
+	INSERT INTO mood.users (nonce, salt, recovery_dkey,
+			pwd_dkey, pwd_hash, email)
+		VALUES(nonce, salt, recovery_dkey, pwd_dkey, pwd_hash, email);
+END/
 
--- setup demo account
-mood.add_user(
-	-- recovery_dkey
-	-- pwd_dkey
-	-- demo@sugarfairyland.com hash
-	"$2y$10$HqboaQRbrSxcJKt9n.gwau1dWfIr7rv53tCPAF.9zGO738JhTASia"
-	-- hunter2 hash
-	"$2y$10$Q7DKrvLsSgjDlqMBIcI9YeYfA7UKqmqhfBkdoO31j4APB6MNBMiXG");
+CREATE PROCEDURE mood.get_user_creds (
+		IN email varchar(254)
+	)
+BEGIN
+	SELECT salt, pwd_dkey, pwd_hash FROM mood.users
+			WHERE users.email=email;
+END/
+delimiter ;
 
-SELECT * FROM Users;
+CALL mood.add_user(
+	'18ff036c5549c9138acaa67a04e90cc3f70e620fca3cf9c6',
+	'b75c36112b20e27ea3b12e1f36b5cc7926c5b1f5c17187c8f58e7e588f5a02a1',
+	'eeebfddd1fcd7f4316294224f7f316b8e4a295d6bed4c3d8ba12b19796eb76ba',
+	'752ad616d4c207c9c309bba25e29fcc1c25921723238c63bc12d107797ccb83c',
+	'$2y$10$3TS14xFibYkTS5dYBxuCve2oDoG1FqOWrx99kVh6I7KoiFy4qrE/m',
+	'demo@sugarfairyland.com'
+);

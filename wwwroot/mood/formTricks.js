@@ -17,8 +17,7 @@ function radioBtnClick(e) {
 	}
 }
 
-
-function addMech(e) {
+function addMech() {
 	var form = $("#newMechName");
 	var name = form.val().trim();
 	if (name.length == 0) {
@@ -33,7 +32,7 @@ function addMech(e) {
 	var class_name = name.replace(/[^A-Z0-9]/ig, '-');
 	var cope = document.getElementById("coping");
 	var ele = document.createElement("div");
-	ele.classList.add("input-group");
+	ele.classList.add("form-group");
 	ele.classList.add("form-row");
 	ele.innerHTML = '<label class="col-sm-4 col-form-label" for="'
 	+ class_name + '">'
@@ -51,4 +50,26 @@ function addMech(e) {
 function removeMech(e) {
 	var par = e.currentTarget.parentElement;
 	par.parentElement.removeChild(par);
+}
+
+function saveInput(e) {
+	localStorage.setItem(e.target.name, JSON.stringify(e.target.value));
+	console.log(e.target.name);
+	console.log(JSON.stringify(e.target.value));
+}
+
+window.onload = function loadInput(e) {
+	// https://stackoverflow.com/a/3138591/8335309
+	for (var i = 0; i < localStorage.length; i++) {
+		var id = localStorage.key(i);
+		console.log(localStorage.getItem(id));
+		var value = JSON.parse(localStorage.getItem(id));
+		document.getElementById(id).value = value;
+	}
+};
+
+function addMechOnEnter(e) {
+	if (e.which === 13) {
+		addMech();
+	}
 }

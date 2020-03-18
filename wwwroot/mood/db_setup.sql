@@ -14,7 +14,127 @@ CREATE TABLE mood.users (
 	pwd_dkey char(64) NOT NULL, -- SODIUM_CRYPTO_SECRETBOX_KEYBYTES * 2
 	pwd_hash char(60) NOT NULL,
 	email varchar(254) NOT NULL,
-	PRIMARY KEY(email)
+	PRIMARY KEY (email)
+);
+
+CREATE TABLE mood.coping_mechs (
+	email varchar(254) NOT NULL,
+	mech varchar(128) NOT NULL,
+	PRIMARY KEY (email, mech),
+	FOREIGN KEY (email) REFERENCES mood.users(email)
+);
+
+CREATE TABLE mood.coping_mechs_help (
+	email varchar(254) NOT NULL,
+	mech varchar(128) NOT NULL,
+	stamp datetime NOT NULL,
+	helpful ENUM('none', '1-5', '5-10', 'over 10') NOT NULL,
+	PRIMARY KEY (email, mech, stamp),
+	FOREIGN KEY (email) REFERENCES mood.users(email),
+	FOREIGN KEY (mech) REFERENCES mood.ucoping_mechs(mech)
+);
+
+CREATE TABLE mood.basic_mood (
+	email varchar(254) NOT NULL,
+	stamp datetime NOT NULL,
+	overall varchar(128),
+	secondary varchar(128),
+	PRIMARY KEY (email, stamp),
+	FOREIGN KEY (email) REFERENCES mood.users(email)
+);
+
+CREATE TABLE mood.suicide (
+	email varchar(254) NOT NULL,
+	stamp datetime NOT NULL,
+	thoughts ENUM('none', '1-5', '5-10', 'over-10'),
+	urges ENUM('none', '1-5', '5-10', 'over-10'),
+	steps varchar(512),
+	PRIMARY KEY (email, stamp),
+	FOREIGN KEY (email) REFERENCES mood.users(email)
+);
+
+CREATE TABLE mood.self_harm (
+	email varchar(254) NOT NULL,
+	stamp datetime NOT NULL,
+	place varchar(512),
+	tool_used varchar(128),
+	how_deep varchar(128),
+	emote_response varchar(512),
+	purpose ENUM('to-bleed', 'to-hurt'),
+	PRIMARY KEY (email, stamp),
+	FOREIGN KEY (email) REFERENCES mood.users(email)
+);
+
+CREATE TABLE mood.depression (
+	email varchar(254) NOT NULL,
+	stamp datetime NOT NULL,
+	energy tinyint unsigned,
+	motivation tinyint unsigned,
+	hygine tinyint unsigned,
+	PRIMARY KEY (email, stamp),
+	FOREIGN KEY (email) REFERENCES mood.users(email)
+);
+
+CREATE TABLE mood.anxiety (
+	email varchar(254) NOT NULL,
+	stamp datetime NOT NULL,
+	felt_where varchar(512),
+	intensity tinyint unsigned,
+	panic boolean,
+	PRIMARY KEY (email, stamp),
+	FOREIGN KEY (email) REFERENCES mood.users(email)
+);
+
+
+CREATE TABLE mood.fog (
+	email varchar(254) NOT NULL,
+	stamp datetime NOT NULL,
+	comp_speed tinyint unsigned,
+	forget ENUM('none', '1-5', '5-10', 'over-10'),
+	slurr ENUM('none', '1-5', '5-10', 'over-10'),
+	PRIMARY KEY (email, stamp),
+	FOREIGN KEY (email) REFERENCES mood.users(email)
+);
+
+CREATE TABLE mood.anger (
+	email varchar(254) NOT NULL,
+	stamp datetime NOT NULL,
+	expression varchar(512),
+	thought varchar(512),
+	PRIMARY KEY (email, stamp),
+	FOREIGN KEY (email) REFERENCES mood.users(email)
+);
+
+CREATE TABLE mood.eat (
+	email varchar(254) NOT NULL,
+	stamp datetime NOT NULL,
+	after_wake decimal(4, 2) unsigned,
+	between_food decimal(4, 2) unsigned,
+	protein_veggie boolean,
+	PRIMARY KEY (email, stamp),
+	FOREIGN KEY (email) REFERENCES mood.users(email)
+);
+
+CREATE TABLE mood.sleep (
+	email varchar(254) NOT NULL,
+	stamp datetime NOT NULL,
+	fell_asleep time,
+	woke_up time,
+	time_awake decimal(4, 2) unsigned,
+	quality ENUM('restless', 'solid'),
+	meds varchar(512),
+	PRIMARY KEY (email, stamp),
+	FOREIGN KEY (email) REFERENCES mood.users(email)
+);
+
+CREATE TABLE mood.people (
+	email varchar(254) NOT NULL,
+	stamp datetime NOT NULL,
+	what_do varchar(512),
+	what_impact varchar(512),
+	interaction_rating tinyint unsigned,
+	PRIMARY KEY (email, stamp),
+	FOREIGN KEY (email) REFERENCES mood.users(email)
 );
 
 CREATE USER 'php'@'localhost'

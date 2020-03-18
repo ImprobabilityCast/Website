@@ -1,5 +1,17 @@
+html, body {
+	height: 100%;
+}
+
+#btn-submit {
+	margin-left: auto;
+	margin-top: 2rem;
+	margin-bottom: 1rem;
+}
+
 .btn-plus {
 	font-weight: bold;
+	border-top-right-radius: .25rem !important;
+	border-bottom-right-radius: .25rem !important;
 }
 
 form {

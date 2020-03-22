@@ -17,28 +17,30 @@ CREATE TABLE mood.users (
 	PRIMARY KEY (email)
 );
 
+-- find out if sodium secret box returns same length encrypted binary text
+
 CREATE TABLE mood.coping_mechs (
 	email varchar(254) NOT NULL,
-	mech varchar(128) NOT NULL,
+	mech varbinary(144) NOT NULL,
+	still_used boolean NOT NULL DEFAULT true,
 	PRIMARY KEY (email, mech),
 	FOREIGN KEY (email) REFERENCES mood.users(email)
 );
 
 CREATE TABLE mood.coping_mechs_help (
 	email varchar(254) NOT NULL,
-	mech varchar(128) NOT NULL,
 	stamp datetime NOT NULL,
-	helpful ENUM('none', '1-5', '5-10', 'over 10') NOT NULL,
+	mech varbinary(144) NOT NULL,
+	helpful binary(64) NOT NULL,
 	PRIMARY KEY (email, mech, stamp),
-	FOREIGN KEY (email) REFERENCES mood.users(email),
-	FOREIGN KEY (mech) REFERENCES mood.ucoping_mechs(mech)
+	FOREIGN KEY (email, mech) REFERENCES mood.coping_mechs(email, mech)
 );
 
 CREATE TABLE mood.basic_mood (
 	email varchar(254) NOT NULL,
 	stamp datetime NOT NULL,
-	overall varchar(128),
-	secondary varchar(128),
+	overall varbinary(144) NOT NULL,
+	secondary varbinary(144) NOT NULL,
 	PRIMARY KEY (email, stamp),
 	FOREIGN KEY (email) REFERENCES mood.users(email)
 );
@@ -46,9 +48,9 @@ CREATE TABLE mood.basic_mood (
 CREATE TABLE mood.suicide (
 	email varchar(254) NOT NULL,
 	stamp datetime NOT NULL,
-	thoughts ENUM('none', '1-5', '5-10', 'over-10'),
-	urges ENUM('none', '1-5', '5-10', 'over-10'),
-	steps varchar(512),
+	thoughts binary(64) NOT NULL,
+	urges binary(64) NOT NULL,
+	steps varbinary(516) NOT NULL,
 	PRIMARY KEY (email, stamp),
 	FOREIGN KEY (email) REFERENCES mood.users(email)
 );
@@ -56,11 +58,11 @@ CREATE TABLE mood.suicide (
 CREATE TABLE mood.self_harm (
 	email varchar(254) NOT NULL,
 	stamp datetime NOT NULL,
-	place varchar(512),
-	tool_used varchar(128),
-	how_deep varchar(128),
-	emote_response varchar(512),
-	purpose ENUM('to-bleed', 'to-hurt'),
+	place varbinary(516) NOT NULL,
+	tool_used varbinary(516) NOT NULL,
+	how_deep varbinary(516) NOT NULL,
+	emote_response varbinary(516) NOT NULL,
+	purpose binary(64) NOT NULL,
 	PRIMARY KEY (email, stamp),
 	FOREIGN KEY (email) REFERENCES mood.users(email)
 );
@@ -68,9 +70,9 @@ CREATE TABLE mood.self_harm (
 CREATE TABLE mood.depression (
 	email varchar(254) NOT NULL,
 	stamp datetime NOT NULL,
-	energy tinyint unsigned,
-	motivation tinyint unsigned,
-	hygine tinyint unsigned,
+	energy binary(64) NOT NULL,
+	motivation binary(64) NOT NULL,
+	hygine binary(64) NOT NULL,
 	PRIMARY KEY (email, stamp),
 	FOREIGN KEY (email) REFERENCES mood.users(email)
 );
@@ -78,20 +80,19 @@ CREATE TABLE mood.depression (
 CREATE TABLE mood.anxiety (
 	email varchar(254) NOT NULL,
 	stamp datetime NOT NULL,
-	felt_where varchar(512),
-	intensity tinyint unsigned,
-	panic boolean,
+	felt_where varbinary(516) NOT NULL,
+	intensity binary(64) NOT NULL,
+	panic binary(64) NOT NULL,
 	PRIMARY KEY (email, stamp),
 	FOREIGN KEY (email) REFERENCES mood.users(email)
 );
 
-
 CREATE TABLE mood.fog (
 	email varchar(254) NOT NULL,
 	stamp datetime NOT NULL,
-	comp_speed tinyint unsigned,
-	forget ENUM('none', '1-5', '5-10', 'over-10'),
-	slurr ENUM('none', '1-5', '5-10', 'over-10'),
+	comp_speed binary(64) NOT NULL,
+	forget binary(64) NOT NULL,
+	slurr binary(64) NOT NULL,
 	PRIMARY KEY (email, stamp),
 	FOREIGN KEY (email) REFERENCES mood.users(email)
 );
@@ -99,18 +100,18 @@ CREATE TABLE mood.fog (
 CREATE TABLE mood.anger (
 	email varchar(254) NOT NULL,
 	stamp datetime NOT NULL,
-	expression varchar(512),
-	thought varchar(512),
+	expression varbinary(516) NOT NULL,
+	thought varbinary(516) NOT NULL,
 	PRIMARY KEY (email, stamp),
 	FOREIGN KEY (email) REFERENCES mood.users(email)
 );
 
-CREATE TABLE mood.eat (
+CREATE TABLE mood.food (
 	email varchar(254) NOT NULL,
 	stamp datetime NOT NULL,
-	after_wake decimal(4, 2) unsigned,
-	between_food decimal(4, 2) unsigned,
-	protein_veggie boolean,
+	after_wake binary(64) NOT NULL,
+	between_food binary(64) NOT NULL,
+	protein_veggie binary(64) NOT NULL,
 	PRIMARY KEY (email, stamp),
 	FOREIGN KEY (email) REFERENCES mood.users(email)
 );
@@ -118,11 +119,11 @@ CREATE TABLE mood.eat (
 CREATE TABLE mood.sleep (
 	email varchar(254) NOT NULL,
 	stamp datetime NOT NULL,
-	fell_asleep time,
-	woke_up time,
-	time_awake decimal(4, 2) unsigned,
-	quality ENUM('restless', 'solid'),
-	meds varchar(512),
+	fell_asleep binary(64) NOT NULL,
+	woke_up binary(64) NOT NULL,
+	sleep_spent_awake binary(64) NOT NULL,
+	quality binary(64) NOT NULL,
+	meds varbinary(516) NOT NULL,
 	PRIMARY KEY (email, stamp),
 	FOREIGN KEY (email) REFERENCES mood.users(email)
 );
@@ -130,42 +131,36 @@ CREATE TABLE mood.sleep (
 CREATE TABLE mood.people (
 	email varchar(254) NOT NULL,
 	stamp datetime NOT NULL,
-	what_do varchar(512),
-	what_impact varchar(512),
-	interaction_rating tinyint unsigned,
+	what_do varbinary(516) NOT NULL,
+	what_impact varbinary(516) NOT NULL,
+	interaction_rating binary(64) NOT NULL,
+	PRIMARY KEY (email, stamp),
+	FOREIGN KEY (email) REFERENCES mood.users(email)
+);
+
+CREATE TABLE mood.swings (
+	email varchar(254) NOT NULL,
+	stamp datetime NOT NULL,
+	swing_trigger varbinary(144) NOT NULL,
+	mood_before binary(64) NOT NULL,
+	mood_after binary(64) NOT NULL,
+	PRIMARY KEY (email, stamp),
+	FOREIGN KEY (email) REFERENCES mood.users(email)
+);
+
+CREATE TABLE mood.notes (
+	email varchar(254) NOT NULL,
+	stamp datetime NOT NULL,
+	note varbinary(516),
 	PRIMARY KEY (email, stamp),
 	FOREIGN KEY (email) REFERENCES mood.users(email)
 );
 
 CREATE USER 'php'@'localhost'
 	IDENTIFIED BY 'bcsdhj%^763SVOW+p2#S';
-GRANT EXECUTE ON mood.* TO 'php'@'localhost';
+GRANT SELECT, INSERT ON mood.* TO 'php'@'localhost';
 
-delimiter /
-CREATE PROCEDURE mood.add_user (
-		IN nonce char(48),
-		IN salt char(64),
-		IN recovery_dkey char(64),
-		IN pwd_dkey char(64),
-		IN pwd_hash char(60),
-		IN email varchar(254)
-	)
-BEGIN
-	INSERT INTO mood.users (nonce, salt, recovery_dkey,
-			pwd_dkey, pwd_hash, email)
-		VALUES(nonce, salt, recovery_dkey, pwd_dkey, pwd_hash, email);
-END/
-
-CREATE PROCEDURE mood.get_user_creds (
-		IN email varchar(254)
-	)
-BEGIN
-	SELECT salt, pwd_dkey, pwd_hash FROM mood.users
-			WHERE users.email=email;
-END/
-delimiter ;
-
-CALL mood.add_user(
+INSERT INTO mood.users VALUES (
 	'18ff036c5549c9138acaa67a04e90cc3f70e620fca3cf9c6',
 	'b75c36112b20e27ea3b12e1f36b5cc7926c5b1f5c17187c8f58e7e588f5a02a1',
 	'eeebfddd1fcd7f4316294224f7f316b8e4a295d6bed4c3d8ba12b19796eb76ba',

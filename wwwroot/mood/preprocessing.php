@@ -1,0 +1,42 @@
+<?php
+
+function scale2bin(string $value, array $acceptable_values) {
+	return array_search($value, $acceptable_values, true);
+}
+
+function ratingPreprocess($value) {
+	global $ratings;
+	return scale2bin($value, $ratings);
+}
+
+function harmRatingPreprocess($value) {
+	global $harm_ratings;
+	return scale2bin($value, $harm_ratings);
+}
+
+function sleepRatingPreprocess($value) {
+	global $sleep_ratings;
+	return scale2bin($value, $sleep_ratings);
+}
+
+function scalePreprocess($value) {
+	return str_pad($value, 3, '0', STR_PAD_LEFT);
+}
+
+function hoursPreprocess($value) {
+	return str_pad($value, 5, '0', STR_PAD_LEFT);
+}
+
+function dummy($value) {
+	return $value;
+}
+
+function pad(string $text, callable $preprocess) {
+	$value = call_user_func($preprocess, $text);
+	// 64 is cell size
+	// 16 is number of bytes added to secretbox output
+	$padding = 64 - (strlen($value) + 16);
+	return random_bytes($padding) . $value;
+}
+
+?>

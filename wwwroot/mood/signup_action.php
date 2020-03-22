@@ -1,4 +1,5 @@
 <?php
+require_once 'mood_util.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 	http_response_code(404);
@@ -10,17 +11,9 @@ function badInput() {
 	
 }
 
-
 // validation
 
-// email regex
-// https://stackoverflow.com/a/8829363/8335309
-// https://html.spec.whatwg.org/multipage/input.html#valid-e-mail-address
-$email_regex = '/\A[a-zA-Z0-9.!#$%&\'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*\z/';
-
-if (FALSE === preg_match($email_regex, $_POST['email'])) {
-	
-}
+// don't care about emial validation atm
 
 // check password requirements
 if (strlen($_POST['pass1']) < 16
@@ -58,30 +51,20 @@ $derived_recovery_key = sodium_crypto_pwhash_scryptsalsa208sha256(
 );
 $recovery_key = $derived_recovery_key ^ $random_key;
 
-// create db connection
-$dsn = 'mysql:host=localhost;dbname=mood';
-$username = 'php';
-$password = 'bcsdhj%^763SVOW+p2#S';
-$options = array(PDO::ATTR_ERRMODE=>PDO::ERRMODE_EXCEPTION);
-try {
-	$dbh = new PDO($dsn, $username, $password, $options);
-	$sql = "CALL mood.add_user('"
-		. bin2hex($nonce) . "','"
-		. bin2hex($salt) . "','"
-		. bin2hex($recovery_key) . "','"
-		. bin2hex($pwd_key) . "','"
-		. password_hash($_POST['pass1'], PASSWORD_BCRYPT) . "',"
-		. $dbh->quote($_POST['email']) . ");";
-	echo $sql;
-	if (FALSE === $dbh->exec($sql)) {
-		echo "Mission failed";
-	}
-	$dbh = null;
-} catch (PDOException $e) {
-	// do nothing, because meh
-	echo $e->getMessage();
+$dbh = create_db_conn();
+$sql = "INSERT INTO mood.users
+		(nonce, salt, recovery_dkey, pwd_dkey, pwd_hash, email)
+		VALUES('"
+	. bin2hex($nonce) . "','"
+	. bin2hex($salt) . "','"
+	. bin2hex($recovery_key) . "','"
+	. bin2hex($pwd_key) . "','"
+	. password_hash($_POST['pass1'], PASSWORD_BCRYPT) . "',"
+	. $dbh->quote($_POST['email']) . ");";
+if (FALSE === $dbh->exec($sql)) {
+	echo "Mission failed";
 }
-
+$dbh = null;
 // redirect user
 //header("Location: /mood/");
 ?>

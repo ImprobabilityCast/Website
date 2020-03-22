@@ -1,21 +1,3 @@
-function radioBtnClick(e) {
-	var t = e.currentTarget;
-	
-	var toggle = t.classList.contains("btn-primary");
-	
-	for (var child of t.parentElement.children) {
-		child.classList.add("btn-outline-primary");
-		child.classList.remove("btn-primary");
-	}
-	
-	if (toggle) {
-		t.classList.add("btn-outline-primary");
-		t.classList.remove("btn-primary");
-	} else {
-		t.classList.add("btn-primary");
-		t.classList.remove("btn-outline-primary");
-	}
-}
 
 function addMech() {
 	var form = $("#newMechName");
@@ -29,16 +11,16 @@ function addMech() {
 		form.siblings(".invalid-feedback")[0].style.display = "none";
 	}
 	
-	var class_name = name.replace(/[^A-Z0-9]/ig, '-');
+	var id = name.replace(/[^A-Z0-9]/ig, '-');
 	var cope = document.getElementById("coping");
 	var ele = document.createElement("div");
 	ele.classList.add("form-group");
 	ele.classList.add("form-row");
 	ele.innerHTML = '<label class="col-sm-4 col-form-label" for="'
-	+ class_name + '">'
+	+ id + '">'
 	+ name + ':</label>'
 	+ '<div class="col">'
-	+   '<div id="' + class_name + '" class="btn-group">'
+	+   '<div id="' + id + '" class="btn-group">'
 	+	  '<button type="button" class="btn btn-outline-primary" onclick="radioBtnClick(event)">It&nbsp;helped</button>'
 	+	  '<button type="button" class="btn btn-outline-primary" onclick="radioBtnClick(event)">Did&nbsp;not&nbsp;help</button>'
 	+	  '<button type="button" class="btn btn-outline-primary" onclick="radioBtnClick(event)">Not&nbsp;used</button>'
@@ -53,6 +35,10 @@ function removeMech(e) {
 }
 
 function saveInput(e) {
+	if (e.target.name.length === 0) {
+		return;
+	}
+	
 	localStorage.setItem(e.target.name, JSON.stringify(e.target.value));
 	console.log(e.target.name);
 	console.log(JSON.stringify(e.target.value));
@@ -62,9 +48,16 @@ window.onload = function loadInput(e) {
 	// https://stackoverflow.com/a/3138591/8335309
 	for (var i = 0; i < localStorage.length; i++) {
 		var id = localStorage.key(i);
-		console.log(localStorage.getItem(id));
 		var value = JSON.parse(localStorage.getItem(id));
-		document.getElementById(id).value = value;
+		var ele = document.getElementById(id);
+		if (ele === null) { // is radio ctrl
+			console.log(id + '-' + value);
+			ele = document.getElementById(id + '-' + value);
+			ele.checked = true;
+			ele.parentElement.classList.add("active");
+		} else {
+			document.getElementById(id).value = value;
+		}
 	}
 };
 

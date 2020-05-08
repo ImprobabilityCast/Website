@@ -50,11 +50,14 @@ window.onload = function loadInput(e) {
 		var id = localStorage.key(i);
 		var value = JSON.parse(localStorage.getItem(id));
 		var ele = document.getElementById(id);
-		if (ele === null) { // is radio ctrl
-			console.log(id + '-' + value);
+		if (ele === null) { // is prolly radio ctrl
 			ele = document.getElementById(id + '-' + value);
-			ele.checked = true;
-			ele.parentElement.classList.add("active");
+			if (ele === null) { // is nothing at all
+				console.log('not found: ' + id + '-' + value);
+			} else {
+				ele.checked = true;
+				ele.parentElement.classList.add("active");
+			}
 		} else {
 			document.getElementById(id).value = value;
 		}

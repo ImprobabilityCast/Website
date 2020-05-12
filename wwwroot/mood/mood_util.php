@@ -14,15 +14,15 @@ function create_db_conn() {
 }
 
 class User {
-	public $email;
+	public $id;
 	
 	private $nonce;
 	private $key;
 	
 	function __construct($dbh) {
 		$pwd_dkey = hex2bin($_SESSION['pwd_key']);
-		$this->email = $_SESSION['email'];
-		$sql = "SELECT * FROM users WHERE email=$this->email;";
+		$this->id = $_SESSION['id'];
+		$sql = "SELECT * FROM users WHERE id=$this->id;";
 		$creds = $dbh->query($sql);
 		
 		if ($creds->rowCount() == 1) {
@@ -59,9 +59,9 @@ class DBQueryHelper {
 		array_walk($values, array($this, 'encrypt'));
 		
 		$values_str = implode(', ', $values);
-		$email = $this->user->email;
+		$id = $this->user->id;
 		$sql = "INSERT INTO $table
-				VALUES($email, $this->timestamp, $values_str);";
+				VALUES($id, $this->timestamp, $values_str);";
 		$this->dbh->query($sql);
 	}
 	

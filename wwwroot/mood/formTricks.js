@@ -27,6 +27,11 @@ function addMech() {
 	+   '</div>'
 	+ '</div>';
 	cope.appendChild(ele);
+
+	var req =  new XMLHttpRequest();
+	req.open("POST", "addMech.php", true);
+	req.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+	req.send('mech=' + encodeURIComponent(name));
 }
 
 function removeMech(e) {

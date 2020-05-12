@@ -1,8 +1,9 @@
 <?php
 
+session_start();
 require_once 'mood_util.php';
 require_once 'preprocessing.php';
-session_start();
+require_once 'simple_check.php';
 
 // check is loged in
 

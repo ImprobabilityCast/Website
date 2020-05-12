@@ -1,17 +1,12 @@
 <?php
-require_once 'mood_util.php';
-
-if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-	http_response_code(404);
-	echo file_get_contents($_SERVER['DOCUMENT_ROOT'] . '/meta-pages/404.html');
-	exit(0);
-}
 session_start();
+require_once 'mood_util.php';
+require_once 'simple_check.php';
 
 // assume login info is correct, escape for sql
 $dbh = create_db_conn();
 $email = $dbh->quote($_POST['email']);
-$query_str = "SELECT salt, pwd_dkey, pwd_hash
+$query_str = "SELECT id, salt, pwd_dkey, pwd_hash
 		FROM mood.users
 		WHERE users.email=$email;";
 $creds = $dbh->query($query_str);
@@ -26,7 +21,7 @@ if ($creds->rowCount() === 1) {
 			SODIUM_CRYPTO_PWHASH_SCRYPTSALSA208SHA256_MEMLIMIT_INTERACTIVE
 		);
 		$_SESSION['pwd_key'] = bin2hex($derived_pwd_key);
-		$_SESSION['email'] = $email;
+		$_SESSION['id'] = $row['id'];
 		header("Location: /mood/");
 		exit();
 	} else {

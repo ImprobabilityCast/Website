@@ -1,24 +1,12 @@
 
-function addMech() {
-	var form = $("#newMechName");
-	var name = form.val().trim();
-	if (name.length == 0) {
-		form.addClass("is-invalid");
-		form.siblings(".invalid-feedback")[0].style.display = "block";
-		return;
-	} else {
-		form.removeClass("is-invalid");
-		form.siblings(".invalid-feedback")[0].style.display = "none";
-	}
-	
+function addMech(name) {
 	var id = name.replace(/[^A-Z0-9]/ig, '-');
 	var cope = document.getElementById("coping");
 	var ele = document.createElement("div");
 	ele.classList.add("form-group");
 	ele.classList.add("form-row");
 	ele.innerHTML = '<label class="col-sm-4 col-form-label" for="'
-	+ id + '">'
-	+ name + ':</label>'
+	+ id + '"></label>'
 	+ '<div class="col">'
 	+   '<div id="' + id + '" class="btn-group">'
 	+	  '<button type="button" class="btn btn-outline-primary" onclick="radioBtnClick(event)">It&nbsp;helped</button>'
@@ -26,12 +14,30 @@ function addMech() {
 	+	  '<button type="button" class="btn btn-outline-primary" onclick="radioBtnClick(event)">Not&nbsp;used</button>'
 	+   '</div>'
 	+ '</div>';
+	ele.firstChild.innerText = name + ":";
 	cope.appendChild(ele);
+}
 
+function saveMech(name) {
 	var req =  new XMLHttpRequest();
 	req.open("POST", "addMech.php", true);
 	req.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 	req.send('mech=' + encodeURIComponent(name));
+}
+
+function getMech() {
+	var req =  new XMLHttpRequest();
+	req.addEventListener("readystatechange", function () {
+		if (req.readyState === 4 && req.status === 200) {
+			var names = req.responseText.split(',');
+			// i = 1 bc it starts with a comma
+			for (var i = 1; i < names.length; i++) {
+				addMech(names[i]);
+			}
+		}
+	});
+	req.open("GET", "getMech.php", true);
+	req.send();
 }
 
 function removeMech(e) {
@@ -67,10 +73,27 @@ window.onload = function loadInput(e) {
 			document.getElementById(id).value = value;
 		}
 	}
+	getMech();
 };
+
+function addMechButton()
+{
+	var form = $("#newMechName");
+	var name = form.val().trim();
+	if (name.length == 0) {
+		form.addClass("is-invalid");
+		form.siblings(".invalid-feedback")[0].style.display = "block";
+		return;
+	} else {
+		form.removeClass("is-invalid");
+		form.siblings(".invalid-feedback")[0].style.display = "none";
+	}
+	addMech(name);
+	saveMech(name);
+}
 
 function addMechOnEnter(e) {
 	if (e.which === 13) {
-		addMech();
+		addMechButton();
 	}
 }

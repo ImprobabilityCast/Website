@@ -30,7 +30,7 @@ class User {
 			$this->nonce = hex2bin($row['nonce']);
 			$this->key = $pwd_dkey ^ hex2bin($row['pwd_dkey']);
 		} else {
-			error_log("User $email does not exist in database");
+			error_log("User $id does not exist in database");
 		}
 	}
 	

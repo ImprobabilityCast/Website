@@ -1,4 +1,6 @@
 <?php
+require_once 'mood_util.php';
+require_once 'login_check.php';
 
 // coping mechs
 // y-axis each mech

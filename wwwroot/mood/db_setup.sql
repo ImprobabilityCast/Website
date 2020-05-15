@@ -32,7 +32,7 @@ CREATE TABLE mood.coping_mechs_help (
 	id int unsigned NOT NULL,
 	stamp datetime NOT NULL,
 	mech varbinary(144) NOT NULL,
-	helpful binary(64) NOT NULL,
+	helpful ENUM('helpful', 'not-helpful') NOT NULL,
 	PRIMARY KEY (id, mech, stamp),
 	FOREIGN KEY (id, mech) REFERENCES mood.coping_mechs(id, mech)
 );

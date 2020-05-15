@@ -10,7 +10,7 @@ $sql = 'SELECT mech FROM coping_mechs
     WHERE id=' . $usr->id . ' and still_used=TRUE;';
 $statement = $dbh->query($sql);
 while ($row = $statement->fetch(PDO::FETCH_ASSOC)) {
-    echo ',', $usr->decryptData($row['mech']);
+    echo "\n", $usr->decryptData($row['mech']);
 }
 
 $statement = null;

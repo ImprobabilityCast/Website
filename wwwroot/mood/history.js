@@ -1,0 +1,1 @@
+document.getElementById('date').value = new Date().toLocaleDateString('en-CA');

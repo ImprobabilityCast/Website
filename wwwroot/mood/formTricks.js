@@ -1,20 +1,22 @@
 
 function addMech(name) {
-	var id = name.replace(/[^A-Z0-9]/ig, '-');
 	var cope = document.getElementById("coping");
 	var ele = document.createElement("div");
 	ele.classList.add("form-group");
 	ele.classList.add("form-row");
 	ele.innerHTML = '<label class="col-sm-4 col-form-label" for="'
-	+ id + '"></label>'
+	+ name + '"></label>'
 	+ '<div class="col">'
-	+   '<div id="' + id + '" class="btn-group">'
-	+	  '<button type="button" class="btn btn-outline-primary" onclick="radioBtnClick(event)">It&nbsp;helped</button>'
-	+	  '<button type="button" class="btn btn-outline-primary" onclick="radioBtnClick(event)">Did&nbsp;not&nbsp;help</button>'
-	+	  '<button type="button" class="btn btn-outline-primary" onclick="radioBtnClick(event)">Not&nbsp;used</button>'
+	+   '<div id="' + name + '" class="btn-group btn-group-toggle" data-toggle="buttons">'
+	+	  '<label class="btn btn-outline-primary">'
+	+		'<input type="radio" value="helpful" name="' + name + '">Helpful</input></label>'
+	+	  '<label class="btn btn-outline-primary">'
+	+		'<input type="radio" value="not-helpful" name="' + name + '">Not&nbsp;helpful</input></label>'
+	+	  '<label class="btn btn-outline-primary active">'
+	+		'<input type="radio" value="not-used" name="' + name + '" checked>Not&nbsp;used</input></label>'
 	+   '</div>'
 	+ '</div>';
-	ele.firstChild.innerText = name + ":";
+	ele.firstChild.innerText = name.replace(/~/g, ' ') + ":";
 	cope.appendChild(ele);
 }
 
@@ -29,8 +31,9 @@ function getMech() {
 	var req =  new XMLHttpRequest();
 	req.addEventListener("readystatechange", function () {
 		if (req.readyState === 4 && req.status === 200) {
-			var names = req.responseText.split(',');
-			// i = 1 bc it starts with a comma
+			var names = req.responseText.split('\n');
+			names.sort();
+			// i = 1 bc it starts with a \n
 			for (var i = 1; i < names.length; i++) {
 				addMech(names[i]);
 			}
@@ -76,10 +79,9 @@ window.onload = function loadInput(e) {
 	getMech();
 };
 
-function addMechButton()
-{
+function addMechButton() {
 	var form = $("#newMechName");
-	var name = form.val().trim();
+	var name = "~" + form.val().trim().replace(/\s/g, '~');
 	if (name.length == 0) {
 		form.addClass("is-invalid");
 		form.siblings(".invalid-feedback")[0].style.display = "block";

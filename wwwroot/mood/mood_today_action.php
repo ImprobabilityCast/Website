@@ -5,8 +5,6 @@ require_once 'mood_util.php';
 require_once 'preprocessing.php';
 require_once 'simple_check.php';
 
-// check is loged in
-
 $dbh = create_db_conn();
 // don't care about seconds
 $ratings = array('none', '1-5', '5-10', 'over-10');
@@ -48,8 +46,7 @@ function isValidTimeSlice($time1, $time2, $interval) {
 	return ($valid_interval->h + $valid_interval->i / 60) >= $interval;
 }
 
-//array_walk($_POST, 'escape');
-var_dump($_POST);
+//var_dump($_POST);
 
 
 if (array_key_exists('mood-overall', $_POST)) {
@@ -160,6 +157,18 @@ if (keys_exist($_POST, 'ap-what', 'ap-impact', 'ap-interactions')
 if (array_key_exists('note', $_POST) && !empty($_POST['note'])) {
 	$db_helper->insert_data('notes', $_POST['note']);
 }
+
+foreach ($_POST as $key => $value) {
+	if ($key[0] === '~' && ($value === 'helpful' || $value === 'not-helpful')) {
+		$enc_key = $dbh->quote($user->encryptData($key));
+		$qot_val = $dbh->quote($value);
+		$sql = "INSERT INTO coping_mechs_help
+			VALUES($user->id, $db_helper->timestamp, $enc_key, $qot_val);";
+		error_log($sql);
+		$dbh->query($sql);
+	}
+}
+
 
 $db_helper = null;
 $user = null;

@@ -45,9 +45,10 @@ class User {
 }
 
 class DBQueryHelper {
+	public $timestamp;
+	
 	private $user;
 	private $dbh;
-	private $timestamp;
 	
 	function __construct($user, $dbh) {
 		$this->user = $user;
@@ -65,8 +66,8 @@ class DBQueryHelper {
 		$this->dbh->query($sql);
 	}
 	
-	private function encrypt($value, $key) {
-		$values[$key] = $this->dbh->quote($this->user->encryptData($value));
+	private function encrypt(&$value, $key) {
+		$value = $this->dbh->quote($this->user->encryptData($value));
 	}
 }
 

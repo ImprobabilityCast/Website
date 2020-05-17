@@ -46,6 +46,7 @@ function getMech() {
 function removeMech(e) {
 	var par = e.currentTarget.parentElement;
 	par.parentElement.removeChild(par);
+	// todo delete from server
 }
 
 function saveInput(e) {

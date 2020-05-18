@@ -33,10 +33,6 @@ wwwroot/ConvertingwxString.html
 # Ignore vscode stuff
 .vscode
 
-# No reason to include libs
-wwwroot/bootstrap*
-wwwroot/js/
-
 # Ignore binaries
 obj
 bin

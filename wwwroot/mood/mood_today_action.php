@@ -46,10 +46,16 @@ function isValidTimeSlice($time1, $time2, $interval) {
 	return ($valid_interval->h + $valid_interval->i / 60) >= $interval;
 }
 
-//var_dump($_POST);
+function check_section_valid($hidden_name) {
+	return array_key_exists($hidden_name, $_POST)
+		&& $_POST[$hidden_name] == '1';
+}
+
+var_dump($_POST);
 
 
-if (array_key_exists('mood-overall', $_POST)) {
+if (array_key_exists('mood-overall', $_POST)
+		&& !empty($_POST['mood-overall'])) {
 	$mood_secondary = array_key_exists('mood-secondary', $_POST) ?
 			$_POST['mood-secondary'] : "''";
 	$db_helper->insert_data('basic_mood',
@@ -58,9 +64,9 @@ if (array_key_exists('mood-overall', $_POST)) {
 	);
 }
 
-if (valid_rating('suicidal-thoughts', $_POST, $ratings)
-		&& valid_rating('suicidal-urges', $_POST, $ratings)
-		&& array_key_exists('suicidal-steps', $_POST)) {
+if (check_section_valid('suicide-hidden')
+		&& valid_rating('suicidal-thoughts', $_POST, $ratings)
+		&& valid_rating('suicidal-urges', $_POST, $ratings)) {
 	$db_helper->insert_data('suicide',
 			pad($_POST['suicidal-thoughts'], 'ratingPreprocess'),
 			pad($_POST['suicidal-urges'], 'ratingPreprocess'),
@@ -68,8 +74,7 @@ if (valid_rating('suicidal-thoughts', $_POST, $ratings)
 	);
 }
 
-if (keys_exist($_POST, 'harm-where', 'harm-tool', 'harm-depth',
-		'harm-emote-response')
+if (check_section_valid('harm-hidden')
 		&& valid_rating('harm-purpose', $_POST, $harm_ratings)) {
 	$db_helper->insert_data('self_harm',
 			$_POST['harm-where'],
@@ -80,7 +85,7 @@ if (keys_exist($_POST, 'harm-where', 'harm-tool', 'harm-depth',
 	);
 }
 
-if (keys_exist($_POST, 'energy', 'motivation', 'hygine')
+if (check_section_valid('depression-hidden')
 		&& validScaleRating($_POST['energy'])
 		&& validScaleRating($_POST['motivation'])
 		&& validScaleRating($_POST['hygine'])) {
@@ -91,7 +96,7 @@ if (keys_exist($_POST, 'energy', 'motivation', 'hygine')
 	);
 }
 
-if (array_key_exists('fog-speed', $_POST)
+if (check_section_valid('anxiety-hidden')
 		&& validScaleRating($_POST['anx-intensity'])) {
 	$db_helper->insert_data('anxiety',
 			$_POST['anx-where'],
@@ -100,7 +105,7 @@ if (array_key_exists('fog-speed', $_POST)
 	);
 }
 
-if (array_key_exists('fog-speed', $_POST)
+if (check_section_valid('fog-hidden')
 		&& valid_rating('forgets', $_POST, $ratings)
 		&& valid_rating('slurrs', $_POST, $ratings)) {
 	$db_helper->insert_data('fog',
@@ -110,14 +115,14 @@ if (array_key_exists('fog-speed', $_POST)
 	);
 }
 
-if (keys_exist($_POST, 'anger-exp', 'anger-thoughts')) {
+if (check_section_valid('anger-hidden')) {
 	$db_helper->insert_data('anger',
 			$_POST['anger-exp'],
 			$_POST['anger-thoughts']
 	);
 }
 
-if (keys_exist($_POST, 'wake-to-eat-time', 'food-to-food-time')
+if (check_section_valid('food-hidden')
 		&& preg_match($hours_reg, $_POST['wake-to-eat-time'])
 		&& preg_match($hours_reg, $_POST['food-to-food-time'])) {
 	$db_helper->insert_data('food',
@@ -127,8 +132,7 @@ if (keys_exist($_POST, 'wake-to-eat-time', 'food-to-food-time')
 	);
 }
 
-if (keys_exist($_POST, 'fell-alseep', 'woke-up', 'sleep-spent-awake',
-			'sleep-quality', 'meds')
+if (check_section_valid('sleep-hidden')
 		&& preg_match($time_reg, $_POST['fell-asleep'])
 		&& preg_match($time_reg, $_POST['woke-up'])
 		&& preg_match($hours_reg, $_POST['sleep-spent-awake'])
@@ -136,17 +140,15 @@ if (keys_exist($_POST, 'fell-alseep', 'woke-up', 'sleep-spent-awake',
 			$_POST['sleep-spent-awake'])
 		&& valid_rating('sleep-quality', $_POST, $sleep_ratings)) {
 	$db_helper->insert_data('sleep',
-			pad($_POST['fell-asleep'], 'dummy'),
-			pad($_POST['woke-up'], 'dummy'),
+			pad($_POST['fell-asleep'], 'timePreprocess'),
+			pad($_POST['woke-up'], 'timePreprocess'),
 			pad($_POST['sleep-spent-awake'], 'hoursPreprocess'),
 			pad($_POST['sleep-quality'], 'sleepPreprocess'),
 			$_POST['meds']
 	);
 }
 
-if (keys_exist($_POST, 'ap-what', 'ap-impact', 'ap-interactions')
-		&& (!empty($_POST['ap-what']) || !empty($_POST['ap-impact'])
-			|| $_POST['ap-interactions'] !== '50')) {
+if (check_section_valid('people-hidden')) {
 	$db_helper->insert_data('people',
 			$_POST['ap-what'],
 			$_POST['ap-impact'],
@@ -159,12 +161,11 @@ if (array_key_exists('note', $_POST) && !empty($_POST['note'])) {
 }
 
 foreach ($_POST as $key => $value) {
-	if ($key[0] === '~' && ($value === 'helpful' || $value === 'not-helpful')) {
+	if ($key[0] === '~' && ($value !== 'not-used')) {
 		$enc_key = $dbh->quote($user->encryptData($key));
-		$qot_val = $dbh->quote($value);
+		$qot_val = $dbh->quote($user->encryptData(pad($value, 'mechPreprocess')));
 		$sql = "INSERT INTO coping_mechs_help
 			VALUES($user->id, $db_helper->timestamp, $enc_key, $qot_val);";
-		error_log($sql);
 		$dbh->query($sql);
 	}
 }

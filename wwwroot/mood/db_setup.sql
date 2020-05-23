@@ -14,7 +14,8 @@ CREATE TABLE mood.users (
 	recovery_dkey char(64) NOT NULL, -- SODIUM_CRYPTO_SECRETBOX_KEYBYTES * 2
 	pwd_dkey char(64) NOT NULL, -- SODIUM_CRYPTO_SECRETBOX_KEYBYTES * 2
 	pwd_hash char(60) NOT NULL,
-	email varchar(254) NOT NULL,
+	email_mask varchar(254) NOT NULL,
+	email_hash char(60) NOT NULL,
 	PRIMARY KEY (id)
 );
 
@@ -32,7 +33,7 @@ CREATE TABLE mood.coping_mechs_help (
 	id int unsigned NOT NULL,
 	stamp datetime NOT NULL,
 	mech varbinary(144) NOT NULL,
-	helpful ENUM('helpful', 'not-helpful') NOT NULL,
+	helpful varbinary(64) NOT NULL,
 	PRIMARY KEY (id, mech, stamp),
 	FOREIGN KEY (id, mech) REFERENCES mood.coping_mechs(id, mech)
 );
@@ -59,9 +60,9 @@ CREATE TABLE mood.suicide (
 CREATE TABLE mood.self_harm (
 	id int unsigned NOT NULL,
 	stamp datetime NOT NULL,
-	place varbinary(516) NOT NULL,
-	tool_used varbinary(516) NOT NULL,
-	how_deep varbinary(516) NOT NULL,
+	place varbinary(144) NOT NULL,
+	tool_used varbinary(144) NOT NULL,
+	how_deep varbinary(144) NOT NULL,
 	emote_response varbinary(516) NOT NULL,
 	purpose binary(64) NOT NULL,
 	PRIMARY KEY (id, stamp),

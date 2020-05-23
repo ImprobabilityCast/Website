@@ -14,7 +14,7 @@
 	<hr />
 	
 	<form id="depressing-form" autocomplete="off" method="post" action="mood_today_action.php" onchange="saveInput(event)">
-		<fieldset>
+		<fieldset id="mood">
 			<legend>Mood</legend>
 			<div class="form-group">
 				<label for="mood-overall">Overall mood:</label>
@@ -36,28 +36,29 @@
 				</div>
 			</div>
 			<div class="form-group" id="coping"></div>
+			<input type="hidden" id="mood-hidden" name="mood-hidden">
 		</fieldset>
 	
-		<fieldset>
+		<fieldset id="suicide">
 			<legend>Suicide</legend>
 			
 			<div class="form-group form-row">
 				<label class="col-sm-4 col-form-label" for="suicidal-thoughts">Suicidal&nbsp;thoughts:</label>
 				<div class="col-auto btn-group btn-group-toggle" data-toggle="buttons">
 					<label class="btn btn-outline-primary">
-						<input type="radio" name="suicidal-thoughts" id="suicidal-thoughts-none" value="none">
+						<input type="radio" name="suicidal-thoughts" id="suicidal-thoughts-none" value="none" waschecked="0">
 						None
 					</label>
 					<label class="btn btn-outline-primary">
-						<input type="radio" name="suicidal-thoughts" id="suicidal-thoughts-1-5" value="1-5">
+						<input type="radio" name="suicidal-thoughts" id="suicidal-thoughts-1-5" value="1-5" waschecked="0">
 						1-5
 					</label>
 					<label class="btn btn-outline-primary">
-						<input type="radio" name="suicidal-thoughts" id="suicidal-thoughts-5-10" value="5-10">
+						<input type="radio" name="suicidal-thoughts" id="suicidal-thoughts-5-10" value="5-10" waschecked="0">
 						5-10
 					</label>
 					<label class="btn btn-outline-primary">
-						<input type="radio" name="suicidal-thoughts" id="suicidal-thoughts-over-10" value="over-10">
+						<input type="radio" name="suicidal-thoughts" id="suicidal-thoughts-over-10" value="over-10" waschecked="0">
 						Over&nbsp;10
 					</label>
 				</div>
@@ -67,19 +68,19 @@
 				<label class="col-sm-4 col-form-label" for="suicidal-urges">Suicidal&nbsp;urges:</label>
 				<div class="col-auto btn-group btn-group-toggle" data-toggle="buttons">
 					<label class="btn btn-outline-primary">
-						<input type="radio" name="suicidal-urges" id="suicidal-urges-none" value="none">
+						<input type="radio" name="suicidal-urges" id="suicidal-urges-none" value="none" waschecked="0">
 						None
 					</label>
 					<label class="btn btn-outline-primary">
-						<input type="radio" name="suicidal-urges" id="suicidal-urges-1-5" value="1-5">
+						<input type="radio" name="suicidal-urges" id="suicidal-urges-1-5" value="1-5" waschecked="0">
 						1-5
 					</label>
 					<label class="btn btn-outline-primary">
-						<input type="radio" name="suicidal-urges" id="suicidal-urges-5-10" value="5-10">
+						<input type="radio" name="suicidal-urges" id="suicidal-urges-5-10" value="5-10" waschecked="0">
 						5-10
 					</label>
 					<label class="btn btn-outline-primary">
-						<input type="radio" name="suicidal-urges" id="suicidal-urges-over-10" value="over-10">
+						<input type="radio" name="suicidal-urges" id="suicidal-urges-over-10" value="over-10" waschecked="0">
 						Over&nbsp;10
 					</label>
 				</div>
@@ -89,9 +90,10 @@
 				<label for="suicidal-steps">Suicidal steps</label>
 				<textarea class="form-control" rows="5" id="suicidal-steps" name="suicidal-steps"></textarea>
 			</div>
+			<input type="hidden" id="suicide-hidden" name="suicide-hidden">
 		</fieldset>
 		
-		<fieldset>
+		<fieldset id="harm">
 			<legend>Self-harm</legend>
 			<div class="form-group">
 				<label for="harm-where">Where:</label>
@@ -113,25 +115,26 @@
 				<label class="col-form-label" for="harm-purpose">Purpose:</label>
 				<div class="col btn-group btn-group-toggle" data-toggle="buttons">
 					<label class="btn btn-outline-primary col-sm-3">
-						<input type="radio" name="harm-purpose" id="harm-purpose-bleed" value="to-bleed">
+						<input type="radio" name="harm-purpose" id="harm-purpose-bleed" value="to-bleed" waschecked="0">
 						To bleed
 					</label>
 					<label class="btn btn-outline-primary col-sm-3">
-						<input type="radio" name="harm-purpose" id="harm-purpose-hurt" value="to-hurt">
+						<input type="radio" name="harm-purpose" id="harm-purpose-hurt" value="to-hurt" waschecked="0">
 						To hurt
 					</label>
 				</div>
 			</div>
+			<input type="hidden" id="harm-hidden" name="harm-hidden">
 		</fieldset>
 		
-		<fieldset>
+		<fieldset id="depression" oninput="flagInput(event)">
 			<legend>Depression</legend>
 			<div class="form-group">
 				<label for="energy">Energy level:</label>
 				<div class="input-group">
 					<div class="container">
 						<div class="row">
-							<input type="range" class="custom-range" id="energy" name="energy" min="0" max="100" />
+							<input type="range" class="custom-range" id="energy" name="energy" min="0" max="100" changed="0">
 						</div>
 						<div class="row justify-content-between">
 							<div class="col-auto">
@@ -149,7 +152,7 @@
 				<div class="input-group">
 					<div class="container">
 						<div class="row">
-							<input type="range" class="custom-range" id="motivation" name="motivation" min="0" max="100" />
+							<input type="range" class="custom-range" id="motivation" name="motivation" min="0" max="100" changed="0">
 						</div>
 						<div class="row justify-content-between">
 							<div class="col-auto">
@@ -167,7 +170,7 @@
 				<div class="input-group">
 					<div class="container">
 						<div class="row">
-							<input type="range" class="custom-range" id="hygine" name="hygine" min="0" max="100" />
+							<input type="range" class="custom-range" id="hygine" name="hygine" min="0" max="100" changed="0">
 						</div>
 						<div class="row justify-content-between">
 							<div class="col-auto">
@@ -180,9 +183,10 @@
 					</div>
 				</div>
 			</div>
+			<input type="hidden" id="depression-hidden" name="depression-hidden">
 		</fieldset>
 		
-		<fieldset>
+		<fieldset id="anxiety">
 			<legend>Anxiety</legend>
 			<div class="form-group">
 				<label for="anx-where">Felt where:</label>
@@ -193,7 +197,8 @@
 				<div class="input-group">
 					<div class="container">
 						<div class="row">
-							<input type="range" class="custom-range" id="anx-intensity" name="anx-intensity" min="0" max="100" />
+							<input type="range" class="custom-range" id="anx-intensity"
+								name="anx-intensity" min="0" max="100" changed="0" oninput="flagInput(event)">
 						</div>
 						<div class="row justify-content-between">
 							<div class="col-auto">
@@ -208,18 +213,20 @@
 			</div>
 			<div class="custom-control custom-checkbox">
 				<input type="checkbox" class="custom-control-input" id="panic-attack" name="panic-attack">
-				<label class="custom-control-label" for="panic-attack">Panic attack</label>
+				<label class="custom-control-label" for="panic-attack" value="1">Panic attack</label>
 			</div>
+			<input type="hidden" id="anxiety-hidden" name="anxiety-hidden">
 		</fieldset>
 		
-		<fieldset>
+		<fieldset id="fog">
 			<legend>Fogginess</legend>
 			<div class="form-group">
 				<label for="fog-speed">Speed of comprehension:</label>
 				<div class="input-group">
 					<div class="container">
 						<div class="row">
-							<input type="range" class="custom-range" id="fog-speed" name="fog-speed" min="0" max="100" />
+							<input type="range" class="custom-range" id="fog-speed"
+								name="fog-speed" min="0" max="100">
 						</div>
 						<div class="row justify-content-between">
 							<div class="col-auto">
@@ -237,19 +244,19 @@
 				<label class="col-sm-9 col-form-label" for="forgets">Forgeting what I was thinking/saying/doing in the middle of it:</label>
 				<div class="col-auto btn-group btn-group-toggle" data-toggle="buttons">
 					<label class="btn btn-outline-primary">
-						<input type="radio" name="forgets" id="forgets-none" value="none">
+						<input type="radio" name="forgets" id="forgets-none" value="none" waschecked="0">
 						None
 					</label>
 					<label class="btn btn-outline-primary">
-						<input type="radio" name="forgets" id="forgets-1-5" value="1-5">
+						<input type="radio" name="forgets" id="forgets-1-5" value="1-5" waschecked="0">
 						1-5
 					</label>
 					<label class="btn btn-outline-primary">
-						<input type="radio" name="forgets" id="forgets-5-10" value="5-10">
+						<input type="radio" name="forgets" id="forgets-5-10" value="5-10" waschecked="0">
 						5-10
 					</label>
 					<label class="btn btn-outline-primary">
-						<input type="radio" name="forgets" id="forgets-over-10" value="over-10">
+						<input type="radio" name="forgets" id="forgets-over-10" value="over-10" waschecked="0">
 						Over&nbsp;10
 					</label>
 				</div>
@@ -259,26 +266,27 @@
 				<label class="col-sm-9 col-form-label" for="slurrs">Slurring words/stuttering:</label>
 				<div class="col-auto btn-group btn-group-toggle" data-toggle="buttons">
 					<label class="btn btn-outline-primary">
-						<input type="radio" name="slurrs" id="slurrs-none" value="none">
+						<input type="radio" name="slurrs" id="slurrs-none" value="none" waschecked="0">
 						None
 					</label>
 					<label class="btn btn-outline-primary">
-						<input type="radio" name="slurrs" id="slurrs-1-5" value="1-5">
+						<input type="radio" name="slurrs" id="slurrs-1-5" value="1-5" waschecked="0">
 						1-5
 					</label>
 					<label class="btn btn-outline-primary">
-						<input type="radio" name="slurrs" id="slurrs-5-10" value="5-10">
+						<input type="radio" name="slurrs" id="slurrs-5-10" value="5-10" waschecked="0">
 						5-10
 					</label>
 					<label class="btn btn-outline-primary">
-						<input type="radio" name="slurrs" id="slurrs-over-10" value="over-10">
+						<input type="radio" name="slurrs" id="slurrs-over-10" value="over-10" waschecked="0">
 						Over&nbsp;10
 					</label>
 				</div>
 			</div>
+			<input type="hidden" id="fog-hidden" name="fog-hidden">
 		</fieldset>
 		
-		<fieldset>
+		<fieldset id="anger">
 			<legend>Anger</legend>
 			<div class="form-group">
 				<label for="anger-exp">Any alarming expression of anger:</label>
@@ -288,9 +296,10 @@
 				<label for="anger-thoughts">Any specific destructive thoughts:</label>
 				<textarea class="form-control" rows="5" id="anger-thoughts" name="anger-thoughts"></textarea>
 			</div>
+			<input type="hidden" id="anger-hidden" name="anger-hidden">
 		</fieldset>
 		
-		<fieldset>
+		<fieldset id="food">
 			<legend>Eating</legend>
 			<div class="form-group form-row">
 				<label for="wake-to-eat-time" class="col-sm-4 col-form-label">Ate how long after waking up:</label>
@@ -320,20 +329,21 @@
 				<input type="checkbox" class="custom-control-input" id="veggies" name="veggies">
 				<label class="custom-control-label" for="veggies">Any protein/veggies</label>
 			</div>
+			<input type="hidden" id="food-hidden" name="food-hidden">
 		</fieldset>
 		
-		<fieldset>
+		<fieldset id="sleep">
 			<legend>Sleep</legend>
 			<div class="form-group form-row">
 				<label class="col-sm-4 col-form-label" for="fell-asleep">Time fell asleep:</label>
 				<div class="col">
-					<input type="time" id="sleep-fell-alseep" name="fell-asleep" class="form-control" value="00:00">
+					<input type="time" id="sleep-fell-alseep" name="fell-asleep" class="form-control">
 				</div>
 			</div>
 			<div class="form-group form-row">
 				<label class="col-sm-4 col-form-label" for="woke-up">Time woke up:</label>
 				<div class="col">
-					<input type="time" id="sleep-woke-up" name="woke-up" class="form-control" value="00:00">
+					<input type="time" id="sleep-woke-up" name="woke-up" class="form-control">
 				</div>
 			</div>
 			
@@ -353,11 +363,11 @@
 				<label class="col-form-label" for="sleep-quality">Sleep quality:</label>
 				<div class="col btn-group btn-group-toggle" data-toggle="buttons">
 					<label class="btn btn-outline-primary col-sm-3">
-						<input type="radio" name="sleep-quality" id="sleep-quality-restless" value="restless">
+						<input type="radio" name="sleep-quality" id="sleep-quality-restless" value="restless" waschecked="0">
 						Restless
 					</label>
 					<label class="btn btn-outline-primary col-sm-3">
-						<input type="radio" name="sleep-quality" id="sleep-quality-solid" value="solid">
+						<input type="radio" name="sleep-quality" id="sleep-quality-solid" value="solid" waschecked="0">
 						Solid
 					</label>
 				</div>
@@ -367,9 +377,10 @@
 				<label for="meds">When meds were taken and how much:</label>
 				<textarea class="form-control" rows="5" id="meds" name="meds"></textarea>
 			</div>
+			<input type="hidden" id="sleep-hidden" name="sleep-hidden">
 		</fieldset>
 		
-		<fieldset>
+		<fieldset id="people">
 			<legend>Alone/People time</legend>
 			<div class="form-group">
 				<label for="ap-what">What did you do:</label>
@@ -384,7 +395,8 @@
 				<div class="input-group">
 					<div class="container">
 						<div class="row">
-							<input type="range" class="custom-range" id="ap-interactions" name="ap-interactions" min="0" max="100">
+							<input type="range" class="custom-range" id="ap-interactions"
+								name="ap-interactions" min="0" max="100" changed="0" oninput="flagInput(event)">
 						</div>
 							<div class="row justify-content-between">
 							<div class="col-auto">
@@ -397,6 +409,7 @@
 					</div>
 				</div>
 			</div>
+			<input type="hidden" id="people-hidden" name="people-hidden">
 		</fieldset>
 		
 		<hr />

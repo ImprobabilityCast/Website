@@ -7,42 +7,42 @@ if (!array_key_exists('start', $_GET) || !array_key_exists('end', $_GET)) {
     exit();
 }
 
+function count_mechs($user, $mech_arr) {
+    $data = [];
+    foreach ($mech_arr as $value) {
+        $mech = $user->decryptData($value['mech']);
+        $helpful = $user->decryptData($value['helpul'])[-1];
+        if (!array_key_exists($key, $data)) {
+            $data[$key] = ['helpful' => 0, 'total' => 0];
+        }
+        if ($helpful == 1) {
+            $data[$key]['helpful']++;
+        }
+        $data[$key]['total']++;
+    }
+    return $data;
+}
+
 $dbh = create_db_conn();
 $start = $_GET['start'];
 $end = $_GET['end'];
-$col_val = 'helpful';
 $user = new User($dbh);
-$sql = 'SELECT mech, COUNT(helpful) AS help FROM coping_mechs_help WHERE id=?
-    AND stamp>=? AND stamp<=? AND helpful=? GROUP BY mech';
+$sql = 'SELECT mech, helpful FROM coping_mechs_help
+    WHERE id=? AND stamp>=? AND stamp<=?';
 $statement = $dbh->prepare($sql);
 $statement->bindParam(1, $user->id);
 $statement->bindParam(2, $start);
 $statement->bindParam(3, $end);
-$statement->bindParam(4, $col_val);
 
 $statement->execute();
-$data = [];
-while ($row = $statement->fetch(PDO::FETCH_OBJ)) {
-    $mech = $user->decryptData($row->mech);
-    $data[$mech] = ['helpful' => $row->help, 'unhelpful' => 0];
-}
-
-$statement->closeCursor();
-$col_val = 'not-helpful';
-$statement->execute();
-while ($row = $statement->fetch(PDO::FETCH_OBJ)) {
-    $mech = $user->decryptData($row->mech);
-    if (array_key_exists($mech, $data)) {
-        $data[$mech]['unhelpful'] = $row->help;
-    } else {
-        $data[$mech] = ['helpful' => 0, 'unhelpful' => $row->help];
-    }
-}
+$data = $statement->fetchAll(PDO::FETCH_ASSOC);
+$data = count_mechs($data);
 
 $statement = null;
 $user = null;
 $dbh = null;
 
+header('Content-Type: text/json');
 echo json_encode($data);
 
 ?>

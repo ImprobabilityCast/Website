@@ -55,11 +55,16 @@ function saveInput(e) {
 	}
 	
 	localStorage.setItem(e.target.name, JSON.stringify(e.target.value));
-	console.log(e.target.name);
-	console.log(JSON.stringify(e.target.value));
+	console.log("saving " + e.target.name);
 }
 
 window.onload = function loadInput(e) {
+	// https://stackoverflow.com/a/15105717/8335309
+	let inputs = $("input[type=radio]");
+	for (let input of inputs) {
+		input.addEventListener("click", dummyToggleRadio);
+	}
+
 	// https://stackoverflow.com/a/3138591/8335309
 	for (var i = 0; i < localStorage.length; i++) {
 		var id = localStorage.key(i);
@@ -71,6 +76,7 @@ window.onload = function loadInput(e) {
 				console.log('not found: ' + id + '-' + value);
 			} else {
 				ele.checked = true;
+				ele.setAttribute("waschecked", 1);
 				ele.parentElement.classList.add("active");
 			}
 		} else {
@@ -99,4 +105,22 @@ function addMechOnEnter(e) {
 	if (e.which === 13) {
 		addMechButton();
 	}
+}
+
+function toggleRadio(e) {
+	if (e.target.tagName.toUpperCase() === "INPUT") {
+		if (e.target.getAttribute("waschecked") == 1) {
+			e.target.setAttribute("waschecked", 0);
+			e.target.checked = false;
+			e.target.parentElement.classList.remove("active");
+			localStorage.removeItem(e.target.name);
+			console.log("removing: '" + e.target.name + "'");
+		} else {
+			e.target.setAttribute("waschecked", 1);
+		}
+	}
+}
+
+function dummyToggleRadio(e) {
+	setTimeout(toggleRadio, 300, e);
 }

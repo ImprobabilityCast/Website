@@ -9,6 +9,11 @@ function ratingPreprocess($value) {
 	return scale2bin($value, $ratings);
 }
 
+function mechPreprocess($value) {
+	$mech_ratings = ['helpful', 'not-helpful'];
+	return scale2bin($value, $mech_ratings);
+}
+
 function harmRatingPreprocess($value) {
 	global $harm_ratings;
 	return scale2bin($value, $harm_ratings);
@@ -25,6 +30,10 @@ function scalePreprocess($value) {
 
 function hoursPreprocess($value) {
 	return str_pad($value, 5, '0', STR_PAD_LEFT);
+}
+
+function timePreprocess($value) {
+	return substr($value, 0, 2) . substr($value, 3, 2);
 }
 
 function dummy($value) {

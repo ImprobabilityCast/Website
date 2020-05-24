@@ -79,6 +79,8 @@ window.onload = function loadInput(e) {
 				ele.setAttribute("waschecked", 1);
 				ele.parentElement.classList.add("active");
 			}
+		} else if (ele.type === "checkbox") {
+			ele.checked = true;
 		} else {
 			document.getElementById(id).value = value;
 		}

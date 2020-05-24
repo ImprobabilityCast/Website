@@ -1,4 +1,4 @@
-function setHiddenInputs() {
+function setHiddenInputs(e) {
     $("#mood-hidden").val($("#mood-overall").val().length);
 
     $("#suicide-hidden").val($("input[name=suicidal-thoughts]:checked").length
@@ -29,8 +29,7 @@ function setHiddenInputs() {
 
     $("#food-hidden").val(
         $("#wake-to-eat-time").val() !== ""
-        & $("#foof-to-food-time").val() !== ""
-        & $("#veggies").prop("checked")
+        & $("#food-to-food-time").val() !== ""
     );
 
     $("#sleep-hidden").val(

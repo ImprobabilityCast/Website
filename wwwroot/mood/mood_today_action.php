@@ -1,4 +1,7 @@
-<?php
+<html>
+<script>
+(function () {
+	let removeIDs = [<?php
 
 session_start();
 require_once 'mood_util.php';
@@ -40,8 +43,8 @@ function validScaleRating($value) {
 }
 
 function isValidTimeSlice($time1, $time2, $interval) {
-	$time1 = new DateTimeImmutable('H:i', $time1);
-	$time2 = new DateTimeImmutable('H:i', $time2);
+	$time1 = DateTimeImmutable::createFromFormat('H:i', $time1);
+	$time2 = DateTimeImmutable::createFromFormat('H:i', $time2);
 	$valid_interval = $time1->diff($time2, true);
 	return ($valid_interval->h + $valid_interval->i / 60) >= $interval;
 }
@@ -51,9 +54,6 @@ function check_section_valid($hidden_name) {
 		&& $_POST[$hidden_name] == '1';
 }
 
-var_dump($_POST);
-
-
 if (array_key_exists('mood-overall', $_POST)
 		&& !empty($_POST['mood-overall'])) {
 	$mood_secondary = array_key_exists('mood-secondary', $_POST) ?
@@ -62,6 +62,7 @@ if (array_key_exists('mood-overall', $_POST)
 			$_POST['mood-overall'],
 			$mood_secondary
 	);
+	echo '"mood-overall", "mood-secondary",';
 }
 
 if (check_section_valid('suicide-hidden')
@@ -72,6 +73,7 @@ if (check_section_valid('suicide-hidden')
 			pad($_POST['suicidal-urges'], 'ratingPreprocess'),
 			$_POST['suicidal-steps']
 	);
+	echo '"suicidal-thoughts", "suicidal-urges", "suicidal-steps",';
 }
 
 if (check_section_valid('harm-hidden')
@@ -83,6 +85,8 @@ if (check_section_valid('harm-hidden')
 			$_POST['harm-emote-response'],
 			pad($_POST['harm-purpose'], 'harmRatingPreprocess')
 	);
+	echo '"harm-where", "harm-tool", "harm-depth", ',
+		'"harm-emote-response", "harm-purpose",';
 }
 
 if (check_section_valid('depression-hidden')
@@ -94,6 +98,7 @@ if (check_section_valid('depression-hidden')
 			pad($_POST['motivation'], 'scalePreprocess'),
 			pad($_POST['hygine'], 'scalePreprocess')
 	);
+	echo '"energy", "motivation", "hygine",';
 }
 
 if (check_section_valid('anxiety-hidden')
@@ -103,6 +108,7 @@ if (check_section_valid('anxiety-hidden')
 			pad($_POST['anx-intensity'], 'scalePreprocess'),
 			pad(array_key_exists('panic-attack', $_POST), 'dummy')
 	);
+	echo '"anx-where", "anx-intensity", "panic-attack",';
 }
 
 if (check_section_valid('fog-hidden')
@@ -113,6 +119,7 @@ if (check_section_valid('fog-hidden')
 			pad($_POST['forgets'], 'ratingPreprocess'),
 			pad($_POST['slurrs'], 'ratingPreprocess')
 	);
+	echo '"fog-speed", "forgets", "slurrs",';
 }
 
 if (check_section_valid('anger-hidden')) {
@@ -120,6 +127,7 @@ if (check_section_valid('anger-hidden')) {
 			$_POST['anger-exp'],
 			$_POST['anger-thoughts']
 	);
+	echo '"anger-exp", "anger-thoughts",';
 }
 
 if (check_section_valid('food-hidden')
@@ -130,6 +138,7 @@ if (check_section_valid('food-hidden')
 			pad($_POST['food-to-food-time'], 'hoursPreprocess'),
 			pad(array_key_exists('veggies', $_POST), 'dummy')
 	);
+	echo '"wake-to-eat-time", "food-to-food-time", "veggies",';
 }
 
 if (check_section_valid('sleep-hidden')
@@ -143,9 +152,11 @@ if (check_section_valid('sleep-hidden')
 			pad($_POST['fell-asleep'], 'timePreprocess'),
 			pad($_POST['woke-up'], 'timePreprocess'),
 			pad($_POST['sleep-spent-awake'], 'hoursPreprocess'),
-			pad($_POST['sleep-quality'], 'sleepPreprocess'),
+			pad($_POST['sleep-quality'], 'sleepRatingPreprocess'),
 			$_POST['meds']
 	);
+	echo '"fell-asleep", "woke-up", "sleep-spent-awake", ',
+		'"sleep-quality", "meds",';
 }
 
 if (check_section_valid('people-hidden')) {
@@ -154,10 +165,12 @@ if (check_section_valid('people-hidden')) {
 			$_POST['ap-impact'],
 			pad($_POST['ap-interactions'], 'scalePreprocess')
 	);
+	echo '"ap-what", "ap-impact", "ap-interactions",';
 }
 
 if (array_key_exists('note', $_POST) && !empty($_POST['note'])) {
 	$db_helper->insert_data('notes', $_POST['note']);
+	echo '"note",';
 }
 
 foreach ($_POST as $key => $value) {
@@ -170,9 +183,18 @@ foreach ($_POST as $key => $value) {
 	}
 }
 
-
 $db_helper = null;
 $user = null;
 $dbh = null;
 
-?>
+?>""];
+	removeIDs.pop();
+
+	for (let id of removeIDs) {
+		localStorage.removeItem(id);
+		console.log("removed: " + id);
+	}
+	window.location = "mood_today.html";
+})();
+</script>
+</html>

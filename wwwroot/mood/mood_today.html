@@ -13,7 +13,8 @@
 	
 	<hr />
 	
-	<form id="depressing-form" autocomplete="off" method="post" action="mood_today_action.php" onchange="saveInput(event)">
+	<form id="depressing-form" autocomplete="off" method="post" action="mood_today_action.php"
+			onchange="saveInput(event)" onsubmit="setHiddenInputs(event)" >
 		<fieldset id="mood">
 			<legend>Mood</legend>
 			<div class="form-group">
@@ -337,13 +338,13 @@
 			<div class="form-group form-row">
 				<label class="col-sm-4 col-form-label" for="fell-asleep">Time fell asleep:</label>
 				<div class="col">
-					<input type="time" id="sleep-fell-alseep" name="fell-asleep" class="form-control">
+					<input type="time" id="fell-asleep" name="fell-asleep" class="form-control">
 				</div>
 			</div>
 			<div class="form-group form-row">
 				<label class="col-sm-4 col-form-label" for="woke-up">Time woke up:</label>
 				<div class="col">
-					<input type="time" id="sleep-woke-up" name="woke-up" class="form-control">
+					<input type="time" id="woke-up" name="woke-up" class="form-control">
 				</div>
 			</div>
 			
@@ -435,5 +436,6 @@
 	<script src="/bootstrap/js/bootstrap.min.js"></script>
 
 	<script src="formTricks.js"></script>
+	<script src="mood_validation.js"></script>
 </body>
 </html>

@@ -33,7 +33,7 @@ CREATE TABLE mood.coping_mechs_help (
 	id int unsigned NOT NULL,
 	stamp datetime NOT NULL,
 	mech varbinary(144) NOT NULL,
-	helpful varbinary(64) NOT NULL,
+	helpful varbinary(32) NOT NULL,
 	PRIMARY KEY (id, mech, stamp),
 	FOREIGN KEY (id, mech) REFERENCES mood.coping_mechs(id, mech)
 );
@@ -50,8 +50,8 @@ CREATE TABLE mood.basic_mood (
 CREATE TABLE mood.suicide (
 	id int unsigned NOT NULL,
 	stamp datetime NOT NULL,
-	thoughts binary(64) NOT NULL,
-	urges binary(64) NOT NULL,
+	thoughts binary(32) NOT NULL,
+	urges binary(32) NOT NULL,
 	steps varbinary(516) NOT NULL,
 	PRIMARY KEY (id, stamp),
 	FOREIGN KEY (id) REFERENCES mood.users(id)
@@ -64,7 +64,7 @@ CREATE TABLE mood.self_harm (
 	tool_used varbinary(144) NOT NULL,
 	how_deep varbinary(144) NOT NULL,
 	emote_response varbinary(516) NOT NULL,
-	purpose binary(64) NOT NULL,
+	purpose binary(32) NOT NULL,
 	PRIMARY KEY (id, stamp),
 	FOREIGN KEY (id) REFERENCES mood.users(id)
 );
@@ -72,9 +72,9 @@ CREATE TABLE mood.self_harm (
 CREATE TABLE mood.depression (
 	id int unsigned NOT NULL,
 	stamp datetime NOT NULL,
-	energy binary(64) NOT NULL,
-	motivation binary(64) NOT NULL,
-	hygine binary(64) NOT NULL,
+	energy binary(32) NOT NULL,
+	motivation binary(32) NOT NULL,
+	hygine binary(32) NOT NULL,
 	PRIMARY KEY (id, stamp),
 	FOREIGN KEY (id) REFERENCES mood.users(id)
 );
@@ -83,8 +83,8 @@ CREATE TABLE mood.anxiety (
 	id int unsigned NOT NULL,
 	stamp datetime NOT NULL,
 	felt_where varbinary(516) NOT NULL,
-	intensity binary(64) NOT NULL,
-	panic binary(64) NOT NULL,
+	intensity binary(32) NOT NULL,
+	panic binary(32) NOT NULL,
 	PRIMARY KEY (id, stamp),
 	FOREIGN KEY (id) REFERENCES mood.users(id)
 );
@@ -92,9 +92,9 @@ CREATE TABLE mood.anxiety (
 CREATE TABLE mood.fog (
 	id int unsigned NOT NULL,
 	stamp datetime NOT NULL,
-	comp_speed binary(64) NOT NULL,
-	forget binary(64) NOT NULL,
-	slurr binary(64) NOT NULL,
+	comp_speed binary(32) NOT NULL,
+	forget binary(32) NOT NULL,
+	slurr binary(32) NOT NULL,
 	PRIMARY KEY (id, stamp),
 	FOREIGN KEY (id) REFERENCES mood.users(id)
 );
@@ -111,9 +111,9 @@ CREATE TABLE mood.anger (
 CREATE TABLE mood.food (
 	id int unsigned NOT NULL,
 	stamp datetime NOT NULL,
-	after_wake binary(64) NOT NULL,
-	between_food binary(64) NOT NULL,
-	protein_veggie binary(64) NOT NULL,
+	after_wake binary(32) NOT NULL,
+	between_food binary(32) NOT NULL,
+	protein_veggie binary(32) NOT NULL,
 	PRIMARY KEY (id, stamp),
 	FOREIGN KEY (id) REFERENCES mood.users(id)
 );
@@ -121,10 +121,10 @@ CREATE TABLE mood.food (
 CREATE TABLE mood.sleep (
 	id int unsigned NOT NULL,
 	stamp datetime NOT NULL,
-	fell_asleep binary(64) NOT NULL,
-	woke_up binary(64) NOT NULL,
-	sleep_spent_awake binary(64) NOT NULL,
-	quality binary(64) NOT NULL,
+	fell_asleep binary(32) NOT NULL,
+	woke_up binary(32) NOT NULL,
+	sleep_spent_awake binary(32) NOT NULL,
+	quality binary(32) NOT NULL,
 	meds varbinary(516) NOT NULL,
 	PRIMARY KEY (id, stamp),
 	FOREIGN KEY (id) REFERENCES mood.users(id)
@@ -135,7 +135,7 @@ CREATE TABLE mood.people (
 	stamp datetime NOT NULL,
 	what_do varbinary(516) NOT NULL,
 	what_impact varbinary(516) NOT NULL,
-	interaction_rating binary(64) NOT NULL,
+	interaction_rating binary(32) NOT NULL,
 	PRIMARY KEY (id, stamp),
 	FOREIGN KEY (id) REFERENCES mood.users(id)
 );
@@ -144,8 +144,8 @@ CREATE TABLE mood.swings (
 	id int unsigned NOT NULL,
 	stamp datetime NOT NULL,
 	swing_trigger varbinary(144) NOT NULL,
-	mood_before binary(64) NOT NULL,
-	mood_after binary(64) NOT NULL,
+	mood_before binary(32) NOT NULL,
+	mood_after binary(32) NOT NULL,
 	PRIMARY KEY (id, stamp),
 	FOREIGN KEY (id) REFERENCES mood.users(id)
 );

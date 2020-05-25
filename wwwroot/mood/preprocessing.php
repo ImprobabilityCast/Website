@@ -42,9 +42,9 @@ function dummy($value) {
 
 function pad(string $text, callable $preprocess) {
 	$value = call_user_func($preprocess, $text);
-	// 64 is cell size
+	// 32 is column width
 	// 16 is number of bytes added to secretbox output
-	$padding = 64 - (strlen($value) + 16);
+	$padding = 32 - (strlen($value) + 16);
 	return random_bytes($padding) . $value;
 }
 

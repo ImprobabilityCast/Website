@@ -90,7 +90,7 @@ window.onload = function loadInput(e) {
 
 function addMechButton() {
 	var form = $("#newMechName");
-	var name = "~" + form.val().trim().replace(/\s/g, '~');
+	var name = "~" + form.val().trim().replace(/\s+/g, '~');
 	if (name.length == 0) {
 		form.addClass("is-invalid");
 		form.siblings(".invalid-feedback")[0].style.display = "block";

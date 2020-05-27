@@ -51,6 +51,7 @@ $derived_recovery_key = sodium_crypto_pwhash_scryptsalsa208sha256(
 );
 $recovery_key = $derived_recovery_key ^ $random_key;
 
+//fix so that email no needed anymore
 $dbh = create_db_conn();
 $sql = "INSERT INTO mood.users
 		(nonce, salt, recovery_dkey, pwd_dkey, pwd_hash, email)

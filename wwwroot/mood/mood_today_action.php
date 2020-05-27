@@ -9,12 +9,9 @@ require_once 'preprocessing.php';
 require_once 'simple_check.php';
 
 $dbh = create_db_conn();
-// don't care about seconds
-$ratings = array('none', '1-5', '5-10', 'over-10');
-$harm_ratings = array('to-bleed', 'to-hurt');
-$sleep_ratings = array('restless', 'solid');
 $user = new User($dbh);
 $db_helper = new DBQueryHelper($user, $dbh);
+// don't care about seconds
 $time_reg = '/\A(([0-1][0-9])|(2[0-3])):[0-5][0-9]\z/';
 $hours_reg = '/\A\d{1,2}(\.\d{1,2})?\z/';
 
@@ -23,19 +20,9 @@ function escape(&$value, $key) {
 	$value = $dbh->quote(trim($value));
 }
 
-function valid_rating(string $key, array $array,
-		array $ratings_array) {
+function valid_rating(string $key, array $array, $max) {
 	return array_key_exists($key, $array)
-			&& in_array($array[$key], $ratings_array);
-}
-
-function keys_exist(array $array, string ...$keys) {
-	foreach ($keys as $key) {
-		if (!array_key_exists($key, $array)) {
-			return false;
-		}
-	}
-	return true;
+			&& $array[$key] >= 0 && $array[$key] <= $max;
 }
 
 function validScaleRating($value) {
@@ -66,24 +53,24 @@ if (array_key_exists('mood-overall', $_POST)
 }
 
 if (check_section_valid('suicide-hidden')
-		&& valid_rating('suicidal-thoughts', $_POST, $ratings)
-		&& valid_rating('suicidal-urges', $_POST, $ratings)) {
+		&& valid_rating('suicidal-thoughts', $_POST, 3)
+		&& valid_rating('suicidal-urges', $_POST, 3)) {
 	$db_helper->insert_data('suicide',
-			pad($_POST['suicidal-thoughts'], 'ratingPreprocess'),
-			pad($_POST['suicidal-urges'], 'ratingPreprocess'),
+			pad($_POST['suicidal-thoughts'], 'numberPreprocess'),
+			pad($_POST['suicidal-urges'], 'numberPreprocess'),
 			$_POST['suicidal-steps']
 	);
 	echo '"suicidal-thoughts", "suicidal-urges", "suicidal-steps",';
 }
 
 if (check_section_valid('harm-hidden')
-		&& valid_rating('harm-purpose', $_POST, $harm_ratings)) {
+		&& valid_rating('harm-purpose', $_POST, 1)) {
 	$db_helper->insert_data('self_harm',
 			$_POST['harm-where'],
 			$_POST['harm-tool'],
 			$_POST['harm-depth'],
 			$_POST['harm-emote-response'],
-			pad($_POST['harm-purpose'], 'harmRatingPreprocess')
+			pad($_POST['harm-purpose'], 'numberPreprocess')
 	);
 	echo '"harm-where", "harm-tool", "harm-depth", ',
 		'"harm-emote-response", "harm-purpose",';
@@ -94,9 +81,9 @@ if (check_section_valid('depression-hidden')
 		&& validScaleRating($_POST['motivation'])
 		&& validScaleRating($_POST['hygine'])) {
 	$db_helper->insert_data('depression',
-			pad($_POST['energy'], 'scalePreprocess'),
-			pad($_POST['motivation'], 'scalePreprocess'),
-			pad($_POST['hygine'], 'scalePreprocess')
+			pad($_POST['energy'], 'numberPreprocess'),
+			pad($_POST['motivation'], 'numberPreprocess'),
+			pad($_POST['hygine'], 'numberPreprocess')
 	);
 	echo '"energy", "motivation", "hygine",';
 }
@@ -105,19 +92,19 @@ if (check_section_valid('anxiety-hidden')
 		&& validScaleRating($_POST['anx-intensity'])) {
 	$db_helper->insert_data('anxiety',
 			$_POST['anx-where'],
-			pad($_POST['anx-intensity'], 'scalePreprocess'),
-			pad(array_key_exists('panic-attack', $_POST), 'dummy')
+			pad($_POST['anx-intensity'], 'numberPreprocess'),
+			pad(array_key_exists('panic-attack', $_POST) * 1, 'numberPreprocess')
 	);
 	echo '"anx-where", "anx-intensity", "panic-attack",';
 }
 
 if (check_section_valid('fog-hidden')
-		&& valid_rating('forgets', $_POST, $ratings)
-		&& valid_rating('slurrs', $_POST, $ratings)) {
+		&& valid_rating('forgets', $_POST, 3)
+		&& valid_rating('slurrs', $_POST, 3)) {
 	$db_helper->insert_data('fog',
-			pad($_POST['fog-speed'], 'scalePreprocess'),
-			pad($_POST['forgets'], 'ratingPreprocess'),
-			pad($_POST['slurrs'], 'ratingPreprocess')
+			pad($_POST['fog-speed'], 'numberPreprocess'),
+			pad($_POST['forgets'], 'numberPreprocess'),
+			pad($_POST['slurrs'], 'numberPreprocess')
 	);
 	echo '"fog-speed", "forgets", "slurrs",';
 }
@@ -134,9 +121,9 @@ if (check_section_valid('food-hidden')
 		&& preg_match($hours_reg, $_POST['wake-to-eat-time'])
 		&& preg_match($hours_reg, $_POST['food-to-food-time'])) {
 	$db_helper->insert_data('food',
-			pad($_POST['wake-to-eat-time'], 'hoursPreprocess'),
-			pad($_POST['food-to-food-time'], 'hoursPreprocess'),
-			pad(array_key_exists('veggies', $_POST), 'dummy')
+			pad($_POST['wake-to-eat-time'], 'numberPreprocess'),
+			pad($_POST['food-to-food-time'], 'numberPreprocess'),
+			pad(array_key_exists('veggies', $_POST) * 1, 'numberPreprocess')
 	);
 	echo '"wake-to-eat-time", "food-to-food-time", "veggies",';
 }
@@ -147,12 +134,12 @@ if (check_section_valid('sleep-hidden')
 		&& preg_match($hours_reg, $_POST['sleep-spent-awake'])
 		&& isValidTimeSlice($_POST['fell-asleep'], $_POST['woke-up'],
 			$_POST['sleep-spent-awake'])
-		&& valid_rating('sleep-quality', $_POST, $sleep_ratings)) {
+		&& valid_rating('sleep-quality', $_POST, 1)) {
 	$db_helper->insert_data('sleep',
-			pad($_POST['fell-asleep'], 'timePreprocess'),
-			pad($_POST['woke-up'], 'timePreprocess'),
-			pad($_POST['sleep-spent-awake'], 'hoursPreprocess'),
-			pad($_POST['sleep-quality'], 'sleepRatingPreprocess'),
+			pad($_POST['fell-asleep'], 'dummy'),
+			pad($_POST['woke-up'], 'dummy'),
+			pad($_POST['sleep-spent-awake'], 'numberPreprocess'),
+			pad($_POST['sleep-quality'], 'numberPreprocess'),
 			$_POST['meds']
 	);
 	echo '"fell-asleep", "woke-up", "sleep-spent-awake", ',
@@ -163,7 +150,7 @@ if (check_section_valid('people-hidden')) {
 	$db_helper->insert_data('people',
 			$_POST['ap-what'],
 			$_POST['ap-impact'],
-			pad($_POST['ap-interactions'], 'scalePreprocess')
+			pad($_POST['ap-interactions'], 'numberPreprocess')
 	);
 	echo '"ap-what", "ap-impact", "ap-interactions",';
 }

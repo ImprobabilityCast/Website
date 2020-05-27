@@ -15,7 +15,7 @@ CREATE TABLE mood.users (
 	pwd_dkey char(64) NOT NULL, -- SODIUM_CRYPTO_SECRETBOX_KEYBYTES * 2
 	pwd_hash char(60) NOT NULL,
 	email_mask varchar(254) NOT NULL,
-	email_hash char(60) NOT NULL,
+	email_hash char(64) NOT NULL,
 	PRIMARY KEY (id)
 );
 
@@ -162,11 +162,12 @@ CREATE USER 'php'@'localhost'
 	IDENTIFIED BY 'bcsdhj%^763SVOW+p2#S';
 GRANT SELECT, INSERT ON mood.* TO 'php'@'localhost';
 
-INSERT INTO mood.users (nonce, salt, recovery_dkey, pwd_dkey, pwd_hash, email) VALUES (
+INSERT INTO mood.users (nonce, salt, recovery_dkey, pwd_dkey, pwd_hash, email_mask, email_hash) VALUES (
 	'18ff036c5549c9138acaa67a04e90cc3f70e620fca3cf9c6',
 	'b75c36112b20e27ea3b12e1f36b5cc7926c5b1f5c17187c8f58e7e588f5a02a1',
 	'eeebfddd1fcd7f4316294224f7f316b8e4a295d6bed4c3d8ba12b19796eb76ba',
 	'752ad616d4c207c9c309bba25e29fcc1c25921723238c63bc12d107797ccb83c',
 	'$2y$10$3TS14xFibYkTS5dYBxuCve2oDoG1FqOWrx99kVh6I7KoiFy4qrE/m',
-	'demo@sugarfairyland.com'
+	'd**o@s***nd.com',
+	'ff83de7222c912f77ef31250c4ac5d0a5ef9a5abd9636b32440e8c061f69be6f'
 );

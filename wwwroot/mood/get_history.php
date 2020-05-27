@@ -21,6 +21,7 @@ $data['sleep'] = $history->sleeps();
 $data['people'] = $history->people();
 $data['swings'] = $history->swings();
 $data['notes'] = $history->notes();
+$data['mechs'] = $history->mechs();
 $history = null;
 
 header('Content-Type: text/json');

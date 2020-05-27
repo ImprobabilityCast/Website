@@ -8,14 +8,12 @@
 
 <body class="container">
 <nav class="nav row">
-    <div class="nav-item input-group">
-        <select name="time-span" class="custom-select">
-            <option>Day of</option>
-            <option selected>Week of</option>
-            <option>Month of</option>
-        </select>
+    <div class="nav-item input-group" oninput="page.getData()">
+        <div class="input-group-prepend">
+            <input type="date" id="start-date" class="form-control">
+        </div>
         <div class="input-group-append">
-            <input type="date" name="date" id="date" class="form-control">
+            <input type="date" id="end-date" class="form-control">
         </div>
     </div>
 </nav>
@@ -29,7 +27,7 @@
         <div class="col-sm bg-secondary text-center text-white pt-1 pb-1 w-50">Not helpful</div>
     </div>
 </div>
-
+<canvas id="chart" width="400" height="400"></canvas>
 <!-- suicidal thoughts & urges -->
 
 <!-- depression -->
@@ -51,6 +49,7 @@ have a link to new tab if multiple days, otherwise just put it there. :D
 <script src="/js/jquery.min.js"></script>
 <script src="/js/popper.min.js"></script>
 <script src="/bootstrap/js/bootstrap.min.js"></script>
+<script src="/js/chart.bundle.min.js"></script>
 <script src="history.js"></script>
 </body>
 </html>

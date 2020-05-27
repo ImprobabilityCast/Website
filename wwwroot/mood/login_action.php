@@ -5,10 +5,10 @@ require_once 'simple_check.php';
 
 // assume login info is correct, escape for sql
 $dbh = create_db_conn();
-$email = $dbh->quote($_POST['email']);
+$email_hash = $dbh->quote(hash('sha256', $_POST['email']));
 $query_str = "SELECT id, salt, pwd_dkey, pwd_hash
 		FROM mood.users
-		WHERE users.email=$email;";
+		WHERE users.email_hash=$email_hash;";
 $creds = $dbh->query($query_str);
 if ($creds->rowCount() === 1) {
 	$row = $creds->fetch(PDO::FETCH_ASSOC);

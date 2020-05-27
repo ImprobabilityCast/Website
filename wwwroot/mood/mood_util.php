@@ -53,7 +53,7 @@ class DBQueryHelper {
 	function __construct($user, $dbh) {
 		$this->user = $user;
 		$this->dbh = $dbh;
-		$this->timestamp = gmdate('\'Y-m-d H:i:00\'', time());
+		$this->timestamp = gmdate('\'Y-m-d H:i:s\'', time());
 	}
 	
 	public function insert_data(string $table, string ...$values) {

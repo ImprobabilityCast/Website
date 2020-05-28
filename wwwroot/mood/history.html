@@ -8,40 +8,51 @@
 
 <body class="container">
 <nav class="nav row">
-    <div class="nav-item input-group" oninput="page.getData()">
-        <div class="input-group-prepend">
-            <input type="date" id="start-date" class="form-control">
-        </div>
-        <div class="input-group-append">
-            <input type="date" id="end-date" class="form-control">
-        </div>
-    </div>
+	<div class="nav-item input-group" oninput="page.getData()">
+		<div class="input-group-prepend">
+			<input type="date" id="start-date" class="form-control">
+		</div>
+		<div class="input-group-append">
+			<input type="date" id="end-date" class="form-control">
+		</div>
+	</div>
 </nav>
 
 <!-- word cloud for overall/secondary mood, but only if there's more than one entry-->
 
 <div id="coping">
-    <h5>Coping mechanisms used</h5>
-    <div class="row">
-        <div class="col-sm bg-primary text-center text-white pt-1 pb-1 w-50">Helpful</div>
-        <div class="col-sm bg-secondary text-center text-white pt-1 pb-1 w-50">Not helpful</div>
-    </div>
+	<h5>Coping mechanisms used</h5>
+	<div class="row">
+		<div class="col-sm bg-primary text-center text-white pt-1 pb-1 w-50">Helpful</div>
+		<div class="col-sm bg-secondary text-center text-white pt-1 pb-1 w-50">Not helpful</div>
+	</div>
 </div>
-<canvas id="chart" width="400" height="400"></canvas>
-<!-- suicidal thoughts & urges -->
-
-<!-- depression -->
-
-<!-- prolly do word cloud for anx too -->
-
-<!-- fog -->
-
-<!-- anger maybe -->
-
-<!-- eating -->
-
-<!-- sleep, minus the meds ? -->
-
+<div class="d-flex flex-wrap justify-content-around overflow-hidden">
+	<div>
+		<h5>Suicide</h5>
+		<canvas id="suicide" width="300" height="300"></canvas>
+		<h5>Self Harm</h5>
+		<canvas id="self_harm" width="300" height="300"></canvas>
+		<h5>Depression</h5>
+		<canvas id="depression" width="300" height="300"></canvas>
+	</div>
+	<div>
+		<h5>Anxiety</h5>
+		<canvas id="anxiety" width="300" height="300"></canvas>
+		<h5>Fogginess</h5>
+		<canvas id="fogComp" width="300" height="300"></canvas>
+		<canvas id="fogRadio" width="300" height="300"></canvas>
+		<h5>Anger</h5>
+	</div>
+	<div>
+		<h5>Eating</h5>
+		<canvas id="food" width="300" height="300"></canvas>
+		<h5>Sleep</h5>
+		<canvas id="sleep" width="300" height="300"></canvas>
+		<h5>People</h5>
+		<canvas id="people" width="300" height="300"></canvas>
+	</div>
+</div>
 <!-- maybe have a page for each one, so that reponses can be seen with dates
 have a link to new tab if multiple days, otherwise just put it there. :D
 -->
@@ -50,6 +61,7 @@ have a link to new tab if multiple days, otherwise just put it there. :D
 <script src="/js/popper.min.js"></script>
 <script src="/bootstrap/js/bootstrap.min.js"></script>
 <script src="/js/chart.bundle.min.js"></script>
+<script src="graphs.js"></script>
 <script src="history.js"></script>
 </body>
 </html>

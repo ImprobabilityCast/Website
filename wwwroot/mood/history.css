@@ -6,3 +6,11 @@ div.width-0 {
     max-width: 256pt;
     margin: 8pt;
 }
+
+.hide-overflow {
+    overflow: hidden;
+}
+
+canvas {
+    display: block;
+}

@@ -90,10 +90,12 @@ if (check_section_valid('depression-hidden')
 
 if (check_section_valid('anxiety-hidden')
 		&& validScaleRating($_POST['anx-intensity'])) {
+	$panic = (array_key_exists('panic-attack', $_POST))
+			? $_POST['panic-attack'] * 1 : 0;
 	$db_helper->insert_data('anxiety',
 			$_POST['anx-where'],
 			pad($_POST['anx-intensity'], 'numberPreprocess'),
-			pad(array_key_exists('panic-attack', $_POST) * 1, 'numberPreprocess')
+			pad($panic, 'numberPreprocess')
 	);
 	echo '"anx-where", "anx-intensity", "panic-attack",';
 }
@@ -120,10 +122,12 @@ if (check_section_valid('anger-hidden')) {
 if (check_section_valid('food-hidden')
 		&& preg_match($hours_reg, $_POST['wake-to-eat-time'])
 		&& preg_match($hours_reg, $_POST['food-to-food-time'])) {
+	$veggies = array_key_exists('veggies', $_POST)
+			? $_POST['veggies'] * 1 : 0;
 	$db_helper->insert_data('food',
 			pad($_POST['wake-to-eat-time'], 'numberPreprocess'),
 			pad($_POST['food-to-food-time'], 'numberPreprocess'),
-			pad(array_key_exists('veggies', $_POST) * 1, 'numberPreprocess')
+			pad($veggies, 'numberPreprocess')
 	);
 	echo '"wake-to-eat-time", "food-to-food-time", "veggies",';
 }

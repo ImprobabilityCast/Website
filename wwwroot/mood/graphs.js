@@ -1,6 +1,8 @@
 var graphs = (function () {
 	var obj = {};
 	var graphColors = ['#26c5d375', '#266ed375',
+		'#26d38b75', '#4f0be275'];
+	var boolColors = ['#26c5d3', '#266ed3',
 		'#26d38b', '#4f0be2'];
 
 	obj.buildGraphs = function (data) {
@@ -24,7 +26,7 @@ var graphs = (function () {
 
 		cols = ['interaction_rating'];
 		let people = transformData(data.people, cols,
-			['interaction rating']);
+			['interactions']);
 
 		drawSleepCharts(data.sleep);
 
@@ -45,7 +47,11 @@ var graphs = (function () {
 			[getRadioOptions()]
 		);
 		drawChartWithBoolLast(food, $('#food')[0].getContext('2d'),
-			[]
+			[{
+				ticks: {
+					callback: hoursLabel,
+				},
+			}]
 		);
 
 		drawChart(people, $('#people')[0].getContext('2d'),
@@ -81,7 +87,7 @@ var graphs = (function () {
 	function transformTimespanData(rawData, startCol, endCol) {
 		let colorIdx = 1;
 		let set = {
-			label: 'diff',
+			label: 'time spent trying to sleep',
 			data: [],
 			fill: 'origin',
 			backgroundColor: graphColors[colorIdx],
@@ -110,16 +116,16 @@ var graphs = (function () {
 			barThickness: 6,
 			data: [],
 			yAxisID: 0,
-			backgroundColor: graphColors[2],
-			borderColor: graphColors[2],
+			backgroundColor: boolColors[2],
+			borderColor: boolColors[2],
 		}, {
 				type: 'bar',
 				label: 'Solid',
 				barThickness: 6,
 				data: [],
 				yAxisID: 0,
-				backgroundColor: graphColors[3],
-				borderColor: graphColors[3],
+				backgroundColor: boolColors[3],
+				borderColor: boolColors[3],
 		}];
 		
 		for (let i = 0; i < rawData.length; i++) {
@@ -143,11 +149,28 @@ var graphs = (function () {
 		return result;
 	}
 
+	function transformSleepTimes(datasets) {
+		for (let i = 0; i < datasets.length; i++) {
+			datasets[i].fill = (i + 1) % datasets.length;
+			for (let j = 0; j < datasets[i].data.length; j++) {
+				let date_str = datasets[i].data[j].y;
+				let time = date_str.substr(0, 2) * 60 * 60 * 1000
+					+ new Date().getTimezoneOffset() * 60 * 1000;
+				datasets[i].data[j].y =
+					new Date(time + i * 24 * 60 * 60 * 1000);
+			}
+		}
+	}
+
 	function drawSleepCharts(sleep) {
 		let cols = ['fell_asleep', 'woke_up'];
-		let sleepTimes = transformData(sleep, cols);
+		let sleepTimes = transformData(sleep, cols,
+				['fell asleep', 'woke up']);
+		transformSleepTimes(sleepTimes);
+
 		let sleepDiff = transformTimespanData(sleep, cols[0], cols[1]);
-		let sleepHours = transformData(sleep, ['sleep_spent_awake']);
+		let sleepHours = transformData(sleep, ['sleep_spent_awake'],
+				['sleep-time spent awake']);
 		sleepHours.push(sleepDiff);
 		let quality = transformQualityData(sleep)
 
@@ -162,8 +185,6 @@ var graphs = (function () {
 			[getTimeOptions()]
 		);
 
-		console.log(sleepHours);
-
 		drawChart(sleepHours,
 			$('#sleepHours')[0].getContext('2d'), [{
 				id: 0,
@@ -175,19 +196,26 @@ var graphs = (function () {
 				position: 'right',
 			}, {
 				id: 1,
+				ticks: {
+					callback: hoursLabel,
+				},
 				position: 'left',
 			}]);
+	}
+
+	function hoursLabel(value, index, values) {
+		return value + ' hrs';
 	}
 
 	function getTimeOptions(id) {
 		return {
 			type: 'time',
 			time: {
-				displayFormat: 'minute',
-				parser: "HH:mm",
-			},
-			ticks: {
-				stepSize: '30m'
+				displayFormats: {
+					minute: 'h:mm a'
+				},
+				unit: 'minute',
+				stepSize: 30,
 			},
 			id: id,
 		};
@@ -197,11 +225,11 @@ var graphs = (function () {
 		return {
 			beginAtZero: true,
 			ticks: {
-				suggestedMin: 0,
-				suggestedMax: 3,
+				min: 0,
+				max: 3,
 				callback: function (value, index, values) {
 					return ['None', '1-5', '5-10', 'Over 10'][value];
-				}
+				},
 			},
 			id: id,
 		};
@@ -239,14 +267,17 @@ var graphs = (function () {
 		};
 	}
 
-	function drawChartWithBoolLast(datasets, ctx, optFirst, id1 = 0) {
+	function drawChartWithBoolLast(datasets, ctx, optFirst) {
+		optFirst.id = 0;
 		let last = datasets.length - 1;
 		for (let i = 0; i < last; i++) {
-			datasets[i].yAxisID = id1;
+			datasets[i].yAxisID = optFirst.id;
 		}
 		datasets[last].yAxisID = 1;
 		datasets[last].type = 'bar';
-		datasets[last].barThickness = 15;
+		datasets[last].barThickness = 6;
+		datasets[last].backgroundColor = boolColors[last];
+		datasets[last].borderColor = boolColors[last];
 
 		var options = [ optFirst,
 			getBoolOptions(datasets[last].yAxisID)

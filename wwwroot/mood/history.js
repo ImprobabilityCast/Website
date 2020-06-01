@@ -23,7 +23,7 @@ var page = (function () {
 		req.onreadystatechange = function () {
 			if (this.readyState == 4 && this.status == 200) {
 				let data = JSON.parse(this.responseText);
-				console.log(data.depression);
+				console.log(data);
 				graphs.buildGraphs(data);
 			}
 		};

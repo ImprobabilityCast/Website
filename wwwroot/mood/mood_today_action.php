@@ -4,9 +4,10 @@
 	let removeIDs = [<?php
 
 session_start();
+require_once 'login_check.php';
+require_once 'post_check.php';
 require_once 'mood_util.php';
 require_once 'preprocessing.php';
-require_once 'simple_check.php';
 
 $dbh = create_db_conn();
 $user = new User($dbh);
@@ -14,16 +15,6 @@ $db_helper = new DBQueryHelper($user, $dbh);
 // don't care about seconds
 $time_reg = '/\A(([0-1][0-9])|(2[0-3])):[0-5][0-9]\z/';
 $hours_reg = '/\A\d{1,2}(\.\d{1,2})?\z/';
-
-function escape(&$value, $key) {
-	global $dbh;
-	$value = $dbh->quote(trim($value));
-}
-
-function valid_rating(string $key, array $array, $max) {
-	return array_key_exists($key, $array)
-			&& $array[$key] >= 0 && $array[$key] <= $max;
-}
 
 function validScaleRating($value) {
 	return (0 <= $value && $value <= 100);

@@ -4,8 +4,14 @@ if (!empty($_SESSION['pwd_key'])) {
 	header("Location: /mood/");
 	exit(0);
 }
-$wrong_pwd = ('1' === htmlspecialchars($_GET['wrong_pwd']));
-$wrong_user = ('1' === htmlspecialchars($_GET['wrong_user']));
+
+function exists_and_valid($key) {
+	return array_key_exists($key, $_GET)
+		&& '1' === $_GET[$key];
+}
+$wrong_pwd = exists_and_valid('wrong_pwd');
+$wrong_user = exists_and_valid('wrong_user');
+
 ?>
 
 <!DOCTYPE html>
@@ -31,11 +37,11 @@ $wrong_user = ('1' === htmlspecialchars($_GET['wrong_user']));
 		<hr />
 		<fieldset>
 			<div class="form-row form-group">
-				<label for="email" class="col-sm-4 col-form-label">Email:</label>
+				<label for="uname" class="col-sm-4 col-form-label">Username:</label>
 				<div class="col">
-					<input type="text" name="email" class="form-control <?php
+					<input type="text" name="uname" class="form-control <?php
 							if ($wrong_user) { echo ' is-invalid'; } ?>"
-						placeholder="someone@example.com">
+						placeholder="Username">
 					<div class="invalid-feedback"
 						<?php if ($wrong_user) { echo ' style="display: block;"'; } ?>>
 						User does not exist

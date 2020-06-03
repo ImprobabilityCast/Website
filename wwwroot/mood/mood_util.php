@@ -13,6 +13,19 @@ function create_db_conn() {
 	return $dbh;
 }
 
+function valid_rating(string $key, array $array, $max) {
+	return array_key_exists($key, $array)
+			&& $array[$key] >= 0 && $array[$key] <= $max;
+}
+
+function user_exists($dbh, $uname) {
+	$sql = 'SELECT id FROM users WHERE uname=?;';
+	$stmt = $dbh->prepare($sql);
+	$stmt->bindParam(1, $uname);
+	$stmt->execute();
+	return $stmt->rowCount() == 1;
+}
+
 class User {
 	public $id;
 	

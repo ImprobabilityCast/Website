@@ -1,14 +1,14 @@
 <?php
 session_start();
 require_once 'mood_util.php';
-require_once 'simple_check.php';
+require_once 'post_check.php';
 
 // assume login info is correct, escape for sql
 $dbh = create_db_conn();
-$email_hash = $dbh->quote(hash('sha256', $_POST['email']));
+$uanme = $dbh->quote($_POST['uname']);
 $query_str = "SELECT id, salt, pwd_dkey, pwd_hash
 		FROM mood.users
-		WHERE users.email_hash=$email_hash;";
+		WHERE users.uname=$uname;";
 $creds = $dbh->query($query_str);
 if ($creds->rowCount() === 1) {
 	$row = $creds->fetch(PDO::FETCH_ASSOC);
@@ -22,6 +22,7 @@ if ($creds->rowCount() === 1) {
 		);
 		$_SESSION['pwd_key'] = bin2hex($derived_pwd_key);
 		$_SESSION['id'] = $row['id'];
+		$_SESSION['uname'] = $uname;
 		header("Location: /mood/");
 		exit();
 	} else {

@@ -6,14 +6,15 @@
 <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css" />
 <link rel="stylesheet" href="form.css" />
 
-<body oninput="save(event)" class="container">
+<body class="container">
 	<header class="nav nav-justified">
 		<a href="/mood/" class="nav-link nav-item">Home</a>
 	</header>
 	
 	<hr />
 	
-	<form id="depressing-form" autocomplete="off">
+	<form id="depressing-form" autocomplete="off" method="post"
+			action="swing_action.php">
 		<fieldset>
 			<legend>Significant mood swing</legend>
 			<div class="form-group">
@@ -45,7 +46,7 @@
 				<div class="input-group">
 					<div class="container">
 						<div class="row">
-							<input type="range" class="custom-range" name="mood-before" min="0" max="100">
+							<input type="range" class="custom-range" name="mood-after" min="0" max="100">
 						</div>
 						<div class="row justify-content-between">
 							<div class="col-auto">

@@ -9,12 +9,16 @@
 <body class="container">
 <nav class="nav row">
 	<div class="nav-item input-group" oninput="page.getData()">
-		<div class="input-group-prepend">
-			<input type="date" id="start-date" class="form-control">
-		</div>
-		<div class="input-group-append">
-			<input type="date" id="end-date" class="form-control">
-		</div>
+		<label class=" input-group-prepend input-group-text col-5" for="start-date">
+			Starting Date:
+		</label>
+		<input type="date" id="start-date" class="form-control col-7">
+	</div>
+	<div class="nav-item input-group" oninput="page.getData()">
+		<label class="input-group-prepend input-group-text col-5" for="start-date">
+			Ending Date:
+		</label>
+		<input type="date" id="end-date" class="form-control col-7">
 	</div>
 </nav>
 
@@ -27,11 +31,15 @@
 		<div class="col-sm bg-secondary text-center text-white pt-1 pb-1 w-50">Not helpful</div>
 	</div>
 </div>
+<div>
+	<h5>Significant mood swings</h5>
+	<!-- trigger : b4: after: like coping mechs maybe? -->
+</div>
 <div class="d-flex flex-wrap justify-content-around">
 	<div>
 		<h5>Suicide</h5>
 		<canvas id="suicide" width="300" height="300"></canvas>
-		<h5>Self Harm</h5>
+		<h5>Self harm</h5>
 		<h5>Depression</h5>
 		<canvas id="depression" width="300" height="300"></canvas>
 	</div>

@@ -1,19 +1,12 @@
 <?php
 require_once 'mood_util.php';
+require_once 'post_check.php';
 
-if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-	http_response_code(404);
-	echo file_get_contents($_SERVER['DOCUMENT_ROOT'] . '/meta-pages/404.html');
-	exit(0);
-}
-
-function badInput() {
-	
+function normalize($str) {
+	return preg_replace('/\s/', ' ', strtoupper(trim($str)));
 }
 
 // validation
-
-// don't care about emial validation atm
 
 // check password requirements
 if (strlen($_POST['pass1']) < 16
@@ -21,7 +14,18 @@ if (strlen($_POST['pass1']) < 16
 		|| FALSE === preg_match('/[0-9]+/', $_POST['pass1'])
 		|| FALSE === preg_match('/[~`\!@#\$%\^&\*\(\)_\+\{\}\|"<>\?\-\=\[\];\',\.]+/',
 				$_POST['pass1'])) {
-	
+	header('Location: signup.html');
+	exit();
+}
+
+// check if user already exists
+$dbh = create_db_conn();
+if (empty($_POST['uname'])
+		|| user_exists($dbh, $_POST['uname'])) {
+	$stmt = null;
+	$dbh = null;
+	header('Location: signup.html');
+	exit();
 }
 
 // create the user
@@ -31,6 +35,7 @@ $key_length = SODIUM_CRYPTO_SECRETBOX_KEYBYTES;
 $random_key = random_bytes($key_length);
 $salt = random_bytes(SODIUM_CRYPTO_PWHASH_SCRYPTSALSA208SHA256_SALTBYTES);
 $nonce = random_bytes(SODIUM_CRYPTO_SECRETBOX_NONCEBYTES);
+$backup_pwd = normalize($_POST['sec-q-1-a']) . normalize($_POST['sec-q-2-a']);
 
 $derived_pwd_key = sodium_crypto_pwhash_scryptsalsa208sha256(
 	$key_length,
@@ -41,31 +46,58 @@ $derived_pwd_key = sodium_crypto_pwhash_scryptsalsa208sha256(
 );
 $pwd_key = $derived_pwd_key ^ $random_key;
 
-// in the future, use security questions
 $derived_recovery_key = sodium_crypto_pwhash_scryptsalsa208sha256(
 	$key_length,
-	$_POST['email'],
+	$backup_pwd,
 	$salt,
 	$iterations,
 	$mem_limit
 );
 $recovery_key = $derived_recovery_key ^ $random_key;
 
-//fix so that email no needed anymore
-$dbh = create_db_conn();
-$sql = "INSERT INTO mood.users
-		(nonce, salt, recovery_dkey, pwd_dkey, pwd_hash, email)
-		VALUES('"
-	. bin2hex($nonce) . "','"
-	. bin2hex($salt) . "','"
-	. bin2hex($recovery_key) . "','"
-	. bin2hex($pwd_key) . "','"
-	. password_hash($_POST['pass1'], PASSWORD_BCRYPT) . "',"
-	. $dbh->quote($_POST['email']) . ");";
-if (FALSE === $dbh->exec($sql)) {
-	echo "Mission failed";
+$sql = 'INSERT INTO mood.users
+		(nonce, salt, recovery_dkey, pwd_dkey, pwd_hash,
+		uname, sec_q_1, sec_q_2, sec_a_hash)
+		VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?);';
+$stmt = $dbh->prepare($sql);
+$stmt->bindParam(1, bin2hex($nonce));
+$stmt->bindParam(2, bin2hex($salt));
+$stmt->bindParam(3, bin2hex($recovery_key));
+$stmt->bindParam(4, bin2hex($pwd_key));
+$stmt->bindParam(5, password_hash($_POST['pass1'], PASSWORD_BCRYPT));
+$stmt->bindParam(6, $_POST['uname']);
+$stmt->bindParam(7, $_POST['sec-q-1']);
+$stmt->bindParam(8, $_POST['sec-q-2']);
+$stmt->bindParam(9, password_hash($backup_pwd, PASSWORD_BCRYPT));
+
+if (FALSE === $stmt->execute()) {
+	error_log("could not create new user: " . $_POST['uname']);
+	$dbh = null;
+	$stmt = null;
+	exit();
 }
 $dbh = null;
-// redirect user
-//header("Location: /mood/");
+$stmt = null;
+
 ?>
+
+<html>
+<body>
+<script>
+(function () {
+	var removeIDs = [
+		'sec-q-1',
+		'sec-q-1-a',
+		'sec-q-2',
+		'sec-q-2-a',
+		'uname'
+	];
+	for (var id of removeIDs) {
+		localStorage.removeItem(id);
+		console.log('removing: ' + id);
+	}
+	window.location = '/mood/';
+})();
+</script>
+</body>
+</html>

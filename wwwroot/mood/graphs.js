@@ -20,8 +20,8 @@ var graphs = (function () {
 			['times forgotten what thing while doing the thing', 'speech slurrs']);
 		cols = ['after_wake', 'between_food', 'protein_veggie'];
 		let food = transformData(data.food, cols,
-			['hours between getting up and eating',
-			'hours between foods',
+			['time between getting up and eating',
+			'time between foods',
 			'protien/veggie']);
 
 		cols = ['interaction_rating'];
@@ -55,7 +55,7 @@ var graphs = (function () {
 		);
 
 		drawChart(people, $('#people')[0].getContext('2d'),
-			[getScaleOptions(0, 'Life fueling', 'Heavy')]
+			[getScaleOptions(0, 'Life\nfueling', 'Heavy')]
 		);
 	}
 
@@ -113,7 +113,7 @@ var graphs = (function () {
 		let result = [{
 			type: 'bar',
 			label: 'Restless',
-			barThickness: 6,
+			barThickness: 4,
 			data: [],
 			yAxisID: 0,
 			backgroundColor: boolColors[2],
@@ -121,7 +121,7 @@ var graphs = (function () {
 		}, {
 				type: 'bar',
 				label: 'Solid',
-				barThickness: 6,
+				barThickness: 4,
 				data: [],
 				yAxisID: 0,
 				backgroundColor: boolColors[3],
@@ -275,7 +275,7 @@ var graphs = (function () {
 		}
 		datasets[last].yAxisID = 1;
 		datasets[last].type = 'bar';
-		datasets[last].barThickness = 6;
+		datasets[last].barThickness = 4;
 		datasets[last].backgroundColor = boolColors[last];
 		datasets[last].borderColor = boolColors[last];
 

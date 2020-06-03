@@ -16,38 +16,53 @@
 		<hr />
 	</header>
 
-	<form action="signup_action.php" method="post" class="jumbotron align-self-center needs-validation" oninput="canSubmit()">
+	<form action="signup_action.php" method="post" id="signup-form"
+			class="jumbotron align-self-center needs-validation">
 		<h3>Sign up</h3>
 		<hr />
 		<fieldset>
 			<div class="form-row form-group">
-				<label for="email" class="col-sm-4 col-form-label">Email:</label>
-				<input type="text" name="email" id="email" class="col form-control" placeholder="someone@example.com">
+				<label for="uname" class="col-sm-4 col-form-label">Username:</label>
+				<input type="text" name="uname" id="uname" class="col form-control"
+						placeholder="Username" oninput="saveInput(event)">
+				<div class="invalid-feedback" id="uname-feedback">
+					User already exists :(
+				</div>
 			</div>
 			<div class="form-row form-group">
 				<label for="pass1" class="col-sm-4 col-form-label">Password:</label>
 				<div class="col input-col">
-					<input type="password" name="pass1" id="pass1" class="form-control" oninput="checkPasswordsMatch()">
-					<div class="hidden">
-						<span>Password requirements:</span>
-						<ul>
-							<li>Both upper and lowercase letters</li>
-							<li>At least one number</li>
-							<li>At least one symbol: `~!@#$%^&amp;*()_+{}|:"&lt;&gt;?-=[]\;',./</li>
-							<li>At least 16 characters in length</li>
-						</ul>
+					<input type="password" name="pass1" id="pass1" class="form-control">
+					<div class="invalid-feedback" id="pwd-feedback">
+					</div>
+					<div class="custom-control">
+						<input type="checkbox" id="show-pwd" class="custom-control-input">
+						<label for="show-pwd" class="custom-control-label">Show password</label>
+					</div>
+					<div class="hidden" id="pwd-needs">
+
 					</div>
 				</div>
 			</div>
-			<div class="form-row form-group">
-				<label for="pass2" class="col-sm-4 col-form-label">Re-enter password:</label>
-				<div class="col input-col">
-					<input type="password" id="pass2" class="col form-control" oninput="checkPasswordsMatch()">
-					<div class="invalid-feedback" id="pass2feedback">
-						Passwords must match
-					</div>
-				</div>
+			<div class="form-row form-group" oninput="saveInput(event)">
+				<input type="text" name="sec-q-1" id="sec-q-1" class="col-sm-6 form-control"
+					placeholder="1st security qestion" list="questions">
+				<input type="text" name="sec-q-1-a" id="sec-q-1-a" class="col-sm-6 form-control"
+					placeholder="Answer to 1st security question">
 			</div>
+			<div class="form-row form-group" oninput="saveInput(event)">
+				<input type="text" name="sec-q-2" id="sec-q-2" class="col-sm-6 form-control"
+					placeholder="2nd security qestion" list="questions">
+				<input type="text" name="sec-q-2-a" id="sec-q-2-a" class="col-sm-6 form-control"
+					placeholder="Answer to 2nd security question">
+			</div>
+			<datalist id="questions">
+				<option>Name of first pet</option>
+				<option>Kind of first car</option>
+				<option>Favorite color at age 12</option>
+				<option>Name of your elementary school</option>
+				<option>The street you first lived on</option>
+			</datalist>
 		</fieldset>
 		
 		<!-- maybe security questions at a later date -->
@@ -63,6 +78,7 @@
 		</nav>
 	</footer>
 	
+	<script src="util.js"></script>
 	<script src="signup.js"></script>
 </body>
 </html>

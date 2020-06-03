@@ -49,45 +49,6 @@ function removeMech(e) {
 	// todo delete from server
 }
 
-function saveInput(e) {
-	if (e.target.name.length === 0) {
-		return;
-	}
-	
-	localStorage.setItem(e.target.name, JSON.stringify(e.target.value));
-	console.log("saving " + e.target.name);
-}
-
-window.onload = function loadInput(e) {
-	// https://stackoverflow.com/a/15105717/8335309
-	let inputs = $("input[type=radio]");
-	for (let input of inputs) {
-		input.addEventListener("click", dummyToggleRadio);
-	}
-
-	// https://stackoverflow.com/a/3138591/8335309
-	for (var i = 0; i < localStorage.length; i++) {
-		var id = localStorage.key(i);
-		var value = JSON.parse(localStorage.getItem(id));
-		var ele = document.getElementById(id);
-		if (ele === null) { // is prolly radio ctrl
-			ele = document.getElementById(id + '-' + value);
-			if (ele === null) { // is nothing at all
-				console.log('not found: ' + id + '-' + value);
-			} else {
-				ele.checked = true;
-				ele.setAttribute("waschecked", 1);
-				ele.parentElement.classList.add("active");
-			}
-		} else if (ele.type === "checkbox") {
-			ele.checked = true;
-		} else {
-			document.getElementById(id).value = value;
-		}
-	}
-	getMech();
-};
-
 function addMechButton() {
 	var form = $("#newMechName");
 	var name = "~" + form.val().trim().replace(/\s+/g, '~');
@@ -126,3 +87,14 @@ function toggleRadio(e) {
 function dummyToggleRadio(e) {
 	setTimeout(toggleRadio, 300, e);
 }
+
+window.addEventListener('load', function () {
+	// https://stackoverflow.com/a/15105717/8335309
+	if (typeof $ === 'function') {
+		let inputs = $("input[type=radio]");
+		for (let input of inputs) {
+			input.addEventListener("click", dummyToggleRadio);
+		}
+	}
+	getMech();
+});

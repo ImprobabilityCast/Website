@@ -5,7 +5,7 @@ require_once 'post_check.php';
 
 // assume login info is correct, escape for sql
 $dbh = create_db_conn();
-$uanme = $dbh->quote($_POST['uname']);
+$uname = $dbh->quote($_POST['uname']);
 $query_str = "SELECT id, salt, pwd_dkey, pwd_hash
 		FROM mood.users
 		WHERE users.uname=$uname;";

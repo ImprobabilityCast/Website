@@ -25,6 +25,7 @@ var page = (function () {
 				let data = JSON.parse(this.responseText);
 				console.log(data);
 				graphs.buildGraphs(data);
+				showMechData(data.mechs);
 			}
 		};
 		req.open("GET", "get_history.php" + timespan, true);
@@ -47,11 +48,10 @@ function tenIfZero(num1, num2) {
 	return [num1, num2];
 }
 
-function parseMechData(text) {
-	var data = JSON.parse(text);
+function showMechData(mechs) {
 	var coping  = document.getElementById('coping');
 	
-	for (var key in data) {
+	for (var key in mechs) {
 		var ele = document.createElement("div");
 		ele.classList.add("row");
 		ele.classList.add("mt-2");

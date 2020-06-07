@@ -9,11 +9,11 @@ function addMech(name) {
 	+ '<div class="col">'
 	+   '<div id="' + name + '" class="btn-group btn-group-toggle" data-toggle="buttons">'
 	+	  '<label class="btn btn-outline-primary">'
-	+		'<input type="radio" value="helpful" name="' + name + '">Helpful</input></label>'
+	+		'<input type="radio" value="2" name="' + name + '">Helpful</input></label>'
 	+	  '<label class="btn btn-outline-primary">'
-	+		'<input type="radio" value="not-helpful" name="' + name + '">Not&nbsp;helpful</input></label>'
+	+		'<input type="radio" value="1" name="' + name + '">Not&nbsp;helpful</input></label>'
 	+	  '<label class="btn btn-outline-primary active">'
-	+		'<input type="radio" value="not-used" name="' + name + '" checked>Not&nbsp;used</input></label>'
+	+		'<input type="radio" value="0" name="' + name + '" checked>Not&nbsp;used</input></label>'
 	+   '</div>'
 	+ '</div>';
 	ele.firstChild.innerText = name.replace(/~/g, ' ') + ":";

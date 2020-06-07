@@ -191,8 +191,8 @@ var graphs = (function () {
 				ticks: {
 					min: 0,
 					max: 1.5,
-					display: false,
 				},
+				display: false,
 				position: 'right',
 			}, {
 				id: 1,

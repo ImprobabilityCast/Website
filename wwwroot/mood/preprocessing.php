@@ -16,4 +16,13 @@ function pad(string $text, callable $preprocess) {
 	return random_bytes($padding) . $value;
 }
 
+// note that the max of max_bits is 8
+function pad_binary($value, int $num_bits) {
+	// 32 is column width
+	// 16 is number of bytes added to secretbox output
+	$padding = 32 - (1 + 16);
+	$value = (random_int(0, 255) << $num_bits) | ($value * 1);
+	return random_bytes($padding) . chr($value);
+}
+
 ?>

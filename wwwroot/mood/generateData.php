@@ -36,7 +36,7 @@ function randomEvening() {
 	return timeHelper($hour);
 }
 
-function createPostArray() {
+function createPostArray($mechs) {
 	$lorem = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
 	
 	$post = array(
@@ -88,6 +88,10 @@ function createPostArray() {
 	$post['wake-to-eat-time'] = rand(0, 12) / 4;
 	$post['food-to-food-time'] = rand(16, 48) / 4;
 
+	foreach ($mechs as $mech) {
+		$post[$mech] = randomRating(2);
+	}
+
 	return $post;
 }
 
@@ -116,7 +120,7 @@ function createOptions($url, $post_str) {
 function login($ch) {
 	$url = 'http://100.115.92.206/mood/login_action.php';
 	$login_str = http_build_query(array(
-		'email' => 'demo@sugarfairyland.com',
+		'uname' => 'demo',
 		'password' => 'hunter2',
 	));
 	$options = createOptions($url, $login_str);
@@ -124,22 +128,36 @@ function login($ch) {
 	curl_exec($ch);
 }
 
-function postData($ch) {
+function postData($ch, $mechs) {
 	$url = 'http://100.115.92.206/mood/mood_today_action.php';
-	$data_str = http_build_query(createPostArray());
+	$data_str = http_build_query(createPostArray($mechs));
 	$options = createOptions($url, $data_str);
 	curl_setopt_array($ch, $options);
 	curl_exec($ch);
 }
 
+function generateMechs($ch) {
+	$mechs = ['Unicorn', 'Another Unicorn', 'Meh'];
+	for ($i = 0; $i < count($mechs); $i++) {
+		$mechs[$i] = '~' . preg_replace('/\s/', '~', $mechs[$i]);
+		$post_str = http_build_query(['mech' => $mechs[$i]]);
+		$options = createOptions('http://100.115.92.206/mood/addMech.php', $post_str);
+		curl_setopt_array($ch, $options);
+		curl_exec($ch);
+	}
+	return $mechs;
+}
+
 $ch = curl_init();
+$mechs = generateMechs($ch);
 login($ch);
+generateMechs($ch, $mechs);
 $num = (count($argv) == 2 && is_numeric($argv[1])) ? $argv[1] : 1;
 
 while ($num > 0) {
-	postData($ch);
+	postData($ch, $mechs);
 	echo 'taking a short break...';
-	sleep(5);
+	sleep(3);
 	$num -= 1;
 }
 

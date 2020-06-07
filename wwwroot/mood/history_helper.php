@@ -38,8 +38,8 @@ class HistoryHelper {
 			foreach ($cols as $col_name) {
 				$row[$col_name] = $this->user->decryptData($row[$col_name]);
       }
-      foreach ($num_cols as $col_name) {
-				$row[$col_name] = $this->trim_num($row[$col_name]);
+      foreach ($num_cols as $col_name => $bit_len) {
+				$row[$col_name] = $this->trim_num($row[$col_name], $bit_len);
       }
       foreach ($time_cols as $col_name) {
 				$row[$col_name] = $this->trim_time($row[$col_name]);
@@ -55,8 +55,8 @@ class HistoryHelper {
 		  return substr($value, -5);
   }
 
-  private function trim_num($value) {
-    return substr($value, -5) * 1;
+  private function trim_num($value, $bit_len) {
+    return ord($value[-1]) & ~(-1 << $bit_len);
 	}
 	
 	public function basic_mood() {
@@ -66,32 +66,36 @@ class HistoryHelper {
 	public function suicide() {
 		return $this->get_data('suicide',
 				['thoughts', 'urges', 'steps'],
-				['thoughts', 'urges']
+				['thoughts' => 7, 'urges' => 7]
 		);
 	}
 	
 	public function self_harm() {
 		return $this->get_data('self_harm',
 				['place', 'tool_used', 'how_deep', 'emote_response', 'purpose'],
-				['purpose']
+				['purpose' => 2]
 		);
 	}
 	
 	public function depression() {
 		$cols = ['energy', 'motivation', 'hygine'];
-		return $this->get_data('depression', $cols, $cols);
+		return $this->get_data('depression', $cols,
+			[$cols[0] => 7, $cols[1] => 7, $cols[2] => 7]
+		);
 	}
 	
 	public function anxiety() {
 		return $this->get_data('anxiety',
 				['felt_where', 'intensity', 'panic'],
-				['panic', 'intensity']
+				['panic' => 2, 'intensity' => 7]
 		);
 	}
 	
 	public function fog() {
     $cols = ['comp_speed', 'forget', 'slurr'];
-		return $this->get_data('fog', $cols, $cols);
+		return $this->get_data('fog', $cols,
+			[$cols[0] => 7, $cols[1] => 3, $cols[2] => 3]
+		);
 	}
 	
 	public function anger() {
@@ -100,28 +104,31 @@ class HistoryHelper {
 	
 	public function food() {
     $cols = ['after_wake', 'between_food', 'protein_veggie'];
-		return $this->get_data('food', $cols, $cols);
+		return $this->get_data('food', $cols,
+			[$cols[2] => 2],
+			['after_wake', 'between_food']
+		);
 	}
 	
 	public function sleeps() {
 		return $this->get_data('sleep',
 				['fell_asleep', 'woke_up', 'sleep_spent_awake', 'quality', 'meds'],
-				['sleep_spent_awake', 'quality'],
-				['fell_asleep', 'woke_up']
+				['quality' => 2],
+				['fell_asleep', 'woke_up', 'sleep_spent_awake']
 		);
 	}
 	
 	public function people() {
 		return $this->get_data('people',
 				['what_do', 'what_impact', 'interaction_rating'],
-				['interaction_rating']
+				['interaction_rating' => 7]
 		);
 	}
 	
 	public function swings() {
 		return $this->get_data('swings',
 				['swing_trigger', 'mood_before', 'mood_after'],
-				['mood_before', 'mood_after']
+				['mood_before' => 7, 'mood_after' => 7]
 		);
 	}
 	
@@ -133,25 +140,25 @@ class HistoryHelper {
 		$data = [];
 		foreach ($mech_arr as $value) {
 			$mech = $this->user->decryptData($value['mech']);
-			$helpful = $this->user->decryptData($value['helpful'])[-1];
-			if (!array_key_exists($key, $data)) {
-				$data[$key] = ['helpful' => 0, 'total' => 0];
+			$helpful = $this->trim_num($this->user->decryptData($value['helpful']), 3);
+			if (!array_key_exists($mech, $data)) {
+				$data[$mech] = ['helpful' => 0, 'total' => 0];
 			}
 			if ($helpful == 1) {
-				$data[$key]['helpful']++;
+				$data[$mech]['helpful']++;
 			}
-			$data[$key]['total']++;
+			$data[$mech]['total']++;
 		}
 		return $data;
 	}
 
 	public function mechs() {
-		$sql = 'SELECT mech, helpful FROM coping_mechs_help
+		$sql = 'SELECT mech, helpful, stamp FROM coping_mechs_help
 			WHERE id=? AND stamp>=? AND stamp<=?';
 		$statement = $this->dbh->prepare($sql);
 		$statement->bindParam(1, $this->user->id);
-		$statement->bindParam(2, $start);
-		$statement->bindParam(3, $end);
+		$statement->bindParam(2, $this->start);
+		$statement->bindParam(3, $this->end);
 
 		$statement->execute();
 		$raw_data = $statement->fetchAll(PDO::FETCH_ASSOC);

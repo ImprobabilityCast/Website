@@ -21,8 +21,6 @@ CREATE TABLE mood.users (
 	PRIMARY KEY (id)
 );
 
--- find out if sodium secret box returns same length encrypted binary text
-
 CREATE TABLE mood.coping_mechs (
 	id int unsigned NOT NULL,
 	mech varbinary(144) NOT NULL,

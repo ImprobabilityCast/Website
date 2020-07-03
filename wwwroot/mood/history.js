@@ -50,6 +50,9 @@ function tenIfZero(num1, num2) {
 
 function showMechData(mechs) {
 	var coping  = document.getElementById('coping');
+	while (coping.childElementCount > 1) {
+		coping.removeChild(coping.lastChild);
+	}
 	
 	for (var key in mechs) {
 		var ele = document.createElement("div");
@@ -58,9 +61,9 @@ function showMechData(mechs) {
 		ele.innerText = key.replace(/~/g, ' ') + ":";
 		coping.appendChild(ele);
 
-		var tot = data[key].helpful * 1 + data[key].unhelpful * 1;
-		var helpfulWidth = data[key].helpful  * 100.0 / tot;
-		var unhelpfulWidth = data[key].unhelpful * 100.0 / tot;
+		var tot = mechs[key].total;
+		var helpfulWidth = mechs[key].helpful  * 100.0 / tot;
+		var unhelpfulWidth = 100 - helpfulWidth;
 		var arr = tenIfZero(helpfulWidth, unhelpfulWidth);
 		helpfulWidth = arr[0];
 		unhelpfulWidth = arr[1];
@@ -70,11 +73,11 @@ function showMechData(mechs) {
 		ele.innerHTML = '<div class="bg-primary text-center text-white'
 		+   ' pt-1 pb-1 width-' +  helpfulWidth
 		+   '" style="width:' + helpfulWidth + '%">'
-		+	   data[key].helpful + '</div>'
+		+	   mechs[key].helpful + '</div>'
 		+ '<div class="bg-secondary text-center text-white'
 		+   ' pt-1 pb-1 width-' + unhelpfulWidth
 		+   '" style="width:' + unhelpfulWidth + '%">'
-		+	   data[key].unhelpful + '</div>';
+		+	   (tot - mechs[key].helpful) + '</div>';
 		coping.appendChild(ele);
 	}
 }

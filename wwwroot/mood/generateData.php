@@ -1,5 +1,7 @@
 <?php
 
+$IP = 'localhost';
+
 function randomShort($lorem) {
 	return substr($lorem, rand(0, strlen($lorem) - 100), 100);
 }
@@ -106,8 +108,9 @@ function cookieMan($ch, $headerLine) {
 
 function createOptions($url, $post_str) {
 	global $cookie;
+	global $IP;
 	return array(
-		CURLOPT_URL => $url,
+		CURLOPT_URL => "http://$IP$url",
 		CURLOPT_POST => true,
 		CURLOPT_POSTFIELDS => $post_str,
 		CURLOPT_FOLLOWLOCATION => true,
@@ -118,7 +121,7 @@ function createOptions($url, $post_str) {
 }
 
 function login($ch) {
-	$url = 'http://100.115.92.206/mood/login_action.php';
+	$url = '/mood/login_action.php';
 	$login_str = http_build_query(array(
 		'uname' => 'demo',
 		'password' => 'hunter2',
@@ -129,7 +132,7 @@ function login($ch) {
 }
 
 function postData($ch, $mechs) {
-	$url = 'http://100.115.92.206/mood/mood_today_action.php';
+	$url = '/mood/mood_today_action.php';
 	$data_str = http_build_query(createPostArray($mechs));
 	$options = createOptions($url, $data_str);
 	curl_setopt_array($ch, $options);
@@ -141,7 +144,7 @@ function generateMechs($ch) {
 	for ($i = 0; $i < count($mechs); $i++) {
 		$mechs[$i] = '~' . preg_replace('/\s/', '~', $mechs[$i]);
 		$post_str = http_build_query(['mech' => $mechs[$i]]);
-		$options = createOptions('http://100.115.92.206/mood/addMech.php', $post_str);
+		$options = createOptions('/mood/addMech.php', $post_str);
 		curl_setopt_array($ch, $options);
 		curl_exec($ch);
 	}

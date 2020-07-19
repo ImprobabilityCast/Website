@@ -22,8 +22,8 @@ class HistoryHelper {
 		return $arr;
 	}
 
-  private function get_data($table, $cols,
-      	$num_cols = [], $time_cols = []) {
+	private function get_data($table, $cols,
+		$num_cols = [], $time_cols = []) {
 		$cols_str = implode(',', $cols);
 		$sql = "SELECT $cols_str, stamp FROM $table WHERE id=?
 				AND stamp>=? AND stamp<=?";
@@ -37,26 +37,26 @@ class HistoryHelper {
 		while ($row = $statement->fetch(PDO::FETCH_ASSOC)) {
 			foreach ($cols as $col_name) {
 				$row[$col_name] = $this->user->decryptData($row[$col_name]);
-      }
-      foreach ($num_cols as $col_name => $bit_len) {
-				$row[$col_name] = $this->trim_num($row[$col_name], $bit_len);
-      }
-      foreach ($time_cols as $col_name) {
-				$row[$col_name] = $this->trim_time($row[$col_name]);
+			}
+			foreach ($num_cols as $col_name => $bit_len) {
+						$row[$col_name] = $this->trim_num($row[$col_name], $bit_len);
+			}
+			foreach ($time_cols as $col_name) {
+						$row[$col_name] = $this->trim_time($row[$col_name]);
 			}
 			array_push($data, $row);
 		}
 
 		$statement = null;
 		return $data;
-  }
-    
-  private function trim_time($value) {
-		  return substr($value, -5);
-  }
+	}
+		
+	private function trim_time($value) {
+			return substr($value, -5);
+	}
 
-  private function trim_num($value, $bit_len) {
-    return ord($value[-1]) & ~(-1 << $bit_len);
+	private function trim_num($value, $bit_len) {
+		return ord($value[-1]) & ~(-1 << $bit_len);
 	}
 	
 	public function basic_mood() {
@@ -66,7 +66,7 @@ class HistoryHelper {
 	public function suicide() {
 		return $this->get_data('suicide',
 				['thoughts', 'urges', 'steps'],
-				['thoughts' => 7, 'urges' => 7]
+				['thoughts' => 3, 'urges' => 3]
 		);
 	}
 	

@@ -25,6 +25,7 @@ var page = (function () {
 				let data = JSON.parse(this.responseText);
 				console.log(data);
 				graphs.buildGraphs(data);
+				text.addText(data);
 				showMechData(data.mechs);
 			}
 		};
@@ -50,7 +51,7 @@ function tenIfZero(num1, num2) {
 
 function showMechData(mechs) {
 	var coping  = document.getElementById('coping');
-	while (coping.childElementCount > 1) {
+	while (coping.childElementCount > 2) {
 		coping.removeChild(coping.lastChild);
 	}
 	
@@ -58,7 +59,7 @@ function showMechData(mechs) {
 		var ele = document.createElement("div");
 		ele.classList.add("row");
 		ele.classList.add("mt-2");
-		ele.innerText = key.replace(/~/g, ' ') + ":";
+		ele.innerText = key.replace(/~/g, ' ');
 		coping.appendChild(ele);
 
 		var tot = mechs[key].total;

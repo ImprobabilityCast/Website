@@ -36,14 +36,19 @@
 	<!-- trigger : b4: after: like coping mechs maybe? -->
 </div>
 <div class="d-flex flex-wrap justify-content-around">
-	<div>
+	<div class="container">
 		<h5>Suicide</h5>
-		<canvas id="suicide" width="300" height="300"></canvas>
+		<div>
+			<canvas id="suicide" width="300" height="300"></canvas>
+			<h6>Suicidal steps</h6>
+			<div id="suicide-text"></div>
+		</div>
+		<br>
 		<h5>Self harm</h5>
 		<h5>Depression</h5>
 		<canvas id="depression" width="300" height="300"></canvas>
 	</div>
-	<div>
+	<div class="container">
 		<h5>Anxiety</h5>
 		<canvas id="anxiety" width="300" height="300"></canvas>
 		<h5>Fogginess</h5>
@@ -51,7 +56,7 @@
 		<canvas id="fogRadio" width="300" height="300"></canvas>
 		<h5>Anger</h5>
 	</div>
-	<div>
+	<div class="container">
 		<h5>Eating</h5>
 		<canvas id="food" width="300" height="300"></canvas>
 		<h5>Sleep</h5>
@@ -70,6 +75,7 @@ have a link to new tab if multiple days, otherwise just put it there. :D
 <script src="/bootstrap/js/bootstrap.min.js"></script>
 <script src="/js/chart.bundle.min.js"></script>
 <script src="graphs.js"></script>
+<script src="text.js"></script>
 <script src="history.js"></script>
 </body>
 </html>

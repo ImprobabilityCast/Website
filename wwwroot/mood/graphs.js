@@ -1,5 +1,5 @@
 var graphs = (function () {
-	var obj = {};
+	let obj = {};
 	var graphColors = ['#26c5d375', '#266ed375',
 		'#26d38b75', '#4f0be275'];
 	var boolColors = ['#26c5d3', '#266ed3',
@@ -17,7 +17,7 @@ var graphs = (function () {
 			['speed of comprehension']);
 		cols = ['forget', 'slurr'];
 		let fogRadio = transformData(data.fog, cols,
-			['times forgotten what thing while doing the thing', 'speech slurrs']);
+			['forgotten what thing while doing thing', 'speech slurrs']);
 		cols = ['after_wake', 'between_food', 'protein_veggie'];
 		let food = transformData(data.food, cols,
 			['time between getting up and eating',
@@ -60,8 +60,8 @@ var graphs = (function () {
 	}
 
 	function transformData(rawData, cols, labels = []) {
-		var out = [];
-		var colorIdx = 0;
+		let out = [];
+		let colorIdx = 0;
 		for (let idx = 0; idx < cols.length; idx++) {
 			let col = cols[idx];
 			let set = {
@@ -279,7 +279,7 @@ var graphs = (function () {
 		datasets[last].backgroundColor = boolColors[last];
 		datasets[last].borderColor = boolColors[last];
 
-		var options = [ optFirst,
+		let options = [ optFirst,
 			getBoolOptions(datasets[last].yAxisID)
 		];
 		drawChart(datasets, ctx, options);

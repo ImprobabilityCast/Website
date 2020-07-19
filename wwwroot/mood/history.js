@@ -1,6 +1,6 @@
 var page = (function () {
-    var obj = {};
-	var requestID = -1;
+    let obj = {};
+	let requestID = -1;
 
 	$("#start-date").val(
 		// past week
@@ -50,22 +50,22 @@ function tenIfZero(num1, num2) {
 }
 
 function showMechData(mechs) {
-	var coping  = document.getElementById('coping');
+	let coping  = document.getElementById('coping');
 	while (coping.childElementCount > 2) {
 		coping.removeChild(coping.lastChild);
 	}
 	
-	for (var key in mechs) {
-		var ele = document.createElement("div");
+	for (let key in mechs) {
+		let ele = document.createElement("div");
 		ele.classList.add("row");
 		ele.classList.add("mt-2");
 		ele.innerText = key.replace(/~/g, ' ');
 		coping.appendChild(ele);
 
-		var tot = mechs[key].total;
-		var helpfulWidth = mechs[key].helpful  * 100.0 / tot;
-		var unhelpfulWidth = 100 - helpfulWidth;
-		var arr = tenIfZero(helpfulWidth, unhelpfulWidth);
+		let tot = mechs[key].total;
+		let helpfulWidth = mechs[key].helpful  * 100.0 / tot;
+		let unhelpfulWidth = 100 - helpfulWidth;
+		let arr = tenIfZero(helpfulWidth, unhelpfulWidth);
 		helpfulWidth = arr[0];
 		unhelpfulWidth = arr[1];
 

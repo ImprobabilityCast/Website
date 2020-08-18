@@ -34,6 +34,11 @@ require_once 'login_check.php'; ?>
 	</div>
 </div>
 <div>
+	<h5>Mood</h5>
+	<div id="mood-text"></div>
+	<br>
+</div>
+<div>
 	<h5>Significant mood swings</h5>
 	<div id="swing-text"></div>
 	<br>

@@ -3,6 +3,10 @@
 $IP = 'localhost';
 $lorem = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
 
+function randomVeryShort($lorem) {
+	return substr($lorem, rand(0, strlen($lorem) - 20), 20);
+}
+
 function randomShort($lorem) {
 	return substr($lorem, rand(0, strlen($lorem) - 100), 100);
 }
@@ -52,8 +56,8 @@ function createPostArray($mechs) {
 		'food-hidden' => '1',
 		'sleep-hidden' => '1',
 		'people-hidden' => '1',
-		'mood-overall' => randomShort($lorem),
-		'mood-secondary' => randomShort($lorem),
+		'mood-overall' => randomVeryShort($lorem),
+		'mood-secondary' => randomVeryShort($lorem),
 		'suicidal-thoughts' => randomRating(3),
 		'suicidal-urges' => randomRating(3),
 		'suicidal-steps' => randomLong($lorem),

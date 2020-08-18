@@ -123,6 +123,7 @@ var text = (function () {
         insertText($('#sleep-text')[0], trans.sleep);
         insertText($('#people-text')[0], trans.people);
         insertText($('#notes-text')[0], trans.notes);
+        insertText($('#mood-text')[0], trans.basic_mood);
     }
 
     return obj;

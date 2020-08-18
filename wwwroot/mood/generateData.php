@@ -1,6 +1,7 @@
 <?php
 
 $IP = 'localhost';
+$lorem = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
 
 function randomShort($lorem) {
 	return substr($lorem, rand(0, strlen($lorem) - 100), 100);
@@ -39,7 +40,7 @@ function randomEvening() {
 }
 
 function createPostArray($mechs) {
-	$lorem = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
+	global $lorem;
 	
 	$post = array(
 		'suicide-hidden' => '1',
@@ -151,6 +152,23 @@ function generateMechs($ch) {
 	return $mechs;
 }
 
+function generateSwingArray() {
+	global $lorem;
+	return array(
+		'mood-trigger' => randomShort($lorem),
+		'mood-before' => randomRating(100),
+		'mood-after' => randomRating(100)
+	);
+}
+
+function postSwings($ch) {
+	$url = '/mood/swing_action.php';
+	$data_str = http_build_query(generateSwingArray());
+	$options = createOptions($url, $data_str);
+	curl_setopt_array($ch, $options);
+	curl_exec($ch);
+}
+
 $ch = curl_init();
 $mechs = generateMechs($ch);
 login($ch);
@@ -159,6 +177,7 @@ $num = (count($argv) == 2 && is_numeric($argv[1])) ? $argv[1] : 1;
 
 while ($num > 0) {
 	postData($ch, $mechs);
+	postSwings($ch);
 	echo 'taking a short break...';
 	sleep(3);
 	$num -= 1;

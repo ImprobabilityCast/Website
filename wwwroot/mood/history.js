@@ -26,6 +26,7 @@ var page = (function () {
 				console.log(data);
 				graphs.buildGraphs(data);
 				text.addText(data);
+				addSwingLines(data.swings, $('#swing-text')[0]);
 				showMechData(data.mechs);
 			}
 		};
@@ -50,10 +51,8 @@ function tenIfZero(num1, num2) {
 }
 
 function showMechData(mechs) {
-	let coping  = document.getElementById('coping');
-	while (coping.childElementCount > 2) {
-		coping.removeChild(coping.lastChild);
-	}
+	let coping = document.getElementById('coping');
+	trimChildren(coping);
 	
 	for (let key in mechs) {
 		let ele = document.createElement("div");
@@ -69,18 +68,66 @@ function showMechData(mechs) {
 		helpfulWidth = arr[0];
 		unhelpfulWidth = arr[1];
 
-		ele = document.createElement('div');
-		ele.classList.add('row');
-		ele.innerHTML = '<div class="bg-primary text-center text-white'
-		+   ' pt-1 pb-1 width-' +  helpfulWidth
-		+   '" style="width:' + helpfulWidth + '%">'
-		+	   mechs[key].helpful + '</div>'
-		+ '<div class="bg-secondary text-center text-white'
-		+   ' pt-1 pb-1 width-' + unhelpfulWidth
-		+   '" style="width:' + unhelpfulWidth + '%">'
-		+	   (tot - mechs[key].helpful) + '</div>';
+		ele = makeLines(mechs[key].helpful, tot, true);
 		coping.appendChild(ele);
 	}
+}
+
+function trimChildren(dest) {
+	while (dest.childElementCount > 2) {
+		dest.removeChild(dest.lastChild);
+	}
+}
+
+function addSwingLines(data, destination) {
+	trimChildren(destination);
+	
+	for (let row of data) {
+		let thingToAdd = text.createText(new Date(row['stamp']).toLocaleDateString(), false);
+		let hiddenBox = thingToAdd.children[1];
+		let ele = document.createElement("h6");
+		ele.innerText = "Trigger";
+		ele.classList.add("font-weight-bold");
+		hiddenBox.appendChild(ele);
+		ele = document.createElement("div");
+		ele.innerText = row['swing_trigger'];
+		hiddenBox.appendChild(ele);
+
+		ele = document.createElement("span");
+		ele.innerText = "Mood Before:";
+		hiddenBox.appendChild(ele);
+		ele = makeLines(row['mood_before'], 100);
+		hiddenBox.appendChild(ele);
+
+		ele = document.createElement("span");
+		ele.innerText = "Mood After:";
+		hiddenBox.appendChild(ele);
+		ele = makeLines(row['mood_after'], 100);
+		hiddenBox.appendChild(ele);
+		destination.appendChild(thingToAdd);
+	}
+}
+
+function makeLines(helpful, total, showNumbers = false) {
+	let helpfulWidth = helpful  * 100.0 / total;
+	let unhelpfulWidth = 100 - helpfulWidth;
+	let arr = tenIfZero(helpfulWidth, unhelpfulWidth);
+	helpfulWidth = arr[0];
+	unhelpfulWidth = arr[1];
+
+	let ele = document.createElement('div');
+	ele.classList.add('row');
+	ele.innerHTML = '<div class="bg-primary text-center text-white'
+	+   ' pt-1 pb-1 width-' +  helpfulWidth
+	+   '" style="width:' + helpfulWidth + '%"></div>'
+	+	'<div class="bg-secondary text-center text-white'
+	+   ' pt-1 pb-1 width-' + unhelpfulWidth
+	+   '" style="width:' + unhelpfulWidth + '%"></div>';
+	if (showNumbers) {
+		ele.children[0].innerText = helpful;
+		ele.children[1].innerText = total - helpful;
+	}
+	return ele;
 }
 
 window.onload = page.getData;

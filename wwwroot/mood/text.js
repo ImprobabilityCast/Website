@@ -1,7 +1,7 @@
 var text = (function () {
     let obj = {};
 
-    function createText(stamp, html) {
+    obj.createText = function (stamp, html) {
         let id = 'a' + (Math.random() + stamp).replace(/[^0-9]/g, '_');
 
         let link = document.createElement('a');
@@ -16,8 +16,10 @@ var text = (function () {
         hidden.classList.add("collapse");
         hidden.classList.add("pt-2")
         hidden.setAttribute("id", id);
-        hidden.appendChild(html);
-
+        if (html) {
+            hidden.appendChild(html);
+        }
+        
         let container = document.createElement("div");
         container.classList.add("text-card");
         container.classList.add("border");
@@ -29,7 +31,7 @@ var text = (function () {
     function insertText(parent, dataset) {
         parent.innerHTML = "";
         for (let entry of dataset) {
-            let html = createText(entry.stamp, entry.html);
+            let html = obj.createText(new Date(entry.stamp).toLocaleDateString(), entry.html);
             parent.appendChild(html);
         }
     }

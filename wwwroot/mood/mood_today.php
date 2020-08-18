@@ -1,3 +1,5 @@
+<?php session_start();
+require_once 'login_check.php'; ?>
 <!DOCTYPE html>
 <html lang="en-US">
 <meta charset="utf-8" />

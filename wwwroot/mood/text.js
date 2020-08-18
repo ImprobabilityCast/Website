@@ -19,7 +19,7 @@ var text = (function () {
         if (html) {
             hidden.appendChild(html);
         }
-        
+
         let container = document.createElement("div");
         container.classList.add("text-card");
         container.classList.add("border");
@@ -31,7 +31,7 @@ var text = (function () {
     function insertText(parent, dataset) {
         parent.innerHTML = "";
         for (let entry of dataset) {
-            let html = obj.createText(new Date(entry.stamp).toLocaleDateString(), entry.html);
+            let html = obj.createText(new Date(entry.stamp).toLocaleString(), entry.html);
             parent.appendChild(html);
         }
     }

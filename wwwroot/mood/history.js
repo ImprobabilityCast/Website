@@ -83,7 +83,7 @@ function addSwingLines(data, destination) {
 	trimChildren(destination);
 	
 	for (let row of data) {
-		let thingToAdd = text.createText(new Date(row['stamp']).toLocaleDateString(), false);
+		let thingToAdd = text.createText(new Date(row['stamp']).toLocaleString(), false);
 		let hiddenBox = thingToAdd.children[1];
 		let ele = document.createElement("h6");
 		ele.innerText = "Trigger";

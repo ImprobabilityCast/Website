@@ -1,3 +1,5 @@
+<?php session_start();
+require_once 'login_check.php'; ?>
 <!DOCTYPE html>
 <html lang="en-US">
 <meta charset="utf-8" />
@@ -10,9 +12,9 @@
 	sleep with scale for #  hours of sleep: when fell sleep/when woke graph -->
 	
 	<ul class="nav navbar-nav">
-		<li><a href="mood_swing.html">Significant mood swing</a></li>
-		<li><a href="mood_today.html">Mood today</a></li>
-		<li><a href="history.html">History</a></li>
+		<li><a href="mood_swing.php">Significant mood swing</a></li>
+		<li><a href="mood_today.php">Mood today</a></li>
+		<li><a href="history.php">History</a></li>
 	</ul>
 	
 	<footer class="container">

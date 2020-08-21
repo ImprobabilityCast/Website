@@ -1,6 +1,7 @@
 <?php
 require_once 'mood_util.php';
 require_once 'post_check.php';
+require_once 'login_func.php';
 
 function normalize($str) {
 	return preg_replace('/\s/', ' ', strtoupper(trim($str)));
@@ -76,6 +77,9 @@ if (FALSE === $stmt->execute()) {
 	$stmt = null;
 	exit();
 }
+
+login($_POST['uname'], $_POST['pass1'], $dbh);
+
 $dbh = null;
 $stmt = null;
 

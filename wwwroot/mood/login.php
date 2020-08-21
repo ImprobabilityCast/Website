@@ -5,12 +5,13 @@ if (!empty($_SESSION['pwd_key'])) {
 	exit(0);
 }
 
-function exists_and_valid($key) {
-	return array_key_exists($key, $_GET)
-		&& '1' === $_GET[$key];
+function error_code() {
+	if (array_key_exists('error', $_GET)) {
+		return $_GET['error'];
+	} else {
+		return 0;
+	}
 }
-$wrong_pwd = exists_and_valid('wrong_pwd');
-$wrong_user = exists_and_valid('wrong_user');
 
 ?>
 
@@ -40,10 +41,10 @@ $wrong_user = exists_and_valid('wrong_user');
 				<label for="uname" class="col-sm-4 col-form-label">Username:</label>
 				<div class="col">
 					<input type="text" name="uname" class="form-control <?php
-							if ($wrong_user) { echo ' is-invalid'; } ?>"
+							if (error_code() == 2) { echo ' is-invalid'; } ?>"
 						placeholder="Username">
 					<div class="invalid-feedback"
-						<?php if ($wrong_user) { echo ' style="display: block;"'; } ?>>
+						<?php if (error_code() == 2) { echo ' style="display: block;"'; } ?>>
 						User does not exist
 					</div>
 				</div>
@@ -52,10 +53,10 @@ $wrong_user = exists_and_valid('wrong_user');
 				<label for="password" class="col-sm-4 col-form-label">Password:</label>
 				<div class="col">
 					<input type="password" name="password" class="form-control <?php
-							if ($wrong_pwd) { echo ' is-invalid'; } ?>"
+							if (error_code() == 1) { echo ' is-invalid'; } ?>"
 						oninput="checkPasswordsMatch()">
 					<div class="invalid-feedback"
-						<?php if ($wrong_pwd) { echo ' style="display: block;"'; } ?>>
+						<?php if (error_code() == 1) { echo ' style="display: block;"'; } ?>>
 						Incorrect password
 					</div>
 				</div>
@@ -67,10 +68,12 @@ $wrong_user = exists_and_valid('wrong_user');
 		</div>
 	</form>
 	
-	<footer>
+	<footer class="mb-3">
 		<hr />
 		<nav class="nav nav-justified">
-			<a class="nav-link nav-item" href="https://www.youtube.com/watch?v=dQw4w9WgXcQ">Tech Support</a>
+			<a href="signup.html" class="nav-item nav-link p-3 font-weight-bold">
+				Sign up
+			</a>
 		</nav>
 	</footer>
 </body>

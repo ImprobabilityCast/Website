@@ -30,9 +30,11 @@ require_once 'login_check.php'; ?>
 	<footer class="mb-3">
 		<hr />
 		<nav class="nav nav-justified">
-			<button type="button" class="btn btn-primary nav-item nav-link p-3 font-weight-bold" href="logout.php">
-				Logout
-			</button>
+			<a href="logout.php" class="nav-item nav-link">
+				<button type="button" class="btn btn-primary p-3 font-weight-bold w-100">
+					Logout
+				</button>
+			</a>
 		</nav>
 	</footer>
 </body>

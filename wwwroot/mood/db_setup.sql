@@ -160,7 +160,7 @@ CREATE TABLE mood.notes (
 
 CREATE USER 'php'@'localhost'
 	IDENTIFIED BY 'bcsdhj%^763SVOW+p2#S';
-GRANT SELECT, INSERT ON mood.* TO 'php'@'localhost';
+GRANT SELECT, INSERT, UPDATE ON mood.* TO 'php'@'localhost';
 
 INSERT INTO mood.users (nonce, salt, recovery_dkey, pwd_dkey, pwd_hash, uname, sec_q_1, sec_q_2, sec_a_hash) VALUES (
 	'18ff036c5549c9138acaa67a04e90cc3f70e620fca3cf9c6',

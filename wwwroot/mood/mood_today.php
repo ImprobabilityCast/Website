@@ -7,6 +7,7 @@ require_once 'login_check.php'; ?>
 
 <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css" />
 <link rel="stylesheet" href="form.css" />
+<title>Mood Today</title>
 
 <body class="container">
 	<header class="nav nav-justified">
@@ -29,13 +30,14 @@ require_once 'login_check.php'; ?>
 			<div class="form-group">
 				<label for="newMechName">Coping mechanisms:</label>
 				<div class="input-group">
-					<input type="text" class="form-control" id="newMechName" placeholder="Add a coping mechanism" onkeypress="addMechOnEnter(event)">
+					<input type="text" class="form-control" id="newMechName"
+						placeholder="Add a coping mechanism" onkeypress="addMechOnEnter(event, addMechLineHTML)">
 					<div class="input-group-append">
-						<button type="button" class="btn btn-primary btn-plus" onclick="addMechButton()">&nbsp;&nbsp;&nbsp;+&nbsp;&nbsp;&nbsp;</button>
+						<button type="button" class="btn btn-primary btn-plus"
+							onclick="addMechButton(addMech)">&nbsp;&nbsp;&nbsp;+&nbsp;&nbsp;&nbsp;</button>
 					</div>
-					<div class="invalid-feedback">
-						Coping mechanism can't be empty.
-					</div>
+					<div class="invalid-feedback"></div>
+					<a class="mt-3" href="mechanismMan.php">Remove a coping mechanism</a>
 				</div>
 			</div>
 			<div class="form-group" id="coping"></div>
@@ -438,7 +440,20 @@ require_once 'login_check.php'; ?>
 	<script src="/bootstrap/js/bootstrap.min.js"></script>
 
 	<script src="util.js"></script>
+	<script src="mechanismMan.js"></script>
 	<script src="formTricks.js"></script>
 	<script src="mood_validation.js"></script>
+	<script>
+	window.addEventListener('load', function () {
+		// https://stackoverflow.com/a/15105717/8335309
+		if (typeof $ === 'function') {
+			let inputs = $("input[type=radio]");
+			for (let input of inputs) {
+				input.addEventListener("click", dummyToggleRadio);
+			}
+		}
+		getMech(addMech);
+	});
+	</script>
 </body>
 </html>

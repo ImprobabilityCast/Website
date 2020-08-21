@@ -12,7 +12,7 @@ require_once 'login_check.php';
 <link rel="stylesheet" href="hoverTweaks.css" />
 <title>Coping Mechanisms</title>
 
-<body class="container">
+<body class="p-3">
 	<?php require_once 'mood_nav.html'; ?>
     <h3>Coping Mechanisms</h2>
     <br>

@@ -64,5 +64,8 @@ require_once 'login_check.php'; ?>
 			<input type="submit" id="btn-submit" class="btn btn-primary align-self-end col-sm-3" value="Submit">
 		</div>
 	</form>
+	<script src="/js/jquery.min.js"></script>
+	<script src="/js/popper.min.js"></script>
+	<script src="/bootstrap/js/bootstrap.min.js"></script>
 </body>
 </html>

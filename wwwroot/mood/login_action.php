@@ -20,6 +20,7 @@ if ($creds->rowCount() === 1) {
 			SODIUM_CRYPTO_PWHASH_SCRYPTSALSA208SHA256_OPSLIMIT_INTERACTIVE,
 			SODIUM_CRYPTO_PWHASH_SCRYPTSALSA208SHA256_MEMLIMIT_INTERACTIVE
 		);
+		session_regenerate_id (true);
 		$_SESSION['pwd_key'] = bin2hex($derived_pwd_key);
 		$_SESSION['id'] = $row['id'];
 		$_SESSION['uname'] = $uname;

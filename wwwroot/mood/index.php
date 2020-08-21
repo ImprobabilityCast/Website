@@ -6,16 +6,25 @@ require_once 'login_check.php'; ?>
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
 <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css" />
+<link rel="stylesheet" href="hoverTweaks.css" />
+<title>Home</title>
 
 <body class="container">
 	<!--	only need graphs for the scales
 	sleep with scale for #  hours of sleep: when fell sleep/when woke graph -->
-	
-	<ul class="nav navbar-nav">
-		<li><a href="mood_swing.php">Significant mood swing</a></li>
-		<li><a href="mood_today.php">Mood today</a></li>
-		<li><a href="history.php">History</a></li>
-	</ul>
+	<header class="container">
+		<nav class="nav nav-justified">
+			<a class="nav-link nav-item disabled" href="/mood/">Home</a>
+		</nav>
+		<hr />
+	</header>
+
+	<div class="nav navbar-nav">
+		<a href="mood_swing.php" class="nav-item nav-link text-center hover-grey">Mood swing</a>
+		<a href="mood_today.php" class="nav-item nav-link text-center hover-grey">Mood today</a>
+		<a href="history.php" class="nav-item nav-link text-center hover-grey">History</a>
+		<a href="mechanismMan.php" class="nav-item nav-link text-center hover-grey">Coping mechanisms</a>
+	</div>
 	
 	<footer class="container">
 		<hr />

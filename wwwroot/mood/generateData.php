@@ -1,5 +1,11 @@
 <?php
 
+if (PHP_SAPI !== 'cli') {
+	http_response_code(404);
+	echo file_get_contents($_SERVER['DOCUMENT_ROOT'] . '/meta-pages/404.html');
+	exit(0);
+}
+
 $IP = 'localhost';
 $lorem = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
 

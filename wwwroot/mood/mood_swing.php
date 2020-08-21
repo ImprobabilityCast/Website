@@ -7,13 +7,10 @@ require_once 'login_check.php'; ?>
 
 <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css" />
 <link rel="stylesheet" href="form.css" />
+<title>Mood Swing</title>
 
 <body class="container">
-	<header class="nav nav-justified">
-		<a href="/mood/" class="nav-link nav-item">Home</a>
-	</header>
-	
-	<hr />
+	<?php require_once 'mood_nav.html'; ?>
 	
 	<form id="depressing-form" autocomplete="off" method="post"
 			action="swing_action.php">

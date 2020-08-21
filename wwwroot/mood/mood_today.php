@@ -10,11 +10,7 @@ require_once 'login_check.php'; ?>
 <title>Mood Today</title>
 
 <body class="container">
-	<header class="nav nav-justified">
-		<a href="/mood/" class="nav-link nav-item">Home</a>
-	</header>
-	
-	<hr />
+	<?php require_once 'mood_nav.html'; ?>
 	
 	<form id="depressing-form" autocomplete="off" method="post" action="mood_today_action.php"
 			onchange="saveInput(event)" onsubmit="setHiddenInputs(event)" >

@@ -1,7 +1,11 @@
 .hover-grey:hover {
-    background-color: lightgrey;
+    background-color: #eee;
 }
 
 .hover-grey {
     background-color: white;
+}
+
+body {
+    max-width: 512pt;
 }

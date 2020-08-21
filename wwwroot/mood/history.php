@@ -7,26 +7,29 @@ require_once 'login_check.php'; ?>
 
 <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css" />
 <link rel="stylesheet" href="./history.css" />
+<title>Mood Log</title>
 
 <body class="container">
-<nav class="nav row">
-	<div class="nav-item input-group" oninput="page.getData()">
-		<label class=" input-group-prepend input-group-text col-5" for="start-date">
+<?php require_once 'mood_nav.html'; ?>
+
+<div class="row skinny">
+	<div class="input-group" oninput="page.getData()">
+		<label class="input-group-prepend input-group-text col" for="start-date">
 			Starting Date:
 		</label>
-		<input type="date" id="start-date" class="form-control col-7">
+		<input type="date" id="start-date" class="form-control col">
 	</div>
-	<div class="nav-item input-group" oninput="page.getData()">
-		<label class="input-group-prepend input-group-text col-5" for="start-date">
+	<div class="input-group" oninput="page.getData()">
+		<label class="input-group-prepend input-group-text col" for="start-date">
 			Ending Date:
 		</label>
-		<input type="date" id="end-date" class="form-control col-7">
+		<input type="date" id="end-date" class="form-control col">
 	</div>
-</nav>
+</div>
 
 <!-- word cloud for overall/secondary mood, but only if there's more than one entry-->
 
-<div id="coping">
+<div id="coping" class="skinny">
 	<h5>Coping mechanisms used</h5>
 	<div class="row">
 		<div class="col-sm bg-primary text-center text-white pt-1 pb-1 w-50">Helpful</div>

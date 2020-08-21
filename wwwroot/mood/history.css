@@ -2,11 +2,6 @@ div.width-0 {
     display: none;
 }
 
-#coping {
-    max-width: 256pt;
-    margin: 8pt;
-}
-
 .hide-overflow {
     overflow: hidden;
 }
@@ -29,4 +24,9 @@ canvas {
 .row {
     margin-left: 0;
     margin-right: 0;
+}
+
+.skinny {
+    max-width: 256pt;
+    margin: 8pt;
 }

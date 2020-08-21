@@ -1,7 +1,6 @@
 <?php
 session_start();
 require_once 'login_check.php';
- # need nav here to get back to mood today
 ?>
 <!DOCTYPE html>
 <html lang="en-US">
@@ -10,10 +9,11 @@ require_once 'login_check.php';
 
 <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css" />
 <link rel="stylesheet" href="form.css" />
-<link rel="stylesheet" href="mechanismMan.css" />
+<link rel="stylesheet" href="hoverTweaks.css" />
 <title>Coping Mechanisms</title>
 
 <body class="container">
+	<?php require_once 'mood_nav.html'; ?>
     <h3>Coping Mechanisms</h2>
     <br>
     <div class="input-group">

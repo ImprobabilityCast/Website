@@ -47,7 +47,7 @@ require_once 'login_check.php'; ?>
 	<br>
 </div>
 <div class="row">
-	<div class="col">
+	<div class="col p-0">
 		<h5>Suicide</h5>
 		<canvas id="suicide" width="300" height="300"></canvas>
 		<h6>Suicidal steps</h6>
@@ -61,7 +61,7 @@ require_once 'login_check.php'; ?>
 		<h5>Depression</h5>
 		<canvas id="depression" width="300" height="300"></canvas>
 	</div>
-	<div class="col">
+	<div class="col p-0">
 		<h5>Anxiety</h5>
 		<canvas id="anxiety" width="300" height="300"></canvas>
 		<h6>Felt Where</h6>
@@ -75,7 +75,7 @@ require_once 'login_check.php'; ?>
 		<div id="anger-text"></div>
 		<br>
 	</div>
-	<div class="col">
+	<div class="col p-0">
 		<h5>Eating</h5>
 		<canvas id="food" width="300" height="300"></canvas>
 		<h5>Sleep</h5>

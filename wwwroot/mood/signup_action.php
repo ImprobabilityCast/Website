@@ -61,15 +61,23 @@ $sql = 'INSERT INTO mood.users
 		uname, sec_q_1, sec_q_2, sec_a_hash)
 		VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?);';
 $stmt = $dbh->prepare($sql);
-$stmt->bindParam(1, bin2hex($nonce));
-$stmt->bindParam(2, bin2hex($salt));
-$stmt->bindParam(3, bin2hex($recovery_key));
-$stmt->bindParam(4, bin2hex($pwd_key));
-$stmt->bindParam(5, password_hash($_POST['pass1'], PASSWORD_BCRYPT));
+
+$nonce = bin2hex($nonce);
+$salt = bin2hex($salt);
+$recovery_key = bin2hex($recovery_key);
+$pwd_key = bin2hex($pwd_key);
+$pass_hash = password_hash($_POST['pass1'], PASSWORD_BCRYPT);
+$backup_pwd_hash = password_hash($backup_pwd, PASSWORD_BCRYPT);
+
+$stmt->bindParam(1, $nonce);
+$stmt->bindParam(2, $salt);
+$stmt->bindParam(3, $recovery_key);
+$stmt->bindParam(4, $pwd_key);
+$stmt->bindParam(5, $pass_hash);
 $stmt->bindParam(6, $_POST['uname']);
 $stmt->bindParam(7, $_POST['sec-q-1']);
 $stmt->bindParam(8, $_POST['sec-q-2']);
-$stmt->bindParam(9, password_hash($backup_pwd, PASSWORD_BCRYPT));
+$stmt->bindParam(9, $backup_pwd_hash);
 
 if (FALSE === $stmt->execute()) {
 	error_log("could not create new user: " . $_POST['uname']);
@@ -78,6 +86,7 @@ if (FALSE === $stmt->execute()) {
 	exit();
 }
 
+session_start();
 login($_POST['uname'], $_POST['pass1'], $dbh);
 
 $dbh = null;
@@ -87,6 +96,7 @@ $stmt = null;
 
 <html>
 <body>
+<div><a href="/mood/">Redirecting...</a></div>
 <script>
 (function () {
 	var removeIDs = [

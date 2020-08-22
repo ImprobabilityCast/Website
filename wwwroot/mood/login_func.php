@@ -1,5 +1,4 @@
 <?php
-session_start();
 require_once 'mood_util.php';
 
 function login($raw_uname, $raw_pwd, $dbh = null) {

@@ -53,8 +53,7 @@ function error_code() {
 				<label for="password" class="col-sm-4 col-form-label">Password:</label>
 				<div class="col">
 					<input type="password" name="password" class="form-control <?php
-							if (error_code() == 1) { echo ' is-invalid'; } ?>"
-						oninput="checkPasswordsMatch()">
+							if (error_code() == 1) { echo ' is-invalid'; } ?>">
 					<div class="invalid-feedback"
 						<?php if (error_code() == 1) { echo ' style="display: block;"'; } ?>>
 						Incorrect password

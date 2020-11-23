@@ -26,7 +26,7 @@
 		var msg = document.createElement('span');
 		var list = document.createElement('ul');
 		var display = document.getElementById('pwd-needs');
-		const pwdLen = 16;
+		const pwdLen = 10;
 		msg.innerText = 'Good password!';
 
 		if (null === pwd.match(/([a-z]+.*[A-Z]+)|([A-Z]+.*[a-z]+)/)) {

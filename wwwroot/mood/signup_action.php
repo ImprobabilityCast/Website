@@ -10,7 +10,7 @@ function normalize($str) {
 // validation
 
 // check password requirements
-if (strlen($_POST['pass1']) < 16
+if (strlen($_POST['pass1']) < 10
 		|| FALSE === preg_match('/[a-z]+/i', $_POST['pass1'])
 		|| FALSE === preg_match('/[0-9]+/', $_POST['pass1'])
 		|| FALSE === preg_match('/[~`\!@#\$%\^&\*\(\)_\+\{\}\|"<>\?\-\=\[\];\',\.]+/',

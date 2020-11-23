@@ -7,6 +7,7 @@ require_once 'login_check.php'; ?>
 
 <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css" />
 <link rel="stylesheet" href="form.css" />
+<link rel="stylesheet" href="mood_today.css" />
 <title>Mood Today</title>
 
 <body class="container">
@@ -422,8 +423,8 @@ require_once 'login_check.php'; ?>
 			<textarea class="form-control" id="note" name="note" rows="5"></textarea>
 		</div>
 		
-		<div class="form-row">
-			<input type="submit" id="btn-submit" class="btn btn-primary align-self-end col-sm-3" value="Submit">
+		<div class="submit-container d-flex justify-content-around">
+			<input type="submit" class="btn btn-primary col-sm-3" value="Submit">
 		</div>
 	</form>
 	

@@ -58,8 +58,7 @@ class User {
 }
 
 class DBQueryHelper {
-	public $timestamp;
-	
+	private $timestamp;
 	private $user;
 	private $dbh;
 	
@@ -67,6 +66,16 @@ class DBQueryHelper {
 		$this->user = $user;
 		$this->dbh = $dbh;
 		$this->timestamp = gmdate('\'Y-m-d H:i:s\'', time());
+	}
+
+	public function get_timestamp() {
+		return $this->timestamp;
+	}
+
+	public function swap_timestamp($stamp) {
+		$old = $this->timestamp;
+		$this->timestamp = $stamp;
+		return $old;
 	}
 	
 	public function insert_data(string $table, string ...$values) {

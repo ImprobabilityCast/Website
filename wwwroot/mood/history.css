@@ -28,4 +28,6 @@ canvas {
 
 .skinny {
     max-width: 256pt;
+	padding-top: 8pt;
+	padding-bottom: 8pt;
 }

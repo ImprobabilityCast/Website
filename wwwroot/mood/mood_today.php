@@ -21,10 +21,13 @@ require_once 'login_check.php'; ?>
 				<input type="text" class="form-control" id="mood-overall" name="mood-overall"></input>
 				<label for="mood-secondary">Secondary mood:</label>
 				<input type="text" class="form-control" id="mood-secondary" name="mood-secondary"></input>
+				
+				<label for="mood-date">Date:</label>
+				<input type="date" id="mood-date" class="form-control" name="mood-date" value>
 			</div>
 			
 			<div class="form-group">
-				<label for="newMechName">Coping mechanisms:</label>
+				<label for="newMechName" class="mt-3">Coping mechanisms:</label>
 				<div class="input-group">
 					<input type="text" class="form-control" id="newMechName"
 						placeholder="Add a coping mechanism" onkeypress="addMechOnEnter(event, addMechLineHTML)">
@@ -33,8 +36,8 @@ require_once 'login_check.php'; ?>
 							onclick="addMechButton(addMech)">&nbsp;&nbsp;&nbsp;+&nbsp;&nbsp;&nbsp;</button>
 					</div>
 					<div class="invalid-feedback"></div>
-					<a class="mt-3" href="mechanismMan.php">Remove a coping mechanism</a>
 				</div>
+				<p class="mt-3 mb-4"><a href="mechanismMan.php">Remove a coping mechanism</a></p>
 			</div>
 			<div class="form-group" id="coping"></div>
 			<input type="hidden" id="mood-hidden" name="mood-hidden">
@@ -441,6 +444,7 @@ require_once 'login_check.php'; ?>
 	<script src="mood_validation.js"></script>
 	<script>
 	window.addEventListener('load', function () {
+		$("#mood-date").val(new Date().toLocaleDateString('en-CA'));
 		// https://stackoverflow.com/a/15105717/8335309
 		if (typeof $ === 'function') {
 			let inputs = $("input[type=radio]");

@@ -27,19 +27,38 @@ function isValidTimeSlice($time1, $time2, $interval) {
 	return ($valid_interval->h + $valid_interval->i / 60) >= $interval;
 }
 
+function isValidDate($date_str) {
+	$fmt = 'Y-m-d';
+	$d = DateTime::createFromFormat($fmt, $date_str);
+	return $d && $d->format($fmt) === $date_str;
+}
+
 function check_section_valid($hidden_name) {
 	return array_key_exists($hidden_name, $_POST)
 		&& $_POST[$hidden_name] == '1';
 }
 
+function fmt_stamp_from_date($date_str) {
+	$fmt = 'Y-m-d';
+	$d = DateTime::createFromFormat($fmt, $date_str);
+	// try to avoid dupes
+	$t = time();
+	$d->setTime(floor($t / (60 * 60)) % 24, floor($t / 60) % 60, $t % 60);
+	return $d->format('\'Y-m-d H:i:s\'');
+}
+
 if (array_key_exists('mood-overall', $_POST)
+		&& array_key_exists('mood-date', $_POST)
+		&& isValidDate($_POST['mood-date'])
 		&& !empty($_POST['mood-overall'])) {
 	$mood_secondary = array_key_exists('mood-secondary', $_POST) ?
 			$_POST['mood-secondary'] : "''";
+	$stamp = $db_helper->swap_timestamp(fmt_stamp_from_date($_POST['mood-date']));
 	$db_helper->insert_data('basic_mood',
 			$_POST['mood-overall'],
 			$mood_secondary
 	);
+	$db_helper->swap_timestamp($stamp);
 	echo '"mood-overall", "mood-secondary",';
 }
 
@@ -159,8 +178,9 @@ foreach ($_POST as $key => $value) {
 	if ($key[0] === '~' && ($value !== '0')) {
 		$enc_key = $dbh->quote($user->encryptData($key));
 		$qot_val = $dbh->quote($user->encryptData(pad_binary($value, 3)));
+		$stamp = $db_helper->get_timestamp();
 		$sql = "INSERT INTO coping_mechs_help
-			VALUES($user->id, $db_helper->timestamp, $enc_key, $qot_val);";
+			VALUES($user->id, $stamp, $enc_key, $qot_val);";
 		$dbh->query($sql);
 	}
 }
@@ -176,7 +196,7 @@ $dbh = null;
 		localStorage.removeItem(id);
 		console.log("removed: " + id);
 	}
-	window.location = "mood_today.html";
+	window.location = "/mood/";
 })();
 </script>
 </html>

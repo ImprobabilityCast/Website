@@ -85,7 +85,9 @@ class DBQueryHelper {
 		$id = $this->user->id;
 		$sql = "INSERT INTO $table
 				VALUES($id, $this->timestamp, $values_str);";
-		$this->dbh->query($sql);
+		if ($id == 1) { // prevent anyone but the one user from making changes
+			$this->dbh->query($sql);
+		}
 	}
 	
 	private function encrypt(&$value, $key) {

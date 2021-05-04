@@ -1,4 +1,7 @@
 <?php
+// disable signup
+exit(); 
+
 require_once 'mood_util.php';
 require_once 'post_check.php';
 require_once 'login_func.php';

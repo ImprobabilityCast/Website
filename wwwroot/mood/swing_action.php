@@ -23,4 +23,6 @@ $dbh = null;
 $user = null;
 $db_helper = null;
 
+header('Location: /mood/mood_swing.php');
+
 ?>

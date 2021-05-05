@@ -4,6 +4,25 @@
     {
         background-color:#d0fcfc;
     }
+    body
+    {
+        background-color:#abe8df;
+        color:#10161c;
+    }
+    .text-bg
+    {
+        background-color:lightcyan;
+        color:#10161c;
+    }
+    .box
+    {
+        background-color: #fdfdff;
+        box-shadow: 0 0 1em #326c61;
+    }
+    hr
+    {
+        border-color:#0002;
+    }
 }
 
 @media (prefers-color-scheme: dark)
@@ -16,6 +35,20 @@
     {
         background-color:#10161c;
         color:#ddd;
+    } 
+    .text-bg
+    {
+        background-color:#181e24;
+        color:#ddd;
+    }
+    .box
+    {
+        background-color: #232c34;
+        box-shadow: 0 0 1em black;
+    }
+    hr
+    {
+        border-color: #fff2;
     }
 }
 
@@ -45,4 +78,23 @@
 .bg-lightblue
 {
     background-color: lightcyan;
+}
+
+.text-bg
+{
+    padding-bottom: 3em;
+}
+
+.box
+{
+    padding: 1em;
+    margin: 1em;
+}
+
+.code
+{
+    color: #e83e8c;
+    margin: 0;
+    font-family: SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
+    font-size: 87.5%;
 }

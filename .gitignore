@@ -26,7 +26,6 @@ wwwroot/ConvertingwxString.html
 
 # Ignore pics
 *.jpg
-*.png
 *.ico
 *.gif
 

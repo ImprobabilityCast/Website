@@ -15,7 +15,7 @@
             <span class="navbar-toggler-icon"></span>
         </button>
         <label class="navbar-brand m-0 pr-3 pl-2">
-            <img src="futuristic_icon.png" alt="futuristic icon" width="40" height="40">
+            <img src="img/futuristic_icon.png" alt="futuristic icon" width="40" height="40">
         </label>
         <div class="navbar-collapse collapse" id="navCollapse">
             <div class="navbar-nav">
@@ -32,39 +32,51 @@
                     <a class="nav-link p-3" href="#contact">Contact</a>
                 </label>
                 <label class="nav-item m-0">
-                    <a class="nav-link p-3" href="#experience">Experience</a>
-                </label>
-                <label class="nav-item m-0">
                     <a class="nav-link p-3" href="#funnies">Funnies</a>
                 </label>
             </div>
         </div>
     </header>
-    <div class="container hidden" id="home" data-info="content">
+    <div class="text-bg container hidden" id="home" data-info="content">
         <h2>Welcome</h2>
         <p>This is my website. I made it myself using Bootstrap and a bit of jQuery.
-            Of course, I also used ye olde HTML, CSS, & JavaScript. </p>
+            Of course, I also used ye olde HTML, CSS, & JavaScript. If you have a
+            better idea for a domain name, let me know. I'm kinda stuck with
+            this one at the moment.
+        </p>
     </div>
-    <div class="container hidden" id="about" data-info="content">
+    <div class="text-bg container hidden" id="about" data-info="content">
         <h2>About</h2>
         <p>My name is Isaac Smith.
             I'm a quiet person with an easy-going sense of humor.
-            I enjoy Photography and almost anything that requires some level creativity.
+            I enjoy Photography, Minecraft, and almost anything that requires some level creativity.
             I recently earned a degree in Computer Science from The Ohio State University
             and am currently looking for a job in software development.
         </p>
     </div>
-    <div class="container hidden" id="contact" data-info="content">
+    <div class="text-bg container hidden" id="contact" data-info="content">
         <h2>Contact</h2>
         <p>ismith152 at outlook dot com</p>
     </div>
-    <div class="container hidden" id="funnies" data-info="content">
+    <div class="text-bg container hidden" id="funnies" data-info="content">
         <h2>Funnies</h2>
+        <p>smh my head, you expected to find funny things here? You will be disappointed.</p>
+        <br>
+        <code>if null, then don't crash</code>
+        <hr>
+
+        <p class="code">x = 1</p>
+        <p class="code">while True:</p>
+        <p class="code">&nbsp;&nbsp;&nbsp;&nbsp;print("To infinity and beyond! We're getting close, on ", x, " now!")
+        </p>
+        <p class="code">&nbsp;&nbsp;&nbsp;&nbsp;x += 1</p>
+        <p class="text-right">- stolen from the <a href="https://wiki.python.org/moin/ForLoop">Python Wiki</a></p>
+        </p>
+        <hr>
+        <p><a href="https://tools.ietf.org/html/rfc2324">Hyper Text Coffee Pot Control Protocol (HTCPCP/1.0)</a></p>
+
     </div>
-    <div class="container hidden" id="experience" data-info="content">
-        <h2>Experience</h2>
-    </div>
-    <div class="container hidden" id="projects" data-info="content">
+    <div class="text-bg container hidden" id="projects" data-info="content">
         <h2>Projects</h2>
         <p>I've tried to describe my projects here in a way that someone who may not
             be 100% familiar with the topic could still somewhat understand most of them.
@@ -72,7 +84,7 @@
         </p>
         <br>
 
-        <div class="row mb-4">
+        <div class="row mb-4 box">
             <div class="col-md-7">
                 <iframe width="100%" height="315" src="https://www.youtube-nocookie.com/embed/2tBmfZFEAOY"
                     title="YouTube video player" frameborder="0"
@@ -86,16 +98,16 @@
                 We plan to polish the game for a bit longer, and then release it on itch.io.
             </div>
         </div>
-        <div class="row mb-4">
+        <div class="row mb-4 box">
             <div class="col-md-7">
-                <img src="mood.png" alt="mood tracker screenshot" width="100%">
+                <img src="img/mood.png" alt="mood tracker screenshot" width="100%">
             </div>
-            <div class="col-md-5">
+            <div class="col-md-5 ">
                 Mood Tracker (<a href="/mood/">Demo</a> |
                 <a href="https://github.com/ImprobabilityCast/Website/tree/master/wwwroot/mood">Source</a>)
                 - A web app I made for a friend who wanted a way to
                 record her mood and other medical things. I made it using PHP, MySQL, JavaScript,
-                Bootstrap, & Chart.js.
+                Bootstrap, Chart.js, & <a href="https://doc.libsodium.org/">libsodium</a>.
                 If you want to see what it looks like log in with username: <code>demo_user</code>
                 and password: <code>NhFQ6uSy9Znmxwz$</code>.
                 Note that new user creation is disabled because I did not implement any kind of
@@ -104,9 +116,9 @@
                 date range to include the week of May 5, 2021.
             </div>
         </div>
-        <div class="row mb-4">
+        <div class="row mb-4 box">
             <div class="col-md-7">
-                <img src="PwdAwManConsole.png" alt="pwdawman screenshot" width="100%">
+                <img src="img/PwdAwManConsole.png" alt="pwdawman screenshot" width="100%">
             </div>
             <div class="col-md-5">
                 PwdAwMan (<a href="https://github.com/ImprobabilityCast/PwdAwMan">Source</a>)
@@ -115,9 +127,9 @@
                 Written in Java.
             </div>
         </div>
-        <div class="row mb-4">
+        <div class="row mb-4 box">
             <div class="col-md-7">
-                <img src="pong.png" alt="pong screenshot" width="100%">
+                <img src="img/pong.png" alt="pong screenshot" width="100%">
             </div>
             <div class="col-md-5">
                 Pong (<a class="link" href="/pong/">Play</a> |
@@ -125,9 +137,9 @@
                 - Pong clone made using JavaScript.
             </div>
         </div>
-        <div class="row mb-4">
+        <div class="row mb-4 box">
             <div class="col-md-7">
-                <img src="rbtree.png" alt="red-black-tree" width="100%">
+                <img src="img/rbtree.png" alt="red-black-tree" width="100%">
             </div>
             <div class="col-md-5">
                 rbtree (<a href="https://github.com/ImprobabilityCast/rbtree">Source</a>)
@@ -138,9 +150,9 @@
                 <a href="https://en.wikipedia.org/wiki/Red–black_tree">Wikipedia</a>.
             </div>
         </div>
-        <div class="row mb-4">
+        <div class="row mb-4 box">
             <div class="col-md-7">
-                <img src="spider.png" alt="web spider screenshot" width="100%">
+                <img src="img/spider.png" alt="web spider screenshot" width="100%">
             </div>
             <div class="col-md-5">
                 SimpleSpider (<a href="https://github.com/ImprobabilityCast/SimpleSpider">Source</a>)
@@ -149,9 +161,9 @@
                 to only retrieve a secific portiion of the site. Written in Python.
             </div>
         </div>
-        <div class="row mb-4">
+        <div class="row mb-4 box">
             <div class="col-md-7">
-                <img src="mines.png" alt="minesweeper clone screenshot" width="100%">
+                <img src="img/mines.png" alt="minesweeper clone screenshot" width="100%">
             </div>
             <div class="col-md-5">
                 Mines (<a href="/mines/">Play</a> |
@@ -159,22 +171,23 @@
                 - Minesweeper clone made using JavaScript.
             </div>
         </div>
-        <div class="row mb-4">
+        <div class="row mb-4 box">
             <div class="col-md-7">
-
+                <img src="img/integrity.png" alt="integrity2gmail screenshot" width="100%">
             </div>
             <div class="col-md-5">
                 Integrity2gmail
                 (<a href="/ContactsConverter/">Web interface</a> |
-                <a href="https://github.com/ImprobabilityCast/Integrity2gmail">CGI source</a> |
+                <a href="https://github.com/ImprobabilityCast/Integrity2gmail">Converter source</a> |
                 <a href="https://github.com/ImprobabilityCast/Website/tree/master/wwwroot/ContactsConverter">
                     Web interface source</a>)
                 - Conversion program to translate one email service's contacts storage format to another's.
+                Made with JavaScript, PHP, <a href="https://curl.se/">cURL</a>, & C++.
             </div>
         </div>
-        <div class="row mb-4">
+        <div class="row mb-4 box">
             <div class="col-md-7">
-                <img src="backupSchool.png" alt="backup school screenshot" width="100%">
+                <img src="img/backupSchool.png" alt="backup school screenshot" width="100%">
             </div>
             <div class="col-md-5">
                 BackupSchool (<a href="https://github.com/ImprobabilityCast/BackupSchool">Source</a>)
@@ -183,9 +196,9 @@
                 GUI framework & C++.
             </div>
         </div>
-        <div class="row mb-4">
+        <div class="row mb-4 box">
             <div class="col-md-7">
-                <img src="wxsEditor.png" alt="wxsEditor screenshot" width="100%">
+                <img src="img/wxsEditor.png" alt="wxsEditor screenshot" width="100%">
             </div>
             <div class="col-md-5">
                 wxsEditor (<a href="https://github.com/ImprobabilityCast/wxsEditor">Source</a>)

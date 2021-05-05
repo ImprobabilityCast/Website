@@ -8,7 +8,7 @@ body {
     background-attachment: fixed;
     background-size: cover;
     background-repeat: no-repeat;
-    background-image: url(../images/pinkFlowers1.JPG);
+    background-image: url(/img/pinkFlowers1.JPG);
 }
 p , h3, h2 {
     padding: 20px;
@@ -16,7 +16,7 @@ p , h3, h2 {
     background-attachment: fixed;
     background-size: cover;
     background-repeat: no-repeat;
-    background-image: url(../images/blurryPinkFlowers1.JPG);
+    background-image: url(/img/blurryPinkFlowers1.JPG);
 }
 p {
     margin-top: 0;

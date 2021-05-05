@@ -13,20 +13,7 @@ wwwroot/Ancient Coding/
 # Ignore cookies file
 wwwroot/ContactsConverter/cookies.txt
 
-# Ignore downloaded documentation
-wwwroot/git-doc/
-wwwroot/grub.html
-wwwroot/libc/
-wwwroot/make.html_node/
-wwwroot/php-manual-en/
-wwwroot/thingsThatDontWork/libcurl/
-wwwroot/ruby-doc/
-wwwroot/syntax.html
-wwwroot/ConvertingwxString.html
-
 # Ignore pics
-*.jpg
-*.ico
 *.gif
 
 # Ignore vscode stuff

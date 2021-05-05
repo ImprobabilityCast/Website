@@ -98,3 +98,8 @@
     font-family: SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
     font-size: 87.5%;
 }
+
+.flower
+{
+    max-width: 200pt;
+}

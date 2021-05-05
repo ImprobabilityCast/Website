@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+<link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css" />
+<link rel="stylesheet" href="/css/index.css" />
+
+<title>Home</title>
+
+<body>
+    <header class="navbar navbar-expand-sm p-0 mb-3">
+        <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navCollapse"
+            aria-controls="navCollapse" aria-expanded="false" aria-label="Menu">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <label class="navbar-brand m-0 pr-3 pl-2">
+            <img src="futuristic_icon.png" alt="futuristic icon" width="40" height="40">
+        </label>
+        <div class="navbar-collapse collapse" id="navCollapse">
+            <div class="navbar-nav">
+                <label class="nav-item m-0">
+                    <a class="nav-link p-3" href="#home">Home</a>
+                </label>
+                <label class="nav-item m-0">
+                    <a class="nav-link p-3" href="#about">About</a>
+                </label>
+                <label class="nav-item m-0">
+                    <a class="nav-link p-3" href="#projects">Projects</a>
+                </label>
+                <label class="nav-item m-0">
+                    <a class="nav-link p-3" href="#contact">Contact</a>
+                </label>
+                <label class="nav-item m-0">
+                    <a class="nav-link p-3" href="#experience">Experience</a>
+                </label>
+                <label class="nav-item m-0">
+                    <a class="nav-link p-3" href="#funnies">Funnies</a>
+                </label>
+            </div>
+        </div>
+    </header>
+    <div class="container hidden" id="home" data-info="content">
+        <h2>Welcome</h2>
+        <p>This is my website. I made it myself using Bootstrap and a bit of jQuery.
+            Of course, I also used ye olde HTML, CSS, & JavaScript. </p>
+    </div>
+    <div class="container hidden" id="about" data-info="content">
+        <h2>About</h2>
+        <p>My name is Isaac Smith.
+            I'm a quiet person with an easy-going sense of humor.
+            I enjoy Photography and almost anything that requires some level creativity.
+            I recently earned a degree in Computer Science from The Ohio State University
+            and am currently looking for a job in software development.
+        </p>
+    </div>
+    <div class="container hidden" id="contact" data-info="content">
+        <h2>Contact</h2>
+        <p>ismith152 at outlook dot com</p>
+    </div>
+    <div class="container hidden" id="funnies" data-info="content">
+        <h2>Funnies</h2>
+    </div>
+    <div class="container hidden" id="experience" data-info="content">
+        <h2>Experience</h2>
+    </div>
+    <div class="container hidden" id="projects" data-info="content">
+        <h2>Projects</h2>
+        <p>I've tried to describe my projects here in a way that someone who may not
+            be 100% familiar with the topic could still somewhat understand most of them.
+            They are listed in rough chronological order, with the most recent at the top.
+        </p>
+        <br>
+
+        <div class="row mb-4">
+            <div class="col-md-7">
+                <iframe width="100%" height="315" src="https://www.youtube-nocookie.com/embed/2tBmfZFEAOY"
+                    title="YouTube video player" frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowfullscreen></iframe>
+            </div>
+            <div class="col-md-5">
+                <i>Untitled_Roguelike</i> - A game I made with five other people for my senior project.
+                I made all the levels and the dragon enemy, minus the sounds. I'm good at fixing problems so
+                I also helped my teammates fix bugs a lot. We made the game with the Unity engine & C#.
+                We plan to polish the game for a bit longer, and then release it on itch.io.
+            </div>
+        </div>
+        <div class="row mb-4">
+            <div class="col-md-7">
+                <img src="mood.png" alt="mood tracker screenshot" width="100%">
+            </div>
+            <div class="col-md-5">
+                Mood Tracker (<a href="/mood/">Demo</a> |
+                <a href="https://github.com/ImprobabilityCast/Website/tree/master/wwwroot/mood">Source</a>)
+                - A web app I made for a friend who wanted a way to
+                record her mood and other medical things. I made it using PHP, MySQL, JavaScript,
+                Bootstrap, & Chart.js.
+                If you want to see what it looks like log in with username: <code>demo_user</code>
+                and password: <code>NhFQ6uSy9Znmxwz$</code>.
+                Note that new user creation is disabled because I did not implement any kind of
+                spam protection. Nothing entered into the various forms will be saved for the same
+                reason. To see what the graphs look like when there's some data to display, set the
+                date range to include the week of May 5, 2021.
+            </div>
+        </div>
+        <div class="row mb-4">
+            <div class="col-md-7">
+                <img src="PwdAwManConsole.png" alt="pwdawman screenshot" width="100%">
+            </div>
+            <div class="col-md-5">
+                PwdAwMan (<a href="https://github.com/ImprobabilityCast/PwdAwMan">Source</a>)
+                - Woefully unsecure password manager. I made it more for the experience
+                than for serious use. I was in a Minecraft mood when I made it, hence the name.
+                Written in Java.
+            </div>
+        </div>
+        <div class="row mb-4">
+            <div class="col-md-7">
+                <img src="pong.png" alt="pong screenshot" width="100%">
+            </div>
+            <div class="col-md-5">
+                Pong (<a class="link" href="/pong/">Play</a> |
+                <a href="https://github.com/ImprobabilityCast/Website/tree/master/wwwroot/pong">Source</a>)
+                - Pong clone made using JavaScript.
+            </div>
+        </div>
+        <div class="row mb-4">
+            <div class="col-md-7">
+                <img src="rbtree.png" alt="red-black-tree" width="100%">
+            </div>
+            <div class="col-md-5">
+                rbtree (<a href="https://github.com/ImprobabilityCast/rbtree">Source</a>)
+                - A sorted data structure based on red-black-tree algorithmns.
+                This type of data structure re-organizes itself when an item
+                is added to it. This makes it very fast to check if an element
+                is in the data structure. Written in Rust. Image from
+                <a href="https://en.wikipedia.org/wiki/Red–black_tree">Wikipedia</a>.
+            </div>
+        </div>
+        <div class="row mb-4">
+            <div class="col-md-7">
+                <img src="spider.png" alt="web spider screenshot" width="100%">
+            </div>
+            <div class="col-md-5">
+                SimpleSpider (<a href="https://github.com/ImprobabilityCast/SimpleSpider">Source</a>)
+                - Similar to <a href="https://en.wikipedia.org/wiki/Wget">wget</a>
+                but way less developed. It downloads copies of websites, with the option
+                to only retrieve a secific portiion of the site. Written in Python.
+            </div>
+        </div>
+        <div class="row mb-4">
+            <div class="col-md-7">
+                <img src="mines.png" alt="minesweeper clone screenshot" width="100%">
+            </div>
+            <div class="col-md-5">
+                Mines (<a href="/mines/">Play</a> |
+                <a href="https://github.com/ImprobabilityCast/Website/tree/master/wwwroot/Mines">Source</a>)
+                - Minesweeper clone made using JavaScript.
+            </div>
+        </div>
+        <div class="row mb-4">
+            <div class="col-md-7">
+
+            </div>
+            <div class="col-md-5">
+                Integrity2gmail
+                (<a href="/ContactsConverter/">Web interface</a> |
+                <a href="https://github.com/ImprobabilityCast/Integrity2gmail">CGI source</a> |
+                <a href="https://github.com/ImprobabilityCast/Website/tree/master/wwwroot/ContactsConverter">
+                    Web interface source</a>)
+                - Conversion program to translate one email service's contacts storage format to another's.
+            </div>
+        </div>
+        <div class="row mb-4">
+            <div class="col-md-7">
+                <img src="backupSchool.png" alt="backup school screenshot" width="100%">
+            </div>
+            <div class="col-md-5">
+                BackupSchool (<a href="https://github.com/ImprobabilityCast/BackupSchool">Source</a>)
+                - Backup program made to automatically copy new/modified files in specified
+                folders to a flash drive. Made with the <a href="https://www.wxwidgets.org/">wxWidgits</a>
+                GUI framework & C++.
+            </div>
+        </div>
+        <div class="row mb-4">
+            <div class="col-md-7">
+                <img src="wxsEditor.png" alt="wxsEditor screenshot" width="100%">
+            </div>
+            <div class="col-md-5">
+                wxsEditor (<a href="https://github.com/ImprobabilityCast/wxsEditor">Source</a>)
+                - A text editor. Backstory: the IDE
+                I was using at the time, <a href="https://www.codeblocks.org/">Code::Blocks</a>,
+                had a built-in GUI builder. The builder saved the GUI designs in an XML file
+                with a .wxs extension. The builder was a bit limited in what you could
+                do with it. I found that I could edit the XML in the WXS file and create
+                a more customized UI. I found myself going back and forth between the IDE and a
+                text editor. So I made this, a text editor with a button to reload the
+                currently open file & a file filter for opening WXS files. Not something
+                I use today, but I was happy with the final result when I finished it.
+                Built using wxWidgits, & C++. Fun fact,
+                one of the Code::Blocks devs starred this on GitHub.
+            </div>
+        </div>
+    </div>
+    <script src="/js/jquery.min.js"></script>
+    <script src="/bootstrap/js/bootstrap.min.js"></script>
+    <script src="/js/index.js"></script>
+</body>
+
+</html>

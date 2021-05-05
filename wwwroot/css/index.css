@@ -1,0 +1,48 @@
+@media (prefers-color-scheme: light)
+{
+    .nav-item:hover, .nav-item.active
+    {
+        background-color:#d0fcfc;
+    }
+}
+
+@media (prefers-color-scheme: dark)
+{
+    .nav-item:hover, .nav-item.active
+    {
+        background-color:#181e24;
+    }
+    body
+    {
+        background-color:#10161c;
+        color:#ddd;
+    }
+}
+
+@media screen and (max-width: 500pt)
+{
+    .nav-item
+    {
+        width: 100%;
+    }
+}
+
+[data-info="content"]
+{
+    transition: opacity 1s;
+}
+
+.hidden
+{
+    display: none;
+}
+
+.transparent
+{
+    opacity: 0;
+}
+
+.bg-lightblue
+{
+    background-color: lightcyan;
+}

@@ -1,15 +1,15 @@
 <?php
-$key = $user = $process_error = "";
+$key = $user = "";
+$process_error = "The webmail service, 'integrity.com', is no longer in service.
+As such, this app no longer does anything.
+<a href='./'>Back<a> | <a href='/'>Home</a>";
 
-// disable submission
-$process_error = """The webmail service, \"integrity.com\", is no longer in service.
-As such, this app no longer does anything.""";
-
-if ($_SERVER['REQUEST_METHOD'] === "POST") {
+// disable the whole shabang
+if ($_SERVER['REQUEST_METHOD'] === "POST" && false) {
 	$key = $_POST['key']; $user = $_POST['user'];
-	if ( empty($key) || empty($user) )
+	if ( empty($key) || empty($user) ) {
 		$process_error = "Password and username fields are required, duh.";
-	else if ($process_error === "") {
+	} else {
 		$login_array = ["login_username" => $user, "secretkey" => $key];
 
 		$get_book_array = array(

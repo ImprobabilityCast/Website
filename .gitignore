@@ -24,3 +24,9 @@ obj
 bin
 *.exe
 Integrity2gmail
+
+*/**/__pycache__
+um/env
+
+# Ignore migrations for the time being
+*/**/migrations

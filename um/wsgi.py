@@ -21,6 +21,8 @@ sys.path.append(cwd + '/proj')  #You must add your project here
 sys.path.insert(0,cwd+'/env/bin')
 sys.path.insert(0,cwd+'/env/lib/python3.10.1/site-packages')
 
-os.environ['DJANGO_SETTINGS_MODULE'] = "proj.settings"
+os.environ['DJANGO_SETTINGS_MODULE'] = "proj.settings
+
 from django.core.wsgi import get_wsgi_application
+
 application = get_wsgi_application()

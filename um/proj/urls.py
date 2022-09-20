@@ -16,6 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from django.urls import include
+from django.views.generic.base import RedirectView
 
 # only for dev
 from django.conf import settings
@@ -24,5 +25,6 @@ from django.conf.urls.static import static
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('budget/', include('budget.urls')),
+    path('', RedirectView.as_view(url='budget/', permanent=False))
 ] + static(settings.STATIC_URL,
 document_root=settings.STATIC_ROOT)

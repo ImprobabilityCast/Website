@@ -1,0 +1,56 @@
+{% extends "base_template.html" %}
+
+{% block content %}
+
+<div class="row">
+  <div class="col-md">
+  </div>
+  <div class="col-md">
+
+    <form method="post" action="{% url 'signup' %}" >
+      {% csrf_token %}
+
+      <h3>Sign Up</h3>
+      <hr />
+      <fieldset>
+        <div class="form-row form-group">
+          <div class="col-4 col-sm-4">
+            {{ form.username.label_tag }}
+          </div>
+          <div class="col-8 col-sm-8">
+            {{ form.username }}
+          </div>
+        </div>
+        <div class="form-row form-group">
+          <div class="col-4 col-sm-4">
+            <label for="email">Email:</label>
+          </div>
+          <div class="col-8 col-sm-8">
+            <input type="email" name="email">
+          </div>
+        </div>
+        <div class="form-row form-group">
+          <div class="col-4 col-sm-4">
+            {{ form.password1.label_tag }}
+          </div>
+          <div class="col-8 col-sm-8">
+            {{ form.password1 }}
+          </div>
+          <div class="form-row form-group">
+            <div class="col-4 col-sm-4">
+              {{ form.password2.label_tag }}
+            </div>
+            <div class="col-8 col-sm-8">
+              {{ form.password2 }}
+            </div>
+        </div>
+      </fieldset>
+
+      <div class="form-row">
+        <div class="col-sm-8"></div>
+        <input type="submit" id="btn-submit" class="btn btn-primary align-self-end col-sm-3" value="Sign up">
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

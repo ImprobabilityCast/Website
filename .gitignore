@@ -30,3 +30,6 @@ um/env
 
 # Ignore migrations for the time being
 */**/migrations
+
+# Ignore static desination dir
+um/static

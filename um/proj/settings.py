@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -38,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'budget.apps.BudgetConfig',
+    'accounts.apps.AccountsConfig',
 ]
 
 MIDDLEWARE = [
@@ -55,7 +57,7 @@ ROOT_URLCONF = 'proj.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'proj/templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -76,8 +78,11 @@ WSGI_APPLICATION = 'proj.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'adoodleydo',
+        'USER': 'adoodleydo_user',
+        'HOST': 'localhost',
+        'PORT': '3306',
     }
 }
 
@@ -117,10 +122,54 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
 
 STATIC_URL = 'static/'
+STATICFILES_DIRS = (
+)
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-AUTH_USER_MODEL = 'budget.AccountsModel'
+AUTH_USER_MODEL = 'accounts.AccountsModel'
+
+LOGIN_REDIRECT_URL = ''
+
+LOGGING = {
+    'version': 1,
+    # Version of logging
+    'disable_existing_loggers': False,
+
+    'filters':{
+        #information regarding filters
+    },
+
+    'formatters':{
+        'whatever':{
+            'format': '[{asctime}] {message}',
+            'style': '{',
+        }
+    },
+
+    'handlers': {
+        'file_logging': {
+            'level': 'DEBUG',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': os.path.join(BASE_DIR, 'um.log'),
+            'maxBytes': 1024 * 1024,
+            'backupCount': 5,
+            'formatter': 'whatever',
+        },
+    },
+
+    'loggers': {
+        # 'django': {
+        #     'handlers': ['file_logging'],
+        #     'level': 'DEBUG',
+        # },
+        'proj': {
+            'handlers': ['file_logging'],
+            'level': 'DEBUG',
+        },
+    },
+}

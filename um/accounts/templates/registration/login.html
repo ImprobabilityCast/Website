@@ -1,0 +1,57 @@
+{% extends "base_template.html" %}
+
+{% block title %}Login{% endblock %}
+
+{% block content %}
+<div class="row">
+  <div class="col-md">
+  </div>
+  <div class="col-md">
+
+    {% if next %}
+      {% if user.is_authenticated %}
+        <p>Next and auth'd</p>
+      {% else %}
+        <p>Next and not auth'd</p>
+      {% endif %}
+    {% endif %}
+
+    <form method="post" action="{% url 'login' %}" >
+      {% csrf_token %}
+
+      <h3>Login</h3>
+      <hr />
+      <fieldset>
+        <div class="form-row form-group">
+          <div class="col-4 col-sm-4">
+            {{ form.username.label_tag }}
+          </div>
+          <div class="col-8 col-sm-8">
+            {{ form.username }}
+            <div class="invalid-feedback">
+              User does not exist
+            </div>
+          </div>
+        </div>
+        <div class="form-row form-group">
+          <div class="col-4 col-sm-4">
+            {{ form.password.label_tag }}
+          </div>
+          <div class="col-8 col-sm-8">
+            {{ form.password }}
+            <div class="invalid-feedback">
+              Incorrect password
+            </div>
+          </div>
+        </div>
+      </fieldset>
+
+      <div class="form-row">
+        <div class="col-sm-8"></div>
+        <input type="submit" id="btn-submit" class="btn btn-primary align-self-end col-sm-3" value="Login">
+        <input type="hidden" name="next" value="{{ next }}">
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

@@ -33,3 +33,5 @@ um/env
 
 # Ignore static desination dir
 um/static
+
+*.log

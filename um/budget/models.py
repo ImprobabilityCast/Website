@@ -5,6 +5,8 @@ from accounts.models import AccountsModel
 # Create your models here.
 
 class BaseModel(models.Model):
+    class Meta:
+        abstract = True
 
     created = models.DateField(auto_now_add=True)
 

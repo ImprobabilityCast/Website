@@ -1,10 +1,10 @@
 from django import forms
-from django.contrib.auth.forms import UserChangeForm, UserCreationForm
+from django.contrib.auth.forms import UserChangeForm, UserCreationForm, AuthenticationForm
 
 from .models import AccountsModel
 
 import logging
-logger = logging.getLogger("proj")
+logger = logging.getLogger('proj')
 
 class AccountCreationForm(UserCreationForm):
 
@@ -28,3 +28,6 @@ class AccountChangeForm(UserChangeForm):
     class Meta:
         model = AccountsModel
         fields = ('username',)
+
+class AccountLoginForm(AuthenticationForm):
+    pass

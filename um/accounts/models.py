@@ -1,3 +1,4 @@
+from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.models import AbstractBaseUser
 from django.db.models.signals import pre_save
 from django.db import models
@@ -6,9 +7,19 @@ from django.dispatch import receiver
 from hashlib import sha256
 
 import logging
-logger = logging.getLogger("proj")
+logger = logging.getLogger('proj')
 
 # Create your models here.
+
+
+class AccountsManager(BaseUserManager):
+    def create_user(self, username, email, password=None):
+        new_account = AccountsModel()
+        new_account.username = username
+        new_account.set_email_attributes(email)
+        new_account.set_password(password)
+        return new_account
+
 
 class AccountsModel(AbstractBaseUser):
 
@@ -24,9 +35,13 @@ class AccountsModel(AbstractBaseUser):
 
     modified = models.DateTimeField(auto_now=True)
 
-    active = models.BooleanField(default=True)
+    is_active = models.BooleanField(default=True)
 
     USERNAME_FIELD = 'username'
+
+    REQUIRED_FIELDS = ['email']
+
+    objects = AccountsManager()
 
     def __str__(self):
         return self.username

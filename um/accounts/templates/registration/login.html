@@ -7,20 +7,6 @@
   <div class="col-md">
   </div>
   <div class="col-md">
-
-
-    {% if user.is_authenticated %}
-      <p>Authedddddd</p>
-    {% endif %}
-
-    {% if next %}
-      {% if user.is_authenticated %}
-        <p>Next and auth'd</p>
-      {% else %}
-        <p>Next and not auth'd</p>
-      {% endif %}
-    {% endif %}
-
     <form method="post" action="{% url 'login' %}" >
       {% csrf_token %}
 
@@ -28,13 +14,18 @@
       <hr />
       <fieldset>
         <div class="form-row form-group">
+          <div class="invalid-feedback d-block">
+            {{ form.non_field_errors }}
+          </div>
+        </div>
+        <div class="form-row form-group">
           <div class="col-4 col-sm-4">
             {{ form.username.label_tag }}
           </div>
           <div class="col-8 col-sm-8">
             {{ form.username }}
-            <div class="invalid-feedback is-invalid">
-              {{ form.username.error_messages }}
+            <div class="invalid-feedback d-block">
+              {{ form.username.errors }}
             </div>
           </div>
         </div>
@@ -44,8 +35,8 @@
           </div>
           <div class="col-8 col-sm-8">
             {{ form.password }}
-            <div class="invalid-feedback is-invalid">
-              {{ form.password.error_messages }}
+            <div class="invalid-feedback d-block">
+              {{ form.password.errors }}
             </div>
           </div>
         </div>

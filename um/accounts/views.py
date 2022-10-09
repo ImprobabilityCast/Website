@@ -1,6 +1,6 @@
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.views import LoginView
-from django.shortcuts import redirect
+from django.shortcuts import redirect, render
 from django.views.generic.edit import CreateView
 
 from .forms import AccountCreationForm, AccountLoginForm
@@ -26,10 +26,14 @@ class SignUpView(CreateView):
             accountsModel.save()
             return redirect('/accounts/login')
         else:
-            return super().post(request)
+            context = {'form' : form}
+            return render(request, self.template_name, context=context)
     
     def get(self, request):
-        return super().get(request)
+        if request.user.is_authenticated:
+            return redirect('/')
+        else:
+            return super().get(request)
     
     # to access request from clean: https://stackoverflow.com/a/12064048/8335309
     def get_form_kwargs(self):
@@ -49,7 +53,6 @@ class LoginView(LoginView):
 
     def post(self, request):
         form = self.get_form()
-        redirect_url = '/accounts/login'
 
         if form.is_valid():
             username = form.cleaned_data['username']
@@ -57,7 +60,14 @@ class LoginView(LoginView):
             my_sweet_user = authenticate(request, username=username, password=password)
             if my_sweet_user is not None:
                 login(request, my_sweet_user)
-                redirect_url = '/'
+                return redirect('/')
         
-        return redirect(redirect_url)
+        context = {'form' : form}
+        return render(request, self.template_name, context=context)
+
+    def get(self, request):
+        if request.user.is_authenticated:
+            return redirect('/')
+        else:
+            return super().get(request)
 

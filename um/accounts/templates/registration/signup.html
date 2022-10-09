@@ -14,11 +14,19 @@
       <hr />
       <fieldset>
         <div class="form-row form-group">
+          <div class="invalid-feedback d-block">
+            {{ form.non_field_errors }}
+          </div>
+        </div>
+        <div class="form-row form-group">
           <div class="col-4 col-sm-4">
             {{ form.username.label_tag }}
           </div>
           <div class="col-8 col-sm-8">
             {{ form.username }}
+            <div class="invalid-feedback d-block">
+              {{ form.username.errors }}
+            </div>
           </div>
         </div>
         <div class="form-row form-group">
@@ -27,6 +35,9 @@
           </div>
           <div class="col-8 col-sm-8">
             <input type="email" name="email">
+            <div class="invalid-feedback d-block">
+              {{ form.email.errors }}
+            </div>
           </div>
         </div>
         <div class="form-row form-group">
@@ -35,6 +46,9 @@
           </div>
           <div class="col-8 col-sm-8">
             {{ form.password1 }}
+            <div class="invalid-feedback d-block">
+              {{ form.password1.errors }}
+            </div>
           </div>
           <div class="form-row form-group">
             <div class="col-4 col-sm-4">
@@ -42,6 +56,9 @@
             </div>
             <div class="col-8 col-sm-8">
               {{ form.password2 }}
+              <div class="invalid-feedback d-block">
+                {{ form.password2.errors }}
+              </div>
             </div>
         </div>
       </fieldset>

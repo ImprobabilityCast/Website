@@ -1,5 +1,7 @@
 from django.contrib.auth import authenticate, login
+from django.contrib.auth.mixins import UserPassesTestMixin
 from django.contrib.auth.views import LoginView
+from django.core.exceptions import PermissionDenied
 from django.shortcuts import redirect, render
 from django.views.generic.edit import CreateView
 
@@ -8,14 +10,23 @@ from .forms import AccountCreationForm, AccountLoginForm
 import logging
 logger = logging.getLogger('proj')
 
-# Create your views here.
 
-class SignUpView(CreateView):
+class NotLoggedInMixin(UserPassesTestMixin):
+    raise_exception = False
+    login_url = '/'
+    def test_func(self):
+        return not self.request.user.is_authenticated
+    
+    def handle_no_permission(self):
+        if self.raise_exception:
+            raise PermissionDenied()
+        else:
+            return redirect(self.login_url)
+
+
+class SignUpView(NotLoggedInMixin, CreateView):
     form_class = AccountCreationForm
-    success_url = ''
-    template_name = 'registration/signup.html'
     http_method_names = ['get', 'post']
-    error_css_class = 'error'
 
     def post(self, request):
         form = self.get_form()
@@ -29,12 +40,6 @@ class SignUpView(CreateView):
             context = {'form' : form}
             return render(request, self.template_name, context=context)
     
-    def get(self, request):
-        if request.user.is_authenticated:
-            return redirect('/')
-        else:
-            return super().get(request)
-    
     # to access request from clean: https://stackoverflow.com/a/12064048/8335309
     def get_form_kwargs(self):
         kwargs = super(SignUpView, self).get_form_kwargs()
@@ -43,12 +48,8 @@ class SignUpView(CreateView):
         })
         return kwargs
 
-    def form_invalid(self, form):
-        logger.debug('hhhhvhvhvh')
-        return super().form_invalid(form)
 
-
-class LoginView(LoginView):
+class LoginView(NotLoggedInMixin, LoginView):
     authentication_form = AccountLoginForm
 
     def post(self, request):
@@ -60,14 +61,8 @@ class LoginView(LoginView):
             my_sweet_user = authenticate(request, username=username, password=password)
             if my_sweet_user is not None:
                 login(request, my_sweet_user)
-                return redirect('/')
+                return super().post(request)
         
         context = {'form' : form}
         return render(request, self.template_name, context=context)
-
-    def get(self, request):
-        if request.user.is_authenticated:
-            return redirect('/')
-        else:
-            return super().get(request)
 

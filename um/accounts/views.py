@@ -26,6 +26,7 @@ class NotLoggedInMixin(UserPassesTestMixin):
 
 class SignUpView(NotLoggedInMixin, CreateView):
     form_class = AccountCreationForm
+    template_name = 'registration/signup.html'
     http_method_names = ['get', 'post']
 
     def post(self, request):

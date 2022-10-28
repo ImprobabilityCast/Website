@@ -1,4 +1,5 @@
 from django.contrib.auth.models import AbstractUser
+from django.core.validators import MinLengthValidator
 from django.db import models
 from accounts.models import AccountsModel
 
@@ -12,12 +13,12 @@ class BaseModel(models.Model):
 
     modified = models.DateTimeField(auto_now=True)
 
-    active = models.BooleanField(default=True)
+    is_active = models.BooleanField(default=True)
 
 
-class SpendingKindsModel(BaseModel):
+class TransactionCategoriesModel(BaseModel):
 
-    kind = models.CharField(max_length=127, unique=True)
+    category = models.CharField(max_length=127, unique=True, validators=[MinLengthValidator(1)])
 
     def __str__(self):
         return self.kind
@@ -25,19 +26,19 @@ class SpendingKindsModel(BaseModel):
 
 class SpecificPlacesModel(BaseModel):
 
-    place = models.CharField(max_length=255, unique=True)
+    place = models.CharField(max_length=255, unique=True, validators=[MinLengthValidator(1)])
 
     def __str__(self):
         return self.place
 
 
-class SpendingModel(BaseModel):
+class TransactionsModel(BaseModel):
 
     account = models.ForeignKey(AccountsModel,
         on_delete=models.CASCADE
     )
 
-    kind = models.ForeignKey(SpendingKindsModel,
+    category = models.ForeignKey(TransactionCategoriesModel,
         on_delete=models.CASCADE
     )
 

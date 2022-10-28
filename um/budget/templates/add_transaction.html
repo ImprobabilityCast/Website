@@ -1,0 +1,53 @@
+{% extends "budget_base.html" %}
+
+{% block content %}
+<form method="post" action="{% url 'add_transaction' %}">
+    {% csrf_token %}
+    
+    <fieldset>
+        <div class="form-row form-group">
+          <div class="invalid-feedback d-block">
+            {{ form.non_field_errors }}
+          </div>
+        </div>
+        <div class="form-row form-group">
+          <div class="col-4 col-sm-4">
+            {{ form.specific_place.label_tag }}
+          </div>
+          <div class="col-8 col-sm-8">
+            {{ form.specific_place }}
+            <div class="invalid-feedback d-block">
+              {{ form.specific_place.errors }}
+            </div>
+          </div>
+        </div>
+        <div class="form-row form-group">
+          <div class="col-4 col-sm-4">
+            {{ form.category.label_tag }}
+          </div>
+          <div class="col-8 col-sm-8">
+            {{ form.category }}
+            <div class="invalid-feedback d-block">
+              {{ form.category.errors }}
+            </div>
+          </div>
+        </div>
+        <div class="form-row form-group">
+            <div class="col-4 col-sm-4">
+              {{ form.amount.label_tag }}
+            </div>
+            <div class="col-8 col-sm-8">
+              {{ form.amount }}
+              <div class="invalid-feedback d-block">
+                {{ form.amount.errors }}
+              </div>
+            </div>
+          </div>
+      </fieldset>
+
+      <div class="form-row">
+        <div class="col-sm-8"></div>
+        <input type="submit" id="btn-submit" class="btn btn-primary align-self-end col-sm-3" value="Submit">
+      </div>
+</form>
+{% endblock %}

@@ -3,7 +3,7 @@ from django.contrib.auth.admin import UserAdmin
 
 from .forms import AccountCreationForm, AccountChangeForm
 from .models import AccountsModel
-from budget.models import SpendingKindsModel, SpecificPlacesModel, SpendingModel
+from budget.models import SpecificPlacesModel, TransactionCategoriesModel, TransactionsModel
 
 # Register your models here.
 class AccountsAdmin(UserAdmin):
@@ -16,6 +16,6 @@ class AccountsAdmin(UserAdmin):
 
 admin.site.register(AccountsModel, AccountsAdmin)
 
-admin.site.register(SpendingKindsModel)
-admin.site.register(SpendingModel)
+admin.site.register(TransactionCategoriesModel)
+admin.site.register(TransactionsModel)
 admin.site.register(SpecificPlacesModel)

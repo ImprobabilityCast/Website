@@ -1,9 +1,9 @@
 {% extends "budget_base.html" %}
 
 {% block content %}
-<form method="post" action="{% url 'add_transaction' %}">
+<form method="post" action="{% url 'add_transaction' %}" autocomplete="off">
     {% csrf_token %}
-    
+
     <fieldset>
         <div class="form-row form-group">
           <div class="invalid-feedback d-block">
@@ -33,16 +33,51 @@
           </div>
         </div>
         <div class="form-row form-group">
+          <div class="col-4 col-sm-4">
+            {{ form.amount.label_tag }}
+          </div>
+          <div class="col-8 col-sm-8">
+            {{ form.amount }}
+            <div class="invalid-feedback d-block">
+              {{ form.amount.errors }}
+            </div>
+          </div>
+        </div>
+        <div class="form-row form-group">
+          <div class="col-4 col-sm-4">
+            {{ form.date.label_tag }}
+          </div>
+          <div class="col-8 col-sm-8">
+            {{ form.date }}
+            <div class="invalid-feedback d-block">
+              {{ form.date.errors }}
+            </div>
+          </div>
+        </div>
+        <div class="form-row form-group">
+          <div class="col-4 col-sm-4">
+            <label for="is_repeating">Repeating Transaction:</label>
+          </div>
+          <div class="col-8 col-sm-8">
+            <input type="checkbox" autocomplete="off"
+              data-toggle="collapse" data-target="#collapseFrequency"
+              aria-expanded="false" aria-controls="collapseFrequency" value="false"
+              onchange="$('#id_frequency')[0].required=event.target.checked">
+          </div>
+        </div>
+        <div class="collapse" id="collapseFrequency">
+          <div class="form-row form-group">
             <div class="col-4 col-sm-4">
-              {{ form.amount.label_tag }}
+              {{ form.frequency.label_tag }}
             </div>
             <div class="col-8 col-sm-8">
-              {{ form.amount }}
+              {{ form.frequency }}
               <div class="invalid-feedback d-block">
-                {{ form.amount.errors }}
+                {{ form.frequency.errors }}
               </div>
             </div>
           </div>
+        </div>
       </fieldset>
 
       <div class="form-row">

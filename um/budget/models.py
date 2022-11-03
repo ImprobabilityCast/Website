@@ -62,3 +62,20 @@ class TransactionsModel(BaseModel):
 
     class Meta:
         ordering = ['date']
+
+
+class TimeFrequenciesModel(BaseModel):
+
+    frequency = models.CharField(max_length=255, unique=True)
+
+
+class RepeatingTransactionsModel(BaseModel):
+
+    transaction = models.ForeignKey(TransactionsModel,
+        on_delete=models.CASCADE
+    )
+
+    frequency = models.ForeignKey(TimeFrequenciesModel,
+        on_delete=models.PROTECT
+    )
+

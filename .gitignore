@@ -29,7 +29,7 @@ Integrity2gmail
 um/env
 
 # Ignore migrations for the time being
-*/**/migrations
+#*/**/migrations
 
 # Ignore static desination dir
 um/static

@@ -1,0 +1,13 @@
+{% extends "budget_base.html" %}
+
+{% block headers %}
+{{ block.super }}
+<script src="http://127.0.0.1/js/popper.min.js"></script>
+<script src="http://127.0.0.1/js/chart.min.js"></script>
+<script src="http://127.0.0.1/js/palette.js"></script>
+<script src="/static/js/history.graph.js"></script>
+{% endblock %}
+
+{% block content %}
+<canvas id="mainGraph" width="300" height="300"></canvas>
+{% endblock %}

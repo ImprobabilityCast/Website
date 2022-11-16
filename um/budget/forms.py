@@ -14,7 +14,7 @@ class AddTransactionForm(forms.Form):
         ('', ''),
         (1, 'Daily'),
         (2, 'Weekly'),
-        (3, 'Monthly'),
+        (3, '30 days'),
         (4, 'Yearly')
         ], required=False, initial=('', ''))
 

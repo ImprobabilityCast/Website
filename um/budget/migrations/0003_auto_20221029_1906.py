@@ -3,7 +3,7 @@
 from django.db import migrations
 
 def populate_time_frequencies(apps, schema_editor):
-    values = ['Daily', 'Weekly', 'Monthly', 'Yearly']
+    values = ['Daily', 'Weekly', '30 days', 'Yearly']
     TimeFrequenciesModel = apps.get_model('budget', 'TimeFrequenciesModel')
 
     for value in values:

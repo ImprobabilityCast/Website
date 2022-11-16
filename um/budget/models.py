@@ -79,3 +79,5 @@ class RepeatingTransactionsModel(BaseModel):
         on_delete=models.PROTECT
     )
 
+    end_date = models.DateField(default='9999-12-31')
+

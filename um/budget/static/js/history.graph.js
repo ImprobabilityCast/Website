@@ -11,7 +11,7 @@
 		set parsedData(value)
 		{
 			this._parsedData = value;
-			this.colors = palette('sol-accent', Object.keys(this._parsedData.data_by_category).length);
+			this.colors = palette("sol-accent", Object.keys(this._parsedData.data_by_category).length);
 		},
 
 		customTooltipLabel: function(context) {
@@ -23,8 +23,8 @@
 		drawChart: function (ctx) {
 			console.log(historyObj.parsedData)
 			let parsing = {
-				xAxisKey: 'date',
-				yAxisKey: 'amount',
+				xAxisKey: "date",
+				yAxisKey: "amount",
 			};
 			let datasets = [];
 			let obj = this;
@@ -40,23 +40,23 @@
 				});
 				counter -= 1;
 			});
-			console.log(datasets[555]);
+			console.log(datasets);
 
 			return new Chart(ctx, {
-				type: 'line',
+				type: "line",
 				data: {
-					datasets: [datasets[4]]
+					datasets: datasets
 				},
 				options: {
 					scales: {
 						xAxes: {
-							type: 'time',
+							type: "time",
 							time: {
-								parser: function(s) {return new Date(s);},
+								tooltipFormat: luxon.DateTime.DATE_MED,
 							},
 						},
 					// 	yAxes: [{
-					// 		type: 'dollars',
+					// 		type: "dollars",
 					//	}],
 					},
 					plugins: {

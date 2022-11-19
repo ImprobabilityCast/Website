@@ -1,0 +1,21 @@
+{% extends "budget_base.html" %}
+
+{% block content %}
+<button>New</button>
+<ul>
+{% for budget_modify_form in object_list %}
+    <li>
+        <form>
+            {{ budget_modify_form.category.label }}
+            {{ budget_modify_form.category }}
+
+            {{ budget_modify_form.spending_limit.label }}
+            {{ budget_modify_form.spending_limit }}
+
+            {{ budget_modify_form.frequency.label }}
+            {{ budget_modify_form.frequency }}
+        </form>
+    </li>
+{% endfor %}
+</ul>
+{% endblock %}

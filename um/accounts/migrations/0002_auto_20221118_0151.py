@@ -17,7 +17,7 @@ def create_demo_user(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('accounts', '0003_alter_accountsmodel_managers'),
+        ('accounts', '0001_initial'),
     ]
 
     operations = [

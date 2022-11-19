@@ -2,8 +2,9 @@
 
 from django.db import migrations
 
+
 def populate_time_frequencies(apps, schema_editor):
-    values = ['Daily', 'Weekly', '30 days', 'Yearly']
+    values = ['Daily', 'Weekly', 'Monthly', 'Yearly']
     TimeFrequenciesModel = apps.get_model('budget', 'TimeFrequenciesModel')
 
     for value in values:
@@ -15,7 +16,7 @@ def populate_time_frequencies(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('budget', '0002_timefrequenciesmodel_repeatingtransactionsmodel'),
+        ('budget', '0001_initial'),
     ]
 
     operations = [

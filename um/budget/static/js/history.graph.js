@@ -40,22 +40,25 @@
 				});
 				counter -= 1;
 			});
-			console.log(datasets);
+			console.log(datasets[555]);
 
 			return new Chart(ctx, {
 				type: 'line',
 				data: {
-					datasets: datasets
+					datasets: [datasets[4]]
 				},
 				options: {
-					// scales: {
-					// 	xAxes: [{
-					// 		type: 'time',
-					// 	}],
+					scales: {
+						xAxes: {
+							type: 'time',
+							time: {
+								parser: function(s) {return new Date(s);},
+							},
+						},
 					// 	yAxes: [{
 					// 		type: 'dollars',
-					// 	}],
-					// },
+					//	}],
+					},
 					plugins: {
 						tooltip: {
 							callbacks: {

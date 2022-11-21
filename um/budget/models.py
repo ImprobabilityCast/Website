@@ -19,12 +19,9 @@ class BaseModel(models.Model):
     is_active = models.BooleanField(default=True)
 
 
-class TransactionCategoriesModel(BaseModel):
+class TimeFrequenciesModel(BaseModel):
 
-    category = models.CharField(max_length=127, unique=True, validators=[MinLengthValidator(1)])
-
-    def __str__(self):
-        return self.kind
+    frequency = models.CharField(max_length=255, unique=True)
 
 
 class SpecificPlacesModel(BaseModel):
@@ -35,13 +32,35 @@ class SpecificPlacesModel(BaseModel):
         return self.place
 
 
+class BudgetsModel(BaseModel):
+
+    account = models.ForeignKey(AccountsModel,
+        on_delete=models.CASCADE
+    )
+
+    category = models.CharField(max_length=127, unique=True, validators=[MinLengthValidator(1)])
+
+    spending_limit = models.DecimalField(max_digits=15,
+        decimal_places=2,
+        default=0.00
+    )
+
+    frequency = models.ForeignKey(TimeFrequenciesModel,
+        on_delete=models.PROTECT
+    )
+
+    start_date = models.DateField(default=now, editable=False, blank=False)
+
+    end_date = models.DateField(default='9999-12-31')
+
+
 class TransactionsModel(BaseModel):
 
     account = models.ForeignKey(AccountsModel,
         on_delete=models.CASCADE
     )
 
-    category = models.ForeignKey(TransactionCategoriesModel,
+    budget = models.ForeignKey(BudgetsModel,
         on_delete=models.CASCADE
     )
 
@@ -67,11 +86,6 @@ class TransactionsModel(BaseModel):
         ordering = ['date']
 
 
-class TimeFrequenciesModel(BaseModel):
-
-    frequency = models.CharField(max_length=255, unique=True)
-
-
 class RepeatingTransactionsModel(BaseModel):
 
     transaction = models.ForeignKey(TransactionsModel,
@@ -81,29 +95,6 @@ class RepeatingTransactionsModel(BaseModel):
     frequency = models.ForeignKey(TimeFrequenciesModel,
         on_delete=models.PROTECT
     )
-
-    end_date = models.DateField(default='9999-12-31')
-
-
-class BudgetsModel(BaseModel):
-
-    account = models.ForeignKey(AccountsModel,
-        on_delete=models.CASCADE
-    )
-
-    category = models.ForeignKey(TransactionCategoriesModel,
-        on_delete=models.CASCADE
-    )
-
-    spending_limit = models.DecimalField(max_digits=15,
-        decimal_places=2
-    )
-
-    frequency = models.ForeignKey(TimeFrequenciesModel,
-        on_delete=models.PROTECT
-    )
-
-    start_date = models.DateField(default=now, editable=False, blank=False)
 
     end_date = models.DateField(default='9999-12-31')
 

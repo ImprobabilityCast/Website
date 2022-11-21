@@ -8,7 +8,7 @@ from django.views.generic.edit import FormView
 from datetime import date, timedelta
 import json
 
-from .models import SpecificPlacesModel, TransactionCategoriesModel, TransactionsModel
+from .models import SpecificPlacesModel, BudgetsModel, TransactionsModel
 from .models import TimeFrequenciesModel, RepeatingTransactionsModel, BudgetsModel
 from .forms import AddTransactionForm, ModifyBudgetForm
 from accounts.models import AccountsModel
@@ -37,11 +37,13 @@ class AddTransactionView(LoginRequiredMixin, FormView):
             )
             transactionsModel.place = placeModel
 
-            categoryModel, was_created = TransactionCategoriesModel.objects.get_or_create(
-                category = form.cleaned_data['category'].lower()
+            budgetModel, was_created = BudgetsModel.objects.get_or_create(
+                account = request.user,
+                category = form.cleaned_data['category'].lower(),
+                defaults = {'frequency': TimeFrequenciesModel.objects.get(frequency='Monthly')}
             )
-            category.is_active = True
-            transactionsModel.category = categoryModel
+            budgetModel.is_active = True
+            transactionsModel.budget = budgetModel
 
             transactionsModel.amount = form.cleaned_data['amount']
             date = form.cleaned_data['date']
@@ -78,11 +80,6 @@ class ModifyBudgetView(LoginRequiredMixin, FormView):
     def post(self, request):
         form = self.get_form()
 
-        if form.is_valid():
-            categoryModel, was_created = TransactionCategoriesModel.objects.get_or_create(
-                category = form.cleaned_data['category'].lower()
-            )
-
 
 class ListBudgetView(LoginRequiredMixin, ListView):
     model = BudgetsModel
@@ -90,16 +87,19 @@ class ListBudgetView(LoginRequiredMixin, ListView):
     template_name = 'list_budget.html'
 
     @classmethod
-    def create_form_from_model(budgetModel):
-        modifyBudgetForm = ModifyBudgetForm()
-        modifyBudgetForm.category.initial = budgetModel.category.category
-        modifyBudgetForm.spending_limit.initial = budgetModel.spending_limit
-        modifyBudgetForm.frequency.initial = (budgetModel.frequency_id, budgetModel.frequency.frequency)
+    def create_form_from_model(cls, budgetModel):
+        modifyBudgetForm = ModifyBudgetForm(initial={
+            'category': budgetModel.category,
+            'spending_limit': budgetModel.spending_limit,
+            'frequency': (budgetModel.frequency_id, budgetModel.frequency.frequency),
+            'budget_id': budgetModel.id,
+        })
         return modifyBudgetForm
 
     def get_queryset(self):
-        queryset = self.model.objects.get(account=self.request.user, is_active=True)
-        result_list = [ create_form_from_model(item) for item in queryset]
+        queryset = self.model.objects.filter(account=self.request.user, is_active=True)
+        result_list = [ ListBudgetView.create_form_from_model(item) for item in queryset]
+        return result_list
 
 
 # graph / chart / data view
@@ -107,18 +107,18 @@ class JsonTransactionAPIView(LoginRequiredMixin, View):
     
     def get(self, request):
         oldest_date = date.today() - timedelta(days=30)
-        query = TransactionsModel.objects.filter(created__gt=oldest_date) #.order_by('category_id', 'date')
+        query = TransactionsModel.objects.filter(created__gt=oldest_date)
 
         response = {'data_by_category' : {}, 'category_mapping' : {}}
         category_mapping = response['category_mapping']
-        data_by_cat = response['data_by_category']
+        data_by_budget = response['data_by_category']
 
         for q in query:
-            if q.category_id not in data_by_cat:
-                data_by_cat[q.category_id] = {'category' : q.category.category, 'data' : []}
-                category_mapping[q.category_id] = q.category.category
+            if q.budget_id not in data_by_budget:
+                data_by_budget[q.budget_id] = {'category' : q.budget.category, 'data' : []}
+                category_mapping[q.budget_id] = q.budget.category
             
-            data_by_cat[q.category_id]['data'].append({
+            data_by_budget[q.budget_id]['data'].append({
                 'amount' : float(q.amount),
                 'date' : str(q.date),
                 'place' : q.place.place

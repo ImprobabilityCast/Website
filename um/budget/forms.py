@@ -1,4 +1,5 @@
 from django import forms
+from django.utils.timezone import now
 
 
 class BaseBudgetForm(forms.Form):
@@ -21,9 +22,11 @@ class AddTransactionForm(BaseBudgetForm):
 
     amount = forms.FloatField(min_value=0.00, max_value=1e15)
     
-    date = forms.DateField(required=False)
+    date = forms.DateField(required=False, default=now)
 
 
 class ModifyBudgetForm(BaseBudgetForm):
     spending_limit = forms.FloatField(min_value=0.00, max_value=1e15)
+
+    budget_id = forms.IntegerField(initial=-1, widget=forms.HiddenInput())
 

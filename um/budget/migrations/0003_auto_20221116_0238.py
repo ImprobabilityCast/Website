@@ -10,7 +10,6 @@ import random
 class HistoryGenerator:
     def __init__(self, apps, schema_editor):
         AccountsModel = apps.get_model('accounts', 'AccountsModel')
-        self.TransactionCategoriesModel = apps.get_model('budget', 'TransactionCategoriesModel')
         self.SpecificPlacesModel = apps.get_model('budget', 'SpecificPlacesModel')
         self.RepeatingTransactionsModel = apps.get_model('budget', 'RepeatingTransactionsModel')
         self.TransactionsModel = apps.get_model('budget', 'TransactionsModel')
@@ -59,28 +58,29 @@ class HistoryGenerator:
         }
 
         for category in mockery:
-            categoriesModel, was_created = self.TransactionCategoriesModel.objects.get_or_create(category=category)
-            categoriesModel.save()
 
-            self.generate_budget(categoriesModel)
+            budgetModel = self.generate_budget(category)
             self.set_category_transaction_amount_range()
 
             for place in mockery[category]:
                 placeModel, was_created = self.SpecificPlacesModel.objects.get_or_create(place=place)
                 placeModel.save()
 
-                self.generate_transactions(categoriesModel, placeModel)
+                self.generate_transactions(budgetModel, placeModel)
 
 
-    def generate_budget(self, categoryModel):
-        if self.BudgetsModel.objects.filter(account=self.account).count() == 0:
-            budget = self.BudgetsModel()
-            budget.account = self.account
-            budget.spending_limit = random.randint(10_000, 1_000_000) / 100.0
-            budget.category = categoryModel
-            budget.frequency = random.choice(self.frequencies)
+    def generate_budget(self, category):
+        budget, was_created = self.BudgetsModel.objects.get_or_create(account=self.account,
+            category=category,
+            defaults={
+                'frequency': random.choice(self.frequencies)
+            }
+        )
+        if was_created:
+            budget.spending_limit = random.randint(10_000, 300_000) / 100.0
             budget.start_date = self.generate_random_recent_date()
             budget.save()
+        return budget
 
 
     def generate_repeating_transaction(self, transactionModel):
@@ -109,12 +109,12 @@ class HistoryGenerator:
         return random.randint(self.min_amount, self.max_amount) / 100.0
 
 
-    def generate_transactions(self, categoryModel, placeModel):
+    def generate_transactions(self, budgetModel, placeModel):
         count = random.randint(1, 30)
         while count > 0:
             count -= 1
             transaction = self.TransactionsModel()
-            transaction.category = categoryModel
+            transaction.budget = budgetModel
             transaction.place = placeModel
             transaction.date = self.generate_random_recent_date()
             

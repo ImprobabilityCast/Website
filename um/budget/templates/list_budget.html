@@ -1,20 +1,28 @@
 {% extends "budget_base.html" %}
 
+{% block headers %}
+{{ block.super }}
+<link rel="stylesheet" href="/static/css/list_budget.css">
+{% endblock %}
+
 {% block content %}
-<button>New</button>
-<ul>
+<button>New</button><button>Save</button>
+<ul style="list-style-type: none;">
 {% for budget_modify_form in object_list %}
-    <li>
-        <form>
-            {{ budget_modify_form.category.label }}
-            {{ budget_modify_form.category }}
-
-            {{ budget_modify_form.spending_limit.label }}
-            {{ budget_modify_form.spending_limit }}
-
-            {{ budget_modify_form.frequency.label }}
-            {{ budget_modify_form.frequency }}
-        </form>
+  <li>
+    <form on>
+      <div class="form-row form-group">
+        <div class="col-4 col-sm-4 child-w-100">
+          {{ budget_modify_form.category }}
+        </div>
+        <div class="col-4 col-sm-4 child-w-100">
+          {{ budget_modify_form.spending_limit }}
+        </div>
+        <div class="col-4 col-sm-4 child-w-100">
+          {{ budget_modify_form.frequency }}
+        </div>
+      </div>
+    </form>
     </li>
 {% endfor %}
 </ul>

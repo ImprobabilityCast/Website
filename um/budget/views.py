@@ -9,7 +9,8 @@ from datetime import date, timedelta
 import json
 
 from .models import SpecificPlacesModel, BudgetsModel, TransactionsModel
-from .models import TimeFrequenciesModel, RepeatingTransactionsModel, BudgetsModel
+from .models import RepeatingTransactionsModel, BudgetsModel
+from .fields import DateDuration
 from .forms import AddTransactionForm, ModifyBudgetForm
 from accounts.models import AccountsModel
 
@@ -39,8 +40,7 @@ class AddTransactionView(LoginRequiredMixin, FormView):
 
             budgetModel, was_created = BudgetsModel.objects.get_or_create(
                 account = request.user,
-                category = form.cleaned_data['category'].lower(),
-                defaults = {'frequency': TimeFrequenciesModel.objects.get(frequency='Monthly')}
+                category = form.cleaned_data['category'].lower()
             )
             budgetModel.is_active = True
             transactionsModel.budget = budgetModel
@@ -56,8 +56,7 @@ class AddTransactionView(LoginRequiredMixin, FormView):
             frequency = form.cleaned_data['frequency']
             if len(frequency) > 0: # empty string signifies that this is not a repeating transaction
                 repeatingTransaction = RepeatingTransactionsModel()
-                frequencyModel = TimeFrequenciesModel.objects.get(id=frequency)
-                repeatingTransaction.frequency = frequencyModel
+                repeatingTransaction.frequency = DateDuration.from_duration(frequency)
                 repeatingTransaction.transaction = transactionsModel
                 
                 end_date = form.cleaned_data['end_date']
@@ -91,7 +90,7 @@ class ListBudgetView(LoginRequiredMixin, ListView):
         modifyBudgetForm = ModifyBudgetForm(initial={
             'category': budgetModel.category,
             'spending_limit': budgetModel.spending_limit,
-            'frequency': (budgetModel.frequency_id, budgetModel.frequency.frequency),
+            'frequency': budgetModel.frequency.to_choice_two_tuple(),
             'budget_id': budgetModel.id,
         })
         return modifyBudgetForm
@@ -102,12 +101,11 @@ class ListBudgetView(LoginRequiredMixin, ListView):
         return result_list
 
 
-# graph / chart / data view
-class JsonTransactionAPIView(LoginRequiredMixin, View):
+class JsonRawHistoryView(LoginRequiredMixin, View):
     
     def get(self, request):
         oldest_date = date.today() - timedelta(days=30)
-        query = TransactionsModel.objects.filter(created__gt=oldest_date)
+        query = TransactionsModel.objects.filter(date__gt=oldest_date)
 
         response = {'data_by_category' : {}, 'category_mapping' : {}}
         category_mapping = response['category_mapping']
@@ -123,6 +121,26 @@ class JsonTransactionAPIView(LoginRequiredMixin, View):
                 'date' : str(q.date),
                 'place' : q.place.place
             })
+        
+        return JsonResponse(response)
+
+
+class JsonAggregateHistoryView(LoginRequiredMixin, View):
+
+    def get(self, request):
+        oldest_date = date.today() - timedelta(days=30)
+        budgets = BudgetsModel.objects.filter(account=request.user)
+        query = TransactionsModel.objects.filter(account=request.user, date__gt=oldest_date)
+
+        response = {'data' : {}}
+        data_by_budget = response['data']
+
+        for budget in budgets:
+            data_by_budget[budget.budget_id] = {
+                'amount' : float(query.filter(budget=budget).aggregate(Sum('amount'))),
+                'spending_limit' : budget.spending_limit,
+                'category' : budget.category,
+            }
         
         return JsonResponse(response)
 

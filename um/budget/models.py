@@ -6,6 +6,8 @@ import datetime
 
 from accounts.models import AccountsModel
 
+from .fields import DateDuration, DateDurationField
+
 
 class BaseModel(models.Model):
 
@@ -17,11 +19,6 @@ class BaseModel(models.Model):
     modified = models.DateTimeField(auto_now=True)
 
     is_active = models.BooleanField(default=True)
-
-
-class TimeFrequenciesModel(BaseModel):
-
-    frequency = models.CharField(max_length=255, unique=True)
 
 
 class SpecificPlacesModel(BaseModel):
@@ -45,13 +42,11 @@ class BudgetsModel(BaseModel):
         default=0.00
     )
 
-    frequency = models.ForeignKey(TimeFrequenciesModel,
-        on_delete=models.PROTECT
-    )
+    frequency = DateDurationField(default=DateDuration(0, 1, 0))
 
     start_date = models.DateField(default=now, editable=False, blank=False)
 
-    end_date = models.DateField(default='9999-12-31')
+    end_date = models.DateField(default=datetime.date.max)
 
 
 class TransactionsModel(BaseModel):
@@ -92,9 +87,7 @@ class RepeatingTransactionsModel(BaseModel):
         on_delete=models.CASCADE
     )
 
-    frequency = models.ForeignKey(TimeFrequenciesModel,
-        on_delete=models.PROTECT
-    )
+    frequency = DateDurationField(default=DateDuration(0, 1, 0))
 
-    end_date = models.DateField(default='9999-12-31')
+    end_date = models.DateField(default=datetime.date.max)
 

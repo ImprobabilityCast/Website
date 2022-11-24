@@ -6,6 +6,8 @@ import calendar
 import datetime
 import random
 
+from budget.fields import DateDuration
+
 
 class HistoryGenerator:
     def __init__(self, apps, schema_editor):
@@ -17,7 +19,13 @@ class HistoryGenerator:
         self.apps = apps
         self.schema_editor = schema_editor
         self.account = AccountsModel.objects.get(username='demo')
-        self.frequencies = apps.get_model('budget', 'TimeFrequenciesModel').objects.all()
+        self.frequencies = [
+            DateDuration(0, 0, 1),
+            DateDuration(0, 0, 7),
+            DateDuration(0, 0, 14),
+            DateDuration(0, 1, 0),
+            DateDuration(1, 0, 0),
+        ]
         self.tday = datetime.date.today()
         self.set_category_transaction_amount_range()
 
@@ -138,7 +146,7 @@ def remove_generated_history(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('budget', '0002_auto_20221029_1906'),
+        ('budget', '0001_initial'),
         ('accounts', '0002_auto_20221118_0151'),
     ]
 

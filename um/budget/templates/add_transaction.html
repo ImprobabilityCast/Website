@@ -1,5 +1,10 @@
 {% extends "budget_base.html" %}
 
+{% block header %}
+{{ block.super }}
+<!-- <script src="/static/js/add_transaction.js"></script> -->
+{% endblock %}
+
 {% block content %}
 <form method="post" action="{% url 'add_transaction' %}" autocomplete="off">
   {% csrf_token %}
@@ -74,17 +79,6 @@
           {{ form.frequency }}
           <div class="invalid-feedback d-block">
             {{ form.frequency.errors }}
-          </div>
-        </div>
-      </div>
-      <div class="form-row form-group">
-        <div class="col-4 col-sm-4">
-          {{ form.end_date.label_tag }}
-        </div>
-        <div class="col-8 col-sm-8">
-          {{ form.end_date }}
-          <div class="invalid-feedback d-block">
-            {{ form.end_date.errors }}
           </div>
         </div>
       </div>

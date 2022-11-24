@@ -1,17 +1,16 @@
 from django import forms
 from django.utils.timezone import now
 
+from .enums import Durations
+from .fields import DateDurationFormField
+
 
 class BaseBudgetForm(forms.Form):
     category = forms.CharField(max_length=127, min_length=1)
 
-    frequency = forms.ChoiceField(choices=[
-        ('', ''),
-        (1, 'Daily'),
-        (2, 'Weekly'),
-        (3, 'Monthly'),
-        (4, 'Yearly')
-        ], required=False, initial=('', ''))
+    frequency = DateDurationFormField()
+
+    timezone_offset = forms.HiddenInput()
 
     class Meta:
         abstract = True
@@ -22,7 +21,9 @@ class AddTransactionForm(BaseBudgetForm):
 
     amount = forms.FloatField(min_value=0.00, max_value=1e15)
     
-    date = forms.DateField(required=False, default=now)
+    date = forms.DateField(required=False)
+
+    end_date = forms.DateField(required=False)
 
 
 class ModifyBudgetForm(BaseBudgetForm):

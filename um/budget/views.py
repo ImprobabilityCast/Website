@@ -1,4 +1,5 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db.models import Sum
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django.views.generic import TemplateView, ListView
@@ -11,7 +12,7 @@ import json
 from .models import SpecificPlacesModel, BudgetsModel, TransactionsModel
 from .models import RepeatingTransactionsModel, BudgetsModel
 from .fields import DateDuration
-from .forms import AddTransactionForm, ModifyBudgetForm
+from .forms import AddTransactionForm, ModifyBudgetForm, JsonAggregateHistoryForm
 from accounts.models import AccountsModel
 
 import logging
@@ -128,21 +129,38 @@ class JsonRawHistoryView(LoginRequiredMixin, View):
 class JsonAggregateHistoryView(LoginRequiredMixin, View):
 
     def get(self, request):
-        oldest_date = date.today() - timedelta(days=30)
-        budgets = BudgetsModel.objects.filter(account=request.user)
-        query = TransactionsModel.objects.filter(account=request.user, date__gt=oldest_date)
+        #form = JsonAggregateHistoryForm(request.GET)
 
-        response = {'data' : {}}
-        data_by_budget = response['data']
+        time_range = False #form.get_time_range()
 
-        for budget in budgets:
-            data_by_budget[budget.budget_id] = {
-                'amount' : float(query.filter(budget=budget).aggregate(Sum('amount'))),
-                'spending_limit' : budget.spending_limit,
-                'category' : budget.category,
-            }
-        
-        return JsonResponse(response)
+        tday = date.today()
+
+        if not time_range:
+            budgets = BudgetsModel.objects.filter(account=request.user,
+                is_active=True,
+            )
+            query = TransactionsModel.objects.filter(account=request.user,
+                date__gte=tday.replace(year = tday.year - 1),
+                date__lte=tday
+            ).order_by('budget_id')
+
+            response = {'data' : {}}
+            data_by_budget = response['data']
+
+            for budget in budgets:
+                sub_query = query.filter(
+                    budget_id=budget.id,
+                    date__gte=budget.frequency.get_date_at_offset(tday, reverse=True),
+                    date__lte=tday
+                )
+                amount_sum = 0 if sub_query.count() == 0 else float(sub_query.aggregate(Sum('amount'))['amount__sum'])
+                data_by_budget[budget.id] = {
+                    'amount' : amount_sum,
+                    'spending_limit' : float(budget.spending_limit),
+                    'category' : budget.category,
+                }
+            
+            return JsonResponse(response)
 
 
 class TransactionHistoryGraphView(LoginRequiredMixin, TemplateView):

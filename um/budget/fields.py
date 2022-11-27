@@ -1,7 +1,9 @@
 from django import forms
 from django.db import models
 
+import calendar
 import datetime
+import math
 
 from .enums import Durations
 
@@ -9,13 +11,43 @@ from .enums import Durations
 class DateDuration:
 
     def __init__(self, years, months, days):
-        self.years = years
-        self.months = months
-        self.days = days
+        self.years = int(years)
+        self.months = int(months)
+        self.days = int(days)
     
     def __str__(self):
         return str(self.years) + '-' + str(self.months) + '-' + str(self.days)
     
+    def reverse(self):
+        self.days = -self.days
+        self.months = -self.months
+        self.years = -self.years
+    
+    def get_date_at_offset(self, start_date, reverse=False):
+        if reverse:
+            self.reverse()
+
+        wip_date = start_date + datetime.timedelta(days=self.days)
+        overflow_month = (wip_date.month - 1) + self.months
+        wip_month = (overflow_month % 12) + 1
+        wip_year = wip_date.year + self.years + math.floor(overflow_month / 12)
+        wip_day = wip_date.day
+
+        _, num_days_in_month = calendar.monthrange(wip_year, wip_month)
+        if num_days_in_month < wip_day:
+            overflow_month += 1
+            wip_month = (overflow_month % 12) + 1
+            wip_year = wip_date.year + self.years + math.floor(overflow_month / 12)
+            wip_day -= num_days_in_month
+        
+        if reverse:
+            self.reverse()
+
+        return datetime.date(year=wip_year, month=wip_month, day=wip_day)
+    
+    def num_durations_in_timespan(self, start_date, end_date):
+        pass
+
     @classmethod
     def from_str(cls, value):
         arr = value.split('-')
@@ -35,7 +67,6 @@ class DateDuration:
             if isinstance(enum_value, str):
                 enum_value = int(enum_value)
             return DateDuration.from_duration(Durations(enum_value))
-
 
 
 class DateDurationFormField(forms.ChoiceField):

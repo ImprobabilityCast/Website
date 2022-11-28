@@ -45,6 +45,15 @@ class DateDuration:
 
         return datetime.date(year=wip_year, month=wip_month, day=wip_day)
     
+    def to_duration(self):
+        match (self.years, self.months, self.days):
+            case (0, 0, 1): return Durations.Daily
+            case (0, 0, 7): return Durations.Weekly
+            case (0, 0, 14): return Durations.BiWeekly
+            case (0, 1, 0): return Durations.Monthly
+            case (1, 0, 0): return Durations.Yearly
+            case _: raise NotImplementedError()
+    
     def num_durations_in_timespan(self, start_date, end_date):
         pass
 

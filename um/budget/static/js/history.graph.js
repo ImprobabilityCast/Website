@@ -149,7 +149,7 @@
 			requester.onerror = function () {
 				console.log(requester.responseText);
 			}
-			requester.open("GET", "/budget/api/history");
+			requester.open("GET", "/budget/api/status");
 			requester.send();
 		},
 	};

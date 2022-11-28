@@ -7,28 +7,32 @@ from .fields import DateDurationFormField
 
 
 class BaseBudgetForm(forms.Form):
-    category = forms.CharField(max_length=127, min_length=1)
+    required_css_class = 'required'
 
-    frequency = DateDurationFormField()
+    category = forms.CharField(max_length=127, min_length=1)
 
     class Meta:
         abstract = True
 
 
 class AddTransactionForm(BaseBudgetForm):
-    specific_place = forms.CharField(max_length=255, min_length=1)
+    specific_place = forms.CharField(max_length=255, min_length=1, required=False)
 
     amount = forms.FloatField(min_value=0.00, max_value=1e15)
+
+    frequency = DateDurationFormField(required=False)
     
     date = forms.DateField(required=False)
 
-    end_date = forms.DateField(required=False)
 
-
-class ModifyBudgetForm(BaseBudgetForm):
+class UpdateBudgetForm(BaseBudgetForm):
     spending_limit = forms.FloatField(min_value=0.00, max_value=1e15)
 
     budget_id = forms.IntegerField(initial=-1, widget=forms.HiddenInput())
+
+    frequency = DateDurationFormField()
+
+    end_date = forms.DateField(required=False)
 
 
 class JsonAggregateHistoryForm(forms.Form):

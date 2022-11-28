@@ -1,0 +1,7 @@
+.child-w-100 input, .child-w-100 select {
+    width: 100%;
+}
+
+.required:before {
+    content: '*'
+}

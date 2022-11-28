@@ -10,9 +10,9 @@ from datetime import date, timedelta
 import json
 
 from .models import SpecificPlacesModel, BudgetsModel, TransactionsModel
-from .models import RepeatingTransactionsModel, BudgetsModel
+from .models import RepeatingTransactionsModel
 from .fields import DateDuration
-from .forms import AddTransactionForm, ModifyBudgetForm, JsonAggregateHistoryForm
+from .forms import AddTransactionForm, UpdateBudgetForm
 from accounts.models import AccountsModel
 
 import logging
@@ -33,6 +33,11 @@ class AddTransactionView(LoginRequiredMixin, FormView):
 
         if form.is_valid():
             transactionsModel = TransactionsModel()
+            logger.debug(form.cleaned_data)
+            logger.debug(request.POST)
+
+            if form.cleaned_data['specific_place'] is None:
+                form.cleaned_data['specific_place'] = ''
 
             placeModel, was_created = SpecificPlacesModel.objects.get_or_create(
                 place = form.cleaned_data['specific_place'].lower()
@@ -72,29 +77,38 @@ class AddTransactionView(LoginRequiredMixin, FormView):
             return render(request, self.template_name, context=context)
 
 
-class ModifyBudgetView(LoginRequiredMixin, FormView):
-    form_class = ModifyBudgetForm
+# make this take a json request instead of a form
+class UpdateBudgetView(LoginRequiredMixin, FormView):
+    form_class = UpdateBudgetForm
     http_method_names = ['get', 'post']
     template_name = 'modify_budget.html'
 
     def post(self, request):
         form = self.get_form()
 
+        if form.is_valid():
+            budget_id = form.cleaned_data['budget_id']
+            budget = BudgetsModel.objects.get(id=budget_id) if budget_id > 0 else BudgetsModel()
+            budget.category = form.cleaned_data['category']
+            budget.frequency = form.cleaned_data['frequency']
+            budget.spending_limit = form.cleaned_data['spending_limit']
+            budget.save()
 
-class ListBudgetView(LoginRequiredMixin, ListView):
+
+class ManageBudgetsView(LoginRequiredMixin, ListView):
     model = BudgetsModel
     http_method_names = ['get', ]
-    template_name = 'list_budget.html'
+    template_name = 'manage_budgets.html'
 
     @classmethod
     def create_form_from_model(cls, budgetModel):
-        modifyBudgetForm = ModifyBudgetForm(initial={
+        form = UpdateBudgetForm(initial={
             'category': budgetModel.category,
             'spending_limit': budgetModel.spending_limit,
-            'frequency': budgetModel.frequency.to_choice_two_tuple(),
+            'frequency': budgetModel.frequency.to_duration().to_choice_two_tuple(),
             'budget_id': budgetModel.id,
         })
-        return modifyBudgetForm
+        return form
 
     def get_queryset(self):
         queryset = self.model.objects.filter(account=self.request.user, is_active=True)
@@ -126,43 +140,46 @@ class JsonRawHistoryView(LoginRequiredMixin, View):
         return JsonResponse(response)
 
 
-class JsonAggregateHistoryView(LoginRequiredMixin, View):
+class JsonBudgetStatusView(LoginRequiredMixin, View):
 
     def get(self, request):
-        #form = JsonAggregateHistoryForm(request.GET)
-
-        time_range = False #form.get_time_range()
-
         tday = date.today()
 
-        if not time_range:
-            budgets = BudgetsModel.objects.filter(account=request.user,
-                is_active=True,
-            )
-            query = TransactionsModel.objects.filter(account=request.user,
-                date__gte=tday.replace(year = tday.year - 1),
+        budgets = BudgetsModel.objects.filter(account=request.user,
+            is_active=True,
+        )
+        query = TransactionsModel.objects.filter(account=request.user,
+            date__gte=tday.replace(year = tday.year - 1),
+            date__lte=tday
+        ).order_by('budget_id')
+
+        response = {'data' : {}}
+        data_by_budget = response['data']
+
+        for budget in budgets:
+            sub_query = query.filter(
+                budget_id=budget.id,
+                date__gte=budget.frequency.get_date_at_offset(tday, reverse=True),
                 date__lte=tday
-            ).order_by('budget_id')
-
-            response = {'data' : {}}
-            data_by_budget = response['data']
-
-            for budget in budgets:
-                sub_query = query.filter(
-                    budget_id=budget.id,
-                    date__gte=budget.frequency.get_date_at_offset(tday, reverse=True),
-                    date__lte=tday
-                )
-                amount_sum = 0 if sub_query.count() == 0 else float(sub_query.aggregate(Sum('amount'))['amount__sum'])
-                data_by_budget[budget.id] = {
-                    'amount' : amount_sum,
-                    'spending_limit' : float(budget.spending_limit),
-                    'category' : budget.category,
-                }
-            
-            return JsonResponse(response)
+            )
+            amount_sum = 0 if sub_query.count() == 0 else float(sub_query.aggregate(Sum('amount'))['amount__sum'])
+            data_by_budget[budget.id] = {
+                'amount' : amount_sum,
+                'spending_limit' : float(budget.spending_limit),
+                'category' : budget.category,
+            }
+        
+        return JsonResponse(response)
 
 
-class TransactionHistoryGraphView(LoginRequiredMixin, TemplateView):
-    template_name = 'history.html'
+class BudgetStatusView(LoginRequiredMixin, TemplateView):
+    template_name = 'budget.html'
+
+
+class TransactionHistoryListView(LoginRequiredMixin, ListView):
+    template_name = 'transaction_history.html'
+
+
+class JsonTransactionHistoryView(LoginRequiredMixin, View):
+    pass
 

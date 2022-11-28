@@ -1,4 +1,5 @@
 {% extends "budget_base.html" %}
+{% load filters %}
 
 {% block header %}
 {{ block.super }}
@@ -17,12 +18,12 @@
     </div>
     <div class="form-row form-group">
       <div class="col-4 col-sm-4">
-        {{ form.specific_place.label_tag }}
+        {{ form.amount.label_tag }}
       </div>
       <div class="col-8 col-sm-8">
-        {{ form.specific_place }}
+        {{ form.amount|addcssclass:'form-control' }}
         <div class="invalid-feedback d-block">
-          {{ form.specific_place.errors }}
+          {{ form.amount.errors }}
         </div>
       </div>
     </div>
@@ -31,7 +32,7 @@
         {{ form.category.label_tag }}
       </div>
       <div class="col-8 col-sm-8">
-        {{ form.category }}
+        {{ form.category|addcssclass:'form-control' }}
         <div class="invalid-feedback d-block">
           {{ form.category.errors }}
         </div>
@@ -39,12 +40,12 @@
     </div>
     <div class="form-row form-group">
       <div class="col-4 col-sm-4">
-        {{ form.amount.label_tag }}
+        {{ form.specific_place.label_tag }}
       </div>
       <div class="col-8 col-sm-8">
-        {{ form.amount }}
+        {{ form.specific_place|addcssclass:'form-control' }}
         <div class="invalid-feedback d-block">
-          {{ form.amount.errors }}
+          {{ form.specific_place.errors }}
         </div>
       </div>
     </div>
@@ -53,7 +54,7 @@
         {{ form.date.label_tag }}
       </div>
       <div class="col-8 col-sm-8">
-        {{ form.date }}
+        {{ form.date|addcssclass:'form-control' }}
         <div class="invalid-feedback d-block">
           {{ form.date.errors }}
         </div>
@@ -73,10 +74,10 @@
     <div class="collapse" id="collapseRepeating">
       <div class="form-row form-group">
         <div class="col-4 col-sm-4">
-          {{ form.frequency.label_tag }}
+          <label for="id_frequency" class="required">{{ form.frequency.label }}:</label>
         </div>
         <div class="col-8 col-sm-8">
-          {{ form.frequency }}
+          {{ form.frequency|addcssclass:'form-control' }}
           <div class="invalid-feedback d-block">
             {{ form.frequency.errors }}
           </div>

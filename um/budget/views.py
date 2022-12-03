@@ -11,7 +11,7 @@ import json
 
 from .models import SpecificPlacesModel, BudgetsModel, TransactionsModel
 from .models import RepeatingTransactionsModel
-from .fields import DateDuration
+from .enums import Durations
 from .forms import AddTransactionForm, UpdateBudgetForm, DeleteBudgetForm
 from accounts.models import AccountsModel
 
@@ -28,28 +28,30 @@ class AddTransactionView(LoginRequiredMixin, FormView):
     http_method_names = ['get', 'post']
     template_name = 'add_transaction.html'
 
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['request'] = self.request
+        return kwargs
+
     def post(self, request):
         form = self.get_form()
 
         if form.is_valid():
             transactionsModel = TransactionsModel()
-            logger.debug(form.cleaned_data)
-            logger.debug(request.POST)
 
             if form.cleaned_data['specific_place'] is None:
                 form.cleaned_data['specific_place'] = ''
 
             placeModel, was_created = SpecificPlacesModel.objects.get_or_create(
-                place = form.cleaned_data['specific_place'].lower()
+                place = form.cleaned_data['specific_place']
             )
             transactionsModel.place = placeModel
 
-            budgetModel, was_created = BudgetsModel.objects.get_or_create(
+            budgetModel = BudgetsModel.objects.get(
                 account = request.user,
-                category = form.cleaned_data['category'].lower(),
+                id = form.cleaned_data['category'],
                 is_active = True
             )
-            budgetModel.is_active = True
             transactionsModel.budget = budgetModel
 
             transactionsModel.amount = form.cleaned_data['amount']
@@ -61,14 +63,13 @@ class AddTransactionView(LoginRequiredMixin, FormView):
             transactionsModel.save()
 
             frequency = form.cleaned_data['frequency']
-            if len(frequency) > 0: # empty string signifies that this is not a repeating transaction
+            if frequency is not None: # this is a repeating transaction
                 repeatingTransaction = RepeatingTransactionsModel()
-                repeatingTransaction.frequency = DateDuration.from_duration(frequency)
+                repeatingTransaction.frequency = frequency
                 repeatingTransaction.transaction = transactionsModel
                 
-                end_date = form.cleaned_data['end_date']
-                if end_date is not None:
-                    repeatingTransaction.end_date = end_date
+                if date is not None:
+                    repeatingTransaction.start_date = date
                 
                 repeatingTransaction.save()
             
@@ -124,11 +125,14 @@ class UpdateBudgetView(BaseModifyBudgetView):
         self.budget_id = form.cleaned_data['budget_id']
         if self.budget_id > 0:
             budget = BudgetsModel.objects.get(id=self.budget_id, account=request.user)
+            budget.category = form.cleaned_data['category']
         else:
-            budget = BudgetsModel()
-            budget.account = request.user
+            budget, was_created = BudgetsModel.objects.get_or_create(account=request.user,
+                category=form.cleaned_data['category']
+            )
+            budget.is_active = True
+            self.budget_id = budget.id
 
-        budget.category = form.cleaned_data['category']
         budget.frequency = form.cleaned_data['frequency']
         budget.spending_limit = form.cleaned_data['spending_limit']
         budget.save()
@@ -154,7 +158,7 @@ class ManageBudgetsView(LoginRequiredMixin, ListView):
         form = UpdateBudgetForm(initial={
             'category': budgetModel.category,
             'spending_limit': budgetModel.spending_limit,
-            'frequency': budgetModel.frequency.to_duration().to_choice_two_tuple(),
+            'frequency': budgetModel.frequency,
             'budget_id': budgetModel.id,
         })
         return form
@@ -198,21 +202,25 @@ class JsonBudgetStatusView(LoginRequiredMixin, View):
         budgets = BudgetsModel.objects.filter(account=request.user,
             is_active=True,
         )
-        query = TransactionsModel.objects.filter(account=request.user,
-            date__gte=tday.replace(year = tday.year - 1),
+        transactions = TransactionsModel.objects.filter(account=request.user,
+            date__gte=tday-timedelta(days=365),
             date__lte=tday
         ).order_by('budget_id')
+        repeating_transactions = RepeatingTransactionsModel.objects.filter(
+            account=request.user,
+            end_date__gte=tday
+        )
 
         response = {'data' : {}}
         data_by_budget = response['data']
 
         for budget in budgets:
-            sub_query = query.filter(
+            budget_transactions = transactions.filter(
                 budget_id=budget.id,
-                date__gte=budget.frequency.get_date_at_offset(tday, reverse=True),
+                date__gte=tday-timedelta(days=budget.frequency),
                 date__lte=tday
             )
-            amount_sum = 0 if sub_query.count() == 0 else float(sub_query.aggregate(Sum('amount'))['amount__sum'])
+            amount_sum = 0 if budget_transactions.count() == 0 else float(budget_transactions.aggregate(Sum('amount'))['amount__sum'])
             data_by_budget[budget.id] = {
                 'amount' : amount_sum,
                 'spending_limit' : float(budget.spending_limit),

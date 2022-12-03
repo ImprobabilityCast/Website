@@ -3,22 +3,32 @@ from django.core.exceptions import ValidationError
 from django.utils.timezone import now
 
 from .enums import Durations
-from .fields import DateDurationFormField
+from .fields import DateDurationFormField, LowerCaseCharField
+from .models import BudgetsModel
+
+import logging
+logger = logging.getLogger('proj')
 
 
 class BaseBudgetForm(forms.Form):
     required_css_class = 'required'
-
-    category = forms.CharField(max_length=127, min_length=1)
 
     class Meta:
         abstract = True
 
 
 class AddTransactionForm(BaseBudgetForm):
-    specific_place = forms.CharField(max_length=255, min_length=1, required=False)
+
+    def __init__(self, request, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        budgets = BudgetsModel.objects.filter(account=request.user, is_active=True)
+        self.fields['category'].choices = [(-1, '')] + ([(budget.id, budget.category) for budget in budgets])
 
     amount = forms.FloatField(min_value=0.00, max_value=1e15)
+
+    category = forms.ChoiceField()
+
+    specific_place = LowerCaseCharField(max_length=255, min_length=1, required=False)
 
     frequency = DateDurationFormField(required=False)
     
@@ -30,9 +40,11 @@ class DeleteBudgetForm(forms.Form):
 
 
 class UpdateBudgetForm(BaseBudgetForm):
+    budget_id = forms.IntegerField(initial=-1, widget=forms.HiddenInput())
+
     spending_limit = forms.FloatField(min_value=0.00, max_value=1e15)
 
-    budget_id = forms.IntegerField(initial=-1, widget=forms.HiddenInput())
+    category = LowerCaseCharField(max_length=127, min_length=1)
 
     frequency = DateDurationFormField()
 

@@ -3,7 +3,7 @@
 
 {% block header %}
 {{ block.super }}
-<!-- <script src="/static/js/add_transaction.js"></script> -->
+<script src="/static/js/add_transaction.js"></script>
 {% endblock %}
 
 {% block content %}
@@ -50,7 +50,7 @@
       </div>
     </div>
     <div class="form-row form-group">
-      <div class="col-4 col-sm-4">
+      <div class="col-4 col-sm-4" id="dateLabelContainer">
         {{ form.date.label_tag }}
       </div>
       <div class="col-8 col-sm-8">
@@ -68,7 +68,7 @@
         <input type="checkbox" autocomplete="off"
           data-toggle="collapse" data-target="#collapseRepeating"
           aria-expanded="false" aria-controls="collapseRepeating" value="false"
-          onchange="$('#id_frequency')[0].required=event.target.checked">
+          onchange="window.add_transaction.toggleRepeatingTransaction(event)">
       </div>
     </div>
     <div class="collapse" id="collapseRepeating">

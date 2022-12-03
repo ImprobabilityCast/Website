@@ -33,10 +33,6 @@ var budgets = (function () {
     };
     let add_budget_html = function (element, HTMLtext) {
         element.innerHTML = HTMLtext;
-        let tokens = $('[name=csrfmiddlewaretoken]');
-        if (tokens.length > 0) {
-            element.firstElementChild.appendChild(tokens[0]);
-        }
         $(element).hide();
         $('#budgetsContainer')[0].appendChild(element);
         $(element).show(300);

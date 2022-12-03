@@ -1,12 +1,10 @@
 from django.contrib.auth.models import AbstractUser
-from django.core.validators import MinLengthValidator
+from django.core.validators import MinLengthValidator, MinValueValidator
 from django.db import models
 from django.utils.timezone import now
 import datetime
 
 from accounts.models import AccountsModel
-
-from .fields import DateDuration, DateDurationField
 
 
 class BaseModel(models.Model):
@@ -42,7 +40,7 @@ class BudgetsModel(BaseModel):
         default=0.00
     )
 
-    frequency = DateDurationField(default=DateDuration(0, 1, 0))
+    frequency = models.IntegerField(default=30, validators=[MinValueValidator(1)]) # in days
 
     start_date = models.DateField(default=now, editable=False, blank=False)
 
@@ -87,7 +85,7 @@ class RepeatingTransactionsModel(BaseModel):
         on_delete=models.CASCADE
     )
 
-    frequency = DateDurationField(default=DateDuration(0, 1, 0))
+    frequency = models.IntegerField(default=30, validators=[MinValueValidator(1)]) # in days
 
     end_date = models.DateField(default=datetime.date.max)
 

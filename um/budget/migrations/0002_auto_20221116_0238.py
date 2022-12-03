@@ -6,7 +6,7 @@ import calendar
 import datetime
 import random
 
-from budget.fields import DateDuration
+from budget.enums import Durations
 
 
 class HistoryGenerator:
@@ -20,11 +20,11 @@ class HistoryGenerator:
         self.schema_editor = schema_editor
         self.account = AccountsModel.objects.get(username='demo')
         self.frequencies = [
-            DateDuration(0, 0, 1),
-            DateDuration(0, 0, 7),
-            DateDuration(0, 0, 14),
-            DateDuration(0, 1, 0),
-            DateDuration(1, 0, 0),
+            Durations.DAILY,
+            Durations.WEEKLY,
+            Durations.SEMI_MONTHLY,
+            Durations.MONTHLY,
+            Durations.YEARLY,
         ]
         self.tday = datetime.date.today()
         self.set_category_transaction_amount_range()

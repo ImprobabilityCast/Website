@@ -1,13 +1,11 @@
-from enum import Enum
+from enum import IntEnum
 
 
-class Durations(Enum):
-    Daily = 1
-    Weekly = 2
-    BiWeekly = 3
-    Monthly = 4
-    Yearly = 5
-    Custom = 6
+class Durations(IntEnum):
+    NONE = 0
+    DAILY = 1
+    WEEKLY = 7
+    SEMI_MONTHLY = 14
+    MONTHLY = 30
+    YEARLY = 365
 
-    def to_choice_two_tuple(self):
-        return (self.value, self.name)

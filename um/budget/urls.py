@@ -8,6 +8,7 @@ urlpatterns = [
     path('api/status', JsonBudgetStatusView.as_view(), name='status_api'),
     path('manage', ManageBudgetsView.as_view(), name='manage'),
     path('api/budget_update', UpdateBudgetView.as_view(), name='budget_update_api'),
-    path('transaction_history', TransactionHistoryListView.as_view(), name='transaction_history'),
-    path('api/transaction_history', JsonTransactionHistoryView.as_view(), name='transaction_history_api'),
+    path('api/budget_delete', DeleteBudgetView.as_view(), name='budget_delete_api'),
+    # path('transaction_history', TransactionHistoryListView.as_view(), name='transaction_history'),
+    # path('api/transaction_history', JsonTransactionHistoryView.as_view(), name='transaction_history_api'),
 ]

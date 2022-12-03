@@ -25,6 +25,10 @@ class AddTransactionForm(BaseBudgetForm):
     date = forms.DateField(required=False)
 
 
+class DeleteBudgetForm(forms.Form):
+    budget_id = forms.IntegerField()
+
+
 class UpdateBudgetForm(BaseBudgetForm):
     spending_limit = forms.FloatField(min_value=0.00, max_value=1e15)
 

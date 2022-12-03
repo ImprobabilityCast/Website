@@ -1,0 +1,44 @@
+{% load filters %}
+
+<form class="row p-1" autocomplete="off" method="post"
+    onchange="$(this).find('.save-btn')[0].disabled=false">
+  {{ form.budget_id }}
+  <fieldset class="rounded border border-secondary p-1">
+    <div class="form-row form-group m-1"
+        onfocusin="window.forms.accordion($(this).siblings('.accordion-member'))">
+      <div class="col-4 col-sm-4 child-w-100 pl-0">
+        {{ form.category|addcssclass:'form-control' }}
+      </div>
+      <div class="col-4 col-sm-4 child-w-100">
+        {{ form.spending_limit|addcssclass:'form-control' }}
+      </div>
+      <div class="col-4 col-sm-4 child-w-100 pr-0">
+        {{ form.frequency|addcssclass:'form-control' }}
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-4 col-sm-4 invalid-feedback d-block m-0 category_error">
+        {{ form.category.errors }}
+      </div>
+      <div class="col-4 col-sm-4 invalid-feedback d-block m-0 spending_limit_error">
+        {{ form.spending_limit.errors }}
+      </div>
+      <div class="col-4 col-sm-4 invalid-feedback d-block m-0 frequency_error">
+        {{ form.frequency.errors }}
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="invalid-feedback d-block m-0 non_field_error">
+        {{ form.non_field_errors }}
+      </div>
+    </div>
+    <div class="form-group m-2 collapse accordion-member">
+      <div class="d-flex justify-content-between">
+        <button type="button" class="btn btn-danger"
+          onclick="window.budgets.delete(event)">Delete</button>
+        <button type="button" class="btn btn-success save-btn"
+          onclick="window.budgets.save(event)" disabled="true">Save</button>
+      </div>
+    </div>
+  </fieldset>
+</form>

@@ -1,4 +1,5 @@
 from django import forms
+from django.core.exceptions import ValidationError
 from django.db import models
 
 import calendar
@@ -91,6 +92,13 @@ class DateDurationFormField(forms.ChoiceField):
                 Durations.Yearly.to_choice_two_tuple()
             ]
         super().__init__(*args, **kwargs)
+    
+    def clean(self, value):
+        value = super().clean(value)
+        try:
+            return DateDuration.from_duration(value)
+        except:
+            raise ValidationError('Provide a valid duration')
 
 
 # class DateDurationFormField(forms.Field):

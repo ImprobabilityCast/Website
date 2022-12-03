@@ -12,7 +12,7 @@ import json
 from .models import SpecificPlacesModel, BudgetsModel, TransactionsModel
 from .models import RepeatingTransactionsModel
 from .fields import DateDuration
-from .forms import AddTransactionForm, UpdateBudgetForm
+from .forms import AddTransactionForm, UpdateBudgetForm, DeleteBudgetForm
 from accounts.models import AccountsModel
 
 import logging
@@ -46,7 +46,8 @@ class AddTransactionView(LoginRequiredMixin, FormView):
 
             budgetModel, was_created = BudgetsModel.objects.get_or_create(
                 account = request.user,
-                category = form.cleaned_data['category'].lower()
+                category = form.cleaned_data['category'].lower(),
+                is_active = True
             )
             budgetModel.is_active = True
             transactionsModel.budget = budgetModel
@@ -77,22 +78,70 @@ class AddTransactionView(LoginRequiredMixin, FormView):
             return render(request, self.template_name, context=context)
 
 
-# make this take a json request instead of a form
-class UpdateBudgetView(LoginRequiredMixin, FormView):
-    form_class = UpdateBudgetForm
-    http_method_names = ['get', 'post']
-    template_name = 'modify_budget.html'
+class BaseModifyBudgetView(LoginRequiredMixin, FormView):
+
+    def post_task(self, form, request):
+        pass
 
     def post(self, request):
         form = self.get_form()
+        has_errors = False
+        self.budget_id = -1
 
         if form.is_valid():
-            budget_id = form.cleaned_data['budget_id']
-            budget = BudgetsModel.objects.get(id=budget_id) if budget_id > 0 else BudgetsModel()
-            budget.category = form.cleaned_data['category']
-            budget.frequency = form.cleaned_data['frequency']
-            budget.spending_limit = form.cleaned_data['spending_limit']
-            budget.save()
+            self.post_task(form, request)
+        else:
+            has_errors = True
+        
+        return JsonResponse({
+            'budget_id': self.budget_id,
+            'has_errors': has_errors,
+            'errors': form.errors,
+        })
+
+    class Meta:
+        abstract = True
+
+
+class DeleteBudgetView(BaseModifyBudgetView):
+    form_class = DeleteBudgetForm
+    http_method_names = ['post', ]
+
+    def post_task(self, form, request):
+        self.budget_id = form.cleaned_data['budget_id']
+        budget = BudgetsModel.objects.get(id=self.budget_id, account=request.user)
+        budget.is_active = False
+        budget.end_date = date.today()
+        budget.save()
+
+
+class UpdateBudgetView(BaseModifyBudgetView):
+    form_class = UpdateBudgetForm
+    http_method_names = ['get', 'post']
+    template_name = 'update_budget.frag.html'
+
+    def post_task(self, form, request):
+        self.budget_id = form.cleaned_data['budget_id']
+        if self.budget_id > 0:
+            budget = BudgetsModel.objects.get(id=self.budget_id, account=request.user)
+        else:
+            budget = BudgetsModel()
+            budget.account = request.user
+
+        budget.category = form.cleaned_data['category']
+        budget.frequency = form.cleaned_data['frequency']
+        budget.spending_limit = form.cleaned_data['spending_limit']
+        budget.save()
+    
+    def get(self, request):
+        id = -1
+        try:
+            id = int(request.GET['budget_id'])
+        except:
+            pass
+        finally:
+            self.initial['budget_id'] = id
+        return super().get(request)
 
 
 class ManageBudgetsView(LoginRequiredMixin, ListView):
@@ -112,7 +161,7 @@ class ManageBudgetsView(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         queryset = self.model.objects.filter(account=self.request.user, is_active=True)
-        result_list = [ ListBudgetView.create_form_from_model(item) for item in queryset]
+        result_list = [ ManageBudgetsView.create_form_from_model(item) for item in queryset]
         return result_list
 
 
@@ -141,6 +190,7 @@ class JsonRawHistoryView(LoginRequiredMixin, View):
 
 
 class JsonBudgetStatusView(LoginRequiredMixin, View):
+    http_method_names = ['get', ]
 
     def get(self, request):
         tday = date.today()

@@ -75,6 +75,7 @@ class HistoryGenerator:
                 placeModel.save()
 
                 self.generate_transactions(budgetModel, placeModel)
+                self.generate_repeating_transactions(budgetModel, placeModel)
 
 
     def generate_budget(self, category):
@@ -91,18 +92,25 @@ class HistoryGenerator:
         return budget
 
 
-    def generate_repeating_transaction(self, transactionModel):
-        repeatingTransaction = self.RepeatingTransactionsModel()
-        repeatingTransaction.transaction = transactionModel
-        repeatingTransaction.frequency = random.choice(self.frequencies)
-        repeatingTransaction.save()
+    def generate_repeating_transactions(self, budgetModel, placeModel):
+        count = random.randint(1, 7)
+        while count > 0:
+            count -= 1
+            repeatingTransaction = self.RepeatingTransactionsModel()
+            repeatingTransaction.budget = budgetModel
+            repeatingTransaction.place = placeModel
+            repeatingTransaction.start_date = self.generate_random_recent_date()
+            repeatingTransaction.amount = self.get_random_transaction_amount() / 100.0
+            repeatingTransaction.account = self.account
+            repeatingTransaction.frequency = random.choice(self.frequencies)
+            repeatingTransaction.save()
 
 
     def generate_random_recent_date(self):
         year = self.tday.year - random.randint(0, 10)
         month = random.randint(1, 12)
         # calendar.monthrange returns (first_week_day, number_of_days_in_month)
-        day = random.randint(1, calendar.monthrange(year, month)[1])
+        day = random.randint(1, 28) #calendar.monthrange(year, month)[1])
         return datetime.date(year, month, day)
 
 
@@ -129,9 +137,6 @@ class HistoryGenerator:
             transaction.amount = self.get_random_transaction_amount()
             transaction.account = self.account
             transaction.save()
-
-            if random.random() < 0.25:
-                self.generate_repeating_transaction(transaction)
 
 
 def generate_history(apps, schema_editor):

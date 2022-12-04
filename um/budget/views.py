@@ -208,19 +208,30 @@ class JsonBudgetStatusView(LoginRequiredMixin, View):
         ).order_by('budget_id')
         repeating_transactions = RepeatingTransactionsModel.objects.filter(
             account=request.user,
-            end_date__gte=tday
-        )
+            end_date__gte=tday,
+            start_date__lte=tday
+        ).order_by('budget_id')
 
         response = {'data' : {}}
         data_by_budget = response['data']
 
         for budget in budgets:
-            budget_transactions = transactions.filter(
+            period = budget.get_current_period()
+            budget_tx = transactions.filter(
                 budget_id=budget.id,
-                date__gte=tday-timedelta(days=budget.frequency),
-                date__lte=tday
+                date__gte=period[0],
+                date__lte=period[1]
             )
-            amount_sum = 0 if budget_transactions.count() == 0 else float(budget_transactions.aggregate(Sum('amount'))['amount__sum'])
+            budget_repeating_tx = repeating_transactions.filter(
+                budget_id=budget.id
+            )
+
+            amount_sum = 0
+            if budget_tx.count() != 0:
+                amount_sum = float(budget_tx.aggregate(Sum('amount'))['amount__sum'])
+            for repeating in budget_repeating_tx:
+                amount_sum += float(repeating.amount_for_period())
+            
             data_by_budget[budget.id] = {
                 'amount' : amount_sum,
                 'spending_limit' : float(budget.spending_limit),

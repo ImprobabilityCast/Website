@@ -11,10 +11,10 @@ logger = logging.getLogger('proj')
 
 
 class BaseBudgetForm(forms.Form):
-    required_css_class = 'required'
-
     class Meta:
         abstract = True
+
+    required_css_class = 'required'
 
 
 class AddTransactionForm(BaseBudgetForm):

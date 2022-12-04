@@ -86,7 +86,7 @@ class HistoryGenerator:
             }
         )
         if was_created:
-            budget.spending_limit = random.randint(10_000, 300_000) / 100.0
+            budget.spending_limit = random.randint(10_000, 300_000) / 10.0
             budget.start_date = self.generate_random_recent_date()
             budget.save()
         return budget

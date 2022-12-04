@@ -4,6 +4,8 @@ from django.db import models
 
 from .enums import Durations
 
+import logging
+logger = logging.getLogger('proj')
 
 class DateDurationFormField(forms.ChoiceField):
 
@@ -33,4 +35,12 @@ class DateDurationFormField(forms.ChoiceField):
 class LowerCaseCharField(forms.CharField):
     def clean(self, value):
         return super().clean(value).lower()
+
+
+class ActualDateField(forms.DateField):
+    widget = forms.DateInput
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.widget.input_type = 'date'
 

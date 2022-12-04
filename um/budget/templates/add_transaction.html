@@ -62,13 +62,17 @@
     </div>
     <div class="form-row form-group">
       <div class="col-4 col-sm-4">
-        <label for="is_repeating">Repeating Transaction:</label>
+        <label for="id_is_repeating">Repeating Transaction:</label>
       </div>
       <div class="col-8 col-sm-8">
-        <input type="checkbox" autocomplete="off"
-          data-toggle="collapse" data-target="#collapseRepeating"
-          aria-expanded="false" aria-controls="collapseRepeating" value="false"
-          onchange="window.add_transaction.toggleRepeatingTransaction(event)">
+        <div class="custom-control custom-switch">
+          <input type="checkbox" autocomplete="off" id="id_is_repeating" name="is_repeating"
+            class="custom-control-input"
+            data-toggle="collapse" data-target="#collapseRepeating"
+            aria-expanded="false" aria-controls="collapseRepeating"
+            onchange="window.add_transaction.toggleRepeatingTransaction(event)">
+          <label for="id_is_repeating" class="custom-control-label"></label>
+        </div>
       </div>
     </div>
     <div class="collapse" id="collapseRepeating">

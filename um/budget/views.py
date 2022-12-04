@@ -37,41 +37,36 @@ class AddTransactionView(LoginRequiredMixin, FormView):
         form = self.get_form()
 
         if form.is_valid():
-            transactionsModel = TransactionsModel()
-
             if form.cleaned_data['specific_place'] is None:
                 form.cleaned_data['specific_place'] = ''
-
             placeModel, was_created = SpecificPlacesModel.objects.get_or_create(
                 place = form.cleaned_data['specific_place']
             )
-            transactionsModel.place = placeModel
-
             budgetModel = BudgetsModel.objects.get(
                 account = request.user,
                 id = form.cleaned_data['category'],
                 is_active = True
             )
-            transactionsModel.budget = budgetModel
-
-            transactionsModel.amount = form.cleaned_data['amount']
+            
             date = form.cleaned_data['date']
-            if date is not None:
-                transactionsModel.date = date
-            transactionsModel.account = request.user
-
-            transactionsModel.save()
-
-            frequency = form.cleaned_data['frequency']
-            if frequency is not None: # this is a repeating transaction
+            
+            if form.cleaned_data['is_repeating']:
                 repeatingTransaction = RepeatingTransactionsModel()
-                repeatingTransaction.frequency = frequency
-                repeatingTransaction.transaction = transactionsModel
-                
                 if date is not None:
                     repeatingTransaction.start_date = date
-                
-                repeatingTransaction.save()
+                repeatingTransaction.frequency = form.cleaned_data['frequency']
+                model = repeatingTransaction
+            else:
+                transaction = TransactionsModel()
+                if date is not None:
+                    transaction.date = date
+                model = transaction
+
+            model.place = placeModel
+            model.budget = budgetModel
+            model.amount = form.cleaned_data['amount']
+            model.account = request.user
+            model.save()
             
             return redirect('/budget')
         else:

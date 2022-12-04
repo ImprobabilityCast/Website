@@ -3,7 +3,7 @@ from django.core.exceptions import ValidationError
 from django.utils.timezone import now
 
 from .enums import Durations
-from .fields import DateDurationFormField, LowerCaseCharField
+from .fields import DateDurationFormField, LowerCaseCharField, ActualDateField
 from .models import BudgetsModel
 
 import logging
@@ -29,10 +29,18 @@ class AddTransactionForm(BaseBudgetForm):
     category = forms.ChoiceField()
 
     specific_place = LowerCaseCharField(max_length=255, min_length=1, required=False)
+    
+    date = ActualDateField(required=False)
+
+    is_repeating = forms.BooleanField(required=False)
 
     frequency = DateDurationFormField(required=False)
-    
-    date = forms.DateField(required=False)
+
+    def clean(self):
+        cleaned_data = super().clean()
+        if cleaned_data['is_repeating'] and cleaned_data['frequency'] is None:
+            raise ValidationError('Frequency is required for repeating transactions.')
+        return cleaned_data
 
 
 class DeleteBudgetForm(forms.Form):
@@ -48,13 +56,13 @@ class UpdateBudgetForm(BaseBudgetForm):
 
     frequency = DateDurationFormField()
 
-    end_date = forms.DateField(required=False)
+    end_date = ActualDateField(required=False)
 
 
 class JsonAggregateHistoryForm(forms.Form):
     time_span = DateDurationFormField()
 
-    start_date = forms.DateField()
+    start_date = ActualDateField()
 
     def get_time_range(self):
         self.clean()

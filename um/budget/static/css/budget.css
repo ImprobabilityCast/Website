@@ -5,3 +5,8 @@
 .required:before {
     content: '*'
 }
+
+.custom-control-label {
+    transform: scale(2);
+    left: 2.3rem;
+}

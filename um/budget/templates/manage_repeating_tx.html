@@ -5,26 +5,23 @@
 {{ block.super }}
 <script src="/static/js/forms.js"></script>
 <script src="/static/js/manage.generic.js"></script>
-<script src="/static/js/manage.budgets.js"></script>
+<script src="/static/js/manage.repeating_tx.js"></script>
 {% endblock %}
 
 {% block content %}
-<header class="mt-4">
-  <h3>
-    <button type="button" class="btn btn-primary"
-        onclick="window.listManage.new('newBudgetForm')">+ New Budget</button>
-  </h3>
+<header class="row m-4">
+  <h3 class="text-center">Repeating Transactions</h3>
 </header>
 
 {% comment %}
   These are all in a line like this until there is support for the css4 definition of ':empty'.
   The new definition will include whitespace.
 {% endcomment %}
-<div class="p-1" id="formsContainer">{% for form in page.object_list %}<div>{% include "update_budget.frag.html" %}</div>{% endfor %}</div>
+<div class="p-1" id="formsContainer">{% for form in page.object_list %}<div>{% include "update_repeating_tx.frag.html" %}</div>{% endfor %}</div>
 <div class="p-1" id="formInfo">
   {% csrf_token %}
   <div class="p-5 border border-secondary rounded" id="noDataMsg">
-    <p class="m-5 text-center">Your budgets will appear here.</p>
+    <p class="m-5 text-center">Your repeating transactions will appear here.</p>
   </div>
 </div>
 

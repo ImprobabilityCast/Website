@@ -9,4 +9,13 @@
 .custom-control-label {
     transform: scale(2);
     left: 2.3rem;
+    bottom: 0.7rem;
+}
+
+#formsContainer:empty + #formInfo {
+    display: block;
+}
+
+#formsContainer + #formInfo {
+    display: none;
 }

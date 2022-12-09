@@ -1,5 +1,5 @@
 (function () {
-    window.onload = function () {historyObj.updateGraph($("#mainGraph")[0])};
+    window.addEventListener("load", function () {historyObj.updateGraph($("#mainGraph")[0])});
 	var historyObj = {
 		_parsedData: {},
 		colors: [],
@@ -28,7 +28,6 @@
 		},
 
 		drawChart: function (ctx) {
-			console.log(historyObj.parsedData)
 			let labels = [];
 			let parsing = {
 				yAxisKey: "y",
@@ -77,7 +76,6 @@
 				labels.push(v.category);
 				counter -= 1;
 			});
-			console.log(datasets);
 
 			return new Chart(ctx, {
 				type: "bar",

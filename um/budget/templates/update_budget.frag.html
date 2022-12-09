@@ -2,7 +2,7 @@
 
 <form class="row p-1" autocomplete="off" method="post"
     onchange="$(this).find('.save-btn')[0].disabled=false">
-  {{ form.budget_id }}
+  {{ form.data_id }}
   <fieldset class="rounded border border-secondary p-1">
     <div class="form-row form-group m-1"
         onfocusin="window.forms.accordion($(this).siblings('.accordion-member'))">
@@ -35,9 +35,9 @@
     <div class="form-group m-2 collapse accordion-member">
       <div class="d-flex justify-content-between">
         <button type="button" class="btn btn-danger"
-          onclick="window.budgets.delete(event)">Delete</button>
+          onclick="window.listManage.delete(event)">Delete</button>
         <button type="button" class="btn btn-success save-btn"
-          onclick="window.budgets.save(event)" disabled="true">Save</button>
+          onclick="window.listManage.save(event)" disabled="true">Save</button>
       </div>
     </div>
   </fieldset>

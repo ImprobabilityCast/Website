@@ -1,4 +1,5 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.paginator import Paginator
 from django.db.models import Sum
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
@@ -12,7 +13,7 @@ import json
 from .models import SpecificPlacesModel, BudgetsModel, TransactionsModel
 from .models import RepeatingTransactionsModel
 from .enums import Durations
-from .forms import AddTransactionForm, UpdateBudgetForm, DeleteBudgetForm
+from .forms import AddTransactionForm, UpdateRepeatingTxForm, UpdateBudgetForm, DeleteDataForm
 from accounts.models import AccountsModel
 
 import logging
@@ -62,7 +63,7 @@ class AddTransactionView(LoginRequiredMixin, FormView):
                     transaction.date = date
                 model = transaction
 
-            model.place = placeModel
+            model.specific_place = placeModel
             model.budget = budgetModel
             model.amount = form.cleaned_data['amount']
             model.account = request.user
@@ -74,7 +75,11 @@ class AddTransactionView(LoginRequiredMixin, FormView):
             return render(request, self.template_name, context=context)
 
 
-class BaseModifyBudgetView(LoginRequiredMixin, FormView):
+class BaseModifyView(LoginRequiredMixin, FormView):
+    class Meta:
+        abstract = True
+
+    http_method_names = ['post', ]
 
     def post_task(self, form, request):
         pass
@@ -82,7 +87,7 @@ class BaseModifyBudgetView(LoginRequiredMixin, FormView):
     def post(self, request):
         form = self.get_form()
         has_errors = False
-        self.budget_id = -1
+        self.data_id = -1
 
         if form.is_valid():
             self.post_task(form, request)
@@ -90,102 +95,64 @@ class BaseModifyBudgetView(LoginRequiredMixin, FormView):
             has_errors = True
         
         return JsonResponse({
-            'budget_id': self.budget_id,
+            'data_id': self.data_id,
             'has_errors': has_errors,
             'errors': form.errors,
         })
 
+
+class DeleteDataView(BaseModifyView):
     class Meta:
         abstract = True
 
-
-class DeleteBudgetView(BaseModifyBudgetView):
-    form_class = DeleteBudgetForm
-    http_method_names = ['post', ]
+    form_class = DeleteDataForm
 
     def post_task(self, form, request):
-        self.budget_id = form.cleaned_data['budget_id']
-        budget = BudgetsModel.objects.get(id=self.budget_id, account=request.user)
-        budget.is_active = False
-        budget.end_date = date.today()
-        budget.save()
+        self.data_id = form.cleaned_data['data_id']
+        model = self.model_class.objects.get(id=self.data_id, account=request.user)
+        model.is_active = False
+        model.end_date = date.today()
+        model.save()
 
 
-class UpdateBudgetView(BaseModifyBudgetView):
+class DeleteBudgetView(DeleteDataView):
+    model_class = BudgetsModel
+
+
+class DeleteRepeatingTxView(DeleteDataView):
+    model_class = RepeatingTransactionsModel
+
+
+class UpdateBudgetView(BaseModifyView):
     form_class = UpdateBudgetForm
     http_method_names = ['get', 'post']
     template_name = 'update_budget.frag.html'
 
     def post_task(self, form, request):
-        self.budget_id = form.cleaned_data['budget_id']
-        if self.budget_id > 0:
-            budget = BudgetsModel.objects.get(id=self.budget_id, account=request.user)
+        self.data_id = form.cleaned_data['data_id']
+        if self.data_id > 0:
+            budget = BudgetsModel.objects.get(id=self.data_id, account=request.user)
             budget.category = form.cleaned_data['category']
         else:
             budget, was_created = BudgetsModel.objects.get_or_create(account=request.user,
                 category=form.cleaned_data['category']
             )
             budget.is_active = True
-            self.budget_id = budget.id
+            self.data_id = budget.id
 
         budget.frequency = form.cleaned_data['frequency']
         budget.spending_limit = form.cleaned_data['spending_limit']
         budget.save()
-    
+
     def get(self, request):
         id = -1
         try:
-            id = int(request.GET['budget_id'])
+            id = int(request.GET['data_id'])
         except:
             pass
         finally:
-            self.initial['budget_id'] = id
+            self.initial['data_id'] = id
         return super().get(request)
-
-
-class ManageBudgetsView(LoginRequiredMixin, ListView):
-    model = BudgetsModel
-    http_method_names = ['get', ]
-    template_name = 'manage_budgets.html'
-
-    @classmethod
-    def create_form_from_model(cls, budgetModel):
-        form = UpdateBudgetForm(initial={
-            'category': budgetModel.category,
-            'spending_limit': budgetModel.spending_limit,
-            'frequency': budgetModel.frequency,
-            'budget_id': budgetModel.id,
-        })
-        return form
-
-    def get_queryset(self):
-        queryset = self.model.objects.filter(account=self.request.user, is_active=True)
-        result_list = [ ManageBudgetsView.create_form_from_model(item) for item in queryset]
-        return result_list
-
-
-class JsonRawHistoryView(LoginRequiredMixin, View):
-    
-    def get(self, request):
-        oldest_date = date.today() - timedelta(days=30)
-        query = TransactionsModel.objects.filter(date__gt=oldest_date)
-
-        response = {'data_by_category' : {}, 'category_mapping' : {}}
-        category_mapping = response['category_mapping']
-        data_by_budget = response['data_by_category']
-
-        for q in query:
-            if q.budget_id not in data_by_budget:
-                data_by_budget[q.budget_id] = {'category' : q.budget.category, 'data' : []}
-                category_mapping[q.budget_id] = q.budget.category
-            
-            data_by_budget[q.budget_id]['data'].append({
-                'amount' : float(q.amount),
-                'date' : str(q.date),
-                'place' : q.place.place
-            })
-        
-        return JsonResponse(response)
 
 
 class JsonBudgetStatusView(LoginRequiredMixin, View):
@@ -240,10 +207,83 @@ class BudgetStatusView(LoginRequiredMixin, TemplateView):
     template_name = 'budget.html'
 
 
-class TransactionHistoryListView(LoginRequiredMixin, ListView):
-    template_name = 'transaction_history.html'
+class PagedListView(LoginRequiredMixin, ListView):
+    class Meta:
+        abstract = True
+
+    http_method_names = ['get', ]
+    paginate_by = 10
+
+    def get_queryset(self):
+        query = self.model.objects.filter(account=self.request.user, is_active=True)
+        # logger.debug(query.explain())
+        return query
+    
+    def paginated_queryset(self):
+        paginator = Paginator(self.get_queryset(), self.paginate_by)
+        try:
+            page_number = int(self.request.GET['page'])
+            if page_number < 1 or page_number > paginator.num_pages:
+                page_number = 1
+        except:
+            page_number = 1
+        return paginator.get_page(page_number)
+
+    def get(self, request):
+        page = self.paginated_queryset()
+        page.object_list = [self.create_form_from_model(item) for item in page]
+        return render(request, self.template_name, {'page': page})
 
 
-class JsonTransactionHistoryView(LoginRequiredMixin, View):
-    pass
+class ManageBudgetsView(PagedListView):
+    model = BudgetsModel
+    template_name = 'manage_budgets.html'
+
+    def create_form_from_model(self, budgetModel):
+        return UpdateBudgetForm(initial={
+            'category': budgetModel.category,
+            'spending_limit': budgetModel.spending_limit,
+            'frequency': budgetModel.frequency,
+            'data_id': budgetModel.id,
+        })
+
+
+class ManageRepeatingTxView(PagedListView):
+    model = RepeatingTransactionsModel
+    template_name = 'manage_repeating_tx.html'
+
+    def create_form_from_model(self, repeatingTxModel):
+        return UpdateRepeatingTxForm(initial={
+            'amount': repeatingTxModel.amount,
+            'category': repeatingTxModel.budget.get_choice_pair(),
+            'specific_place': repeatingTxModel.specific_place,
+            'frequency': repeatingTxModel.frequency,
+            'data_id': repeatingTxModel.id,
+        }, request=self.request)
+
+
+class UpdateRepeatingTxView(BaseModifyView):
+    form_class = UpdateRepeatingTxForm
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['request'] = self.request
+        return kwargs
+
+    def post_task(self, form, request):
+        self.data_id = form.cleaned_data['data_id']
+        if self.data_id > 0:
+            obj = RepeatingTransactionsModel.objects.get(id=self.data_id, account=request.user)
+            obj.budget = BudgetsModel.objects.get(
+                id=form.cleaned_data['category'],
+                account=request.user
+            )
+            place, was_created = SpecificPlacesModel.objects.get_or_create(
+                place=form.cleaned_data['specific_place']
+            )
+            obj.specific_place = place
+            obj.is_active = True
+            obj.frequency = form.cleaned_data['frequency']
+            obj.amount = form.cleaned_data['amount']
+            obj.save()
 

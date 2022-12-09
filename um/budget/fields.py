@@ -7,8 +7,8 @@ from .enums import Durations
 import logging
 logger = logging.getLogger('proj')
 
-class DateDurationFormField(forms.ChoiceField):
 
+class DateDurationFormField(forms.ChoiceField):
     def __init__(self, *args, **kwargs):
         if 'choices' not in kwargs:
             kwargs['choices'] = [
@@ -26,9 +26,9 @@ class DateDurationFormField(forms.ChoiceField):
         try:
             value = Durations(int(value)).value
         except:
-            raise ValidationError('Select a valid duration')
-        if value == Durations.NONE.value:
-            value = None
+            raise ValidationError('Select a valid duration.')
+        if value == Durations.NONE.value and self.required:
+            raise ValidationError('This field is required.')
         return value
 
 

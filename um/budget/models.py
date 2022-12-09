@@ -12,7 +12,6 @@ from .enums import Durations
 
 
 class BaseModel(models.Model):
-
     class Meta:
         abstract = True
 
@@ -24,7 +23,6 @@ class BaseModel(models.Model):
 
 
 class TimespanMixin(models.Model):
-
     class Meta:
         abstract = True
     # in days, excluing 30 & 365 which are treated specially
@@ -37,7 +35,6 @@ class TimespanMixin(models.Model):
 
 
 class SpecificPlacesModel(BaseModel):
-
     place = models.CharField(max_length=255, unique=True, validators=[MinLengthValidator(1)])
 
     def __str__(self):
@@ -45,7 +42,6 @@ class SpecificPlacesModel(BaseModel):
 
 
 class BudgetsModel(BaseModel, TimespanMixin):
-
     account = models.ForeignKey(AccountsModel,
         on_delete=models.CASCADE
     )
@@ -60,10 +56,12 @@ class BudgetsModel(BaseModel, TimespanMixin):
     def get_current_period(self):
         tday = date.today()
         return (tday-timedelta(days=self.frequency), tday)
+    
+    def get_choice_pair(self):
+        return (self.id, self.category)
 
 
 class BaseTransactionModel(BaseModel):
-
     class Meta:
         abstract = True
 
@@ -75,7 +73,7 @@ class BaseTransactionModel(BaseModel):
         on_delete=models.CASCADE
     )
 
-    place = models.ForeignKey(SpecificPlacesModel,
+    specific_place = models.ForeignKey(SpecificPlacesModel,
         on_delete=models.CASCADE
     )
 
@@ -85,7 +83,6 @@ class BaseTransactionModel(BaseModel):
 
 
 class TransactionsModel(BaseTransactionModel):
-
     class Meta:
         ordering = ['date']
 
@@ -101,7 +98,6 @@ class TransactionsModel(BaseTransactionModel):
 
 
 class RepeatingTransactionsModel(BaseTransactionModel, TimespanMixin):
-
     # this assumes that tx only begin on the days of the month in range [1, 28]
     def get_first_tx_in_period(self, period_start_date):
         tx_begin_date = self.start_date

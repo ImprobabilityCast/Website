@@ -1,8 +1,9 @@
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.contrib.auth.views import LoginView
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import redirect, render
+from django.views.generic import TemplateView
 from django.views.generic.edit import CreateView
 
 from .forms import AccountCreationForm, AccountLoginForm
@@ -66,4 +67,13 @@ class LoginView(NotLoggedInMixin, LoginView):
         
         context = {'form' : form}
         return render(request, self.template_name, context=context)
+
+
+class LogoutView(TemplateView):
+    template_name = 'registration/logout.html'
+    http_method_names = ['get', ]
+
+    def get(self, request):
+        logout(request)
+        return super().get(request)
 

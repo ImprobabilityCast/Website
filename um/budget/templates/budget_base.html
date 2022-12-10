@@ -25,25 +25,30 @@ window.addEventListener("load", function () {
 			aria-expanded="false" aria-controls="collapse" aria-label="Toggle navigation">
 			<span class="navbar-toggler-icon"></span>
 		</button>
-		<h5 class="mb-0 pt-1 pb-1 d-inline">Budget Thingy</h5>
+		<h5 class="mb-0 pt-1 pb-1 d-inline text-light">Budget Thingy</h5>
 	</div>
 
 	<div class="collapse navbar-collapse" id="collapsibleNav">
 		<ul class="nav row">
-			<li class="nav-item col-md-2">
-				<a class="nav-link text-light" href="{% url 'index' %}">Home</a>
+			<li class="nav-item col-md-2 p-0">
+				<a class="nav-link text-light text-center w-100 h-100" href="{% url 'index' %}">Home</a>
 			</li>
-			<li class="nav-item col-md-2">
-				<a class="nav-link text-light" href="{% url 'manage' %}">Budgets</a>
+			<li class="nav-item col-md-2 p-0">
+				<a class="nav-link text-light text-center w-100 h-100" href="{% url 'manage' %}">Budgets</a>
 			</li>
-			<li class="nav-item col-md-3">
-				<a class="nav-link text-light" href="{% url 'manage_repeating_tx' %}">Repeating Transactions</a>
+			<li class="nav-item col-md-2 p-0">
+				<a class="nav-link text-light text-center w-100 h-100" href="{% url 'manage_repeating_tx' %}">
+					Repeating Transactions</a>
 			</li>
-			<li class="nav-item col-md-3">
-				<a class="nav-link text-light" href="{% url 'add_transaction' %}">Add Transaction</a>
+			<li class="nav-item col-md-2 p-0">
+				<a class="nav-link text-light text-center w-100 h-100" href="{% url 'add_transaction' %}">
+					Add Transaction</a>
 			</li>
-			<li class="nav-item col-md-2">
-				<a class="nav-link text-light" href="{% url 'status' %}">Status</a>
+			<li class="nav-item col-md-2 p-0">
+				<a class="nav-link text-light text-center w-100 h-100" href="{% url 'status' %}">Status</a>
+			</li>
+			<li class="nav-item col-md-2 p-0">
+				<a class="nav-link text-light text-center w-100 h-100" href="{% url 'logout' %}">Logout</a>
 			</li>
 		</ul>
 	</div>

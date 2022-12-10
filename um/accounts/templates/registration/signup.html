@@ -1,4 +1,4 @@
-{% extends "base_template.html" %}
+{% extends "accounts_base.html" %}
 {% load filters %}
 
 {% block content %}
@@ -8,7 +8,7 @@
   </div>
   <div class="col-md">
 
-    <form method="post" action="{% url 'signup' %}" >
+    <form method="post" action="{% url 'signup' %}" class="v-center">
       {% csrf_token %}
 
       <h3>Sign Up</h3>
@@ -20,10 +20,10 @@
           </div>
         </div>
         <div class="form-row form-group">
-          <div class="col-4 col-sm-4">
+          <div class="col-5 col-sm-5">
             {{ form.username.label_tag }}
           </div>
-          <div class="col-8 col-sm-8">
+          <div class="col-7 col-sm-7">
             {{ form.username|addcssclass:'form-control' }}
             <div class="invalid-feedback d-block">
               {{ form.username.errors }}
@@ -31,10 +31,10 @@
           </div>
         </div>
         <div class="form-row form-group">
-          <div class="col-4 col-sm-4">
+          <div class="col-5 col-sm-5">
             <label for="email">Email:</label>
           </div>
-          <div class="col-8 col-sm-8">
+          <div class="col-7 col-sm-7">
             <input type="email" name="email" class="form-control">
             <div class="invalid-feedback d-block">
               {{ form.email.errors }}
@@ -42,25 +42,26 @@
           </div>
         </div>
         <div class="form-row form-group">
-          <div class="col-4 col-sm-4">
+          <div class="col-5 col-sm-5">
             {{ form.password1.label_tag }}
           </div>
-          <div class="col-8 col-sm-8">
+          <div class="col-7 col-sm-7">
             {{ form.password1|addcssclass:'form-control' }}
             <div class="invalid-feedback d-block">
               {{ form.password1.errors }}
             </div>
           </div>
-          <div class="form-row form-group">
-            <div class="col-4 col-sm-4">
-              {{ form.password2.label_tag }}
+        </div>
+        <div class="form-row form-group">
+          <div class="col-5 col-sm-5">
+            {{ form.password2.label_tag }}
+          </div>
+          <div class="col-7 col-sm-7">
+            {{ form.password2|addcssclass:'form-control' }}
+            <div class="invalid-feedback d-block">
+              {{ form.password2.errors }}
             </div>
-            <div class="col-8 col-sm-8">
-              {{ form.password2|addcssclass:'form-control' }}
-              <div class="invalid-feedback d-block">
-                {{ form.password2.errors }}
-              </div>
-            </div>
+          </div>
         </div>
       </fieldset>
 

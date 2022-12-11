@@ -1,6 +1,7 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.paginator import Paginator
-from django.db.models import Sum
+from django.db.models import Sum, F
+from django.db.models.query import QuerySet
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django.views.generic import TemplateView, ListView
@@ -109,10 +110,9 @@ class DeleteDataView(BaseModifyView):
 
     def post_task(self, form, request):
         self.data_id = form.cleaned_data['data_id']
-        model = self.model_class.objects.get(id=self.data_id, account=request.user)
-        model.is_active = False
-        model.end_date = date.today()
-        model.save()
+        self.model_class.objects.get(
+            id=self.data_id, account=request.user
+        ).update(is_active=False, end_date = date.today())
 
 
 class DeleteBudgetView(DeleteDataView):
@@ -159,45 +159,55 @@ class JsonBudgetStatusView(LoginRequiredMixin, View):
     http_method_names = ['get', ]
 
     def get(self, request):
+        raw_sql = '''SELECT
+            budget_budgetsmodel.id as id,
+            spending_limit,
+            category,
+            COALESCE(amount__sum, 0) as amount__sum
+        FROM
+        (
+            SELECT budget_budgetsmodel.id as id, sum(amount) as amount__sum
+            FROM budget_budgetsmodel
+            LEFT OUTER JOIN budget_transactionsmodel
+            ON budget_budgetsmodel.id=budget_transactionsmodel.budget_id
+            WHERE budget_budgetsmodel.account_id=%s
+            AND budget_budgetsmodel.is_active
+            AND (
+                    (frequency=30 AND date >= DATE_SUB(CURRENT_DATE(), INTERVAL 1 MONTH))
+                OR
+                    (frequency=365 AND date >= DATE_SUB(CURRENT_DATE(), INTERVAL 1 YEAR))
+                OR
+                    (date >= DATE_SUB(CURRENT_DATE(), INTERVAL frequency DAY))
+                )
+            GROUP BY budget_budgetsmodel.id
+        ) as inner_table
+        RIGHT JOIN budget_budgetsmodel
+        ON budget_budgetsmodel.id=inner_table.id
+        WHERE budget_budgetsmodel.is_active'''
+        budget_tx_sums = BudgetsModel.objects.raw(raw_sql, [request.user.id])
+        
         tday = date.today()
-
-        budgets = BudgetsModel.objects.filter(account=request.user,
-            is_active=True,
-        )
-        transactions = TransactionsModel.objects.filter(account=request.user,
-            date__gte=tday-timedelta(days=365),
-            date__lte=tday
-        ).order_by('budget_id')
-        repeating_transactions = RepeatingTransactionsModel.objects.filter(
+        repeating_transactions = list(RepeatingTransactionsModel.objects.filter(
             account=request.user,
             end_date__gte=tday,
             start_date__lte=tday
-        ).order_by('budget_id')
+        ).order_by('budget_id').select_related('budget'))
 
         response = {'data' : {}}
         data_by_budget = response['data']
 
-        for budget in budgets:
-            period = budget.get_current_period()
-            budget_tx = transactions.filter(
-                budget_id=budget.id,
-                date__gte=period[0],
-                date__lte=period[1]
-            )
-            budget_repeating_tx = repeating_transactions.filter(
-                budget_id=budget.id
-            )
-
-            amount_sum = 0
-            if budget_tx.count() != 0:
-                amount_sum = float(budget_tx.aggregate(Sum('amount'))['amount__sum'])
+        for budget_tx in budget_tx_sums:
+            budget_repeating_tx = [
+                rep_tx for rep_tx in repeating_transactions if rep_tx.budget_id == budget_tx.id
+            ]
+            amount__sum = budget_tx.amount__sum
             for repeating in budget_repeating_tx:
-                amount_sum += float(repeating.amount_for_period())
+                amount__sum += repeating.amount_for_period()
             
-            data_by_budget[budget.id] = {
-                'amount' : amount_sum,
-                'spending_limit' : float(budget.spending_limit),
-                'category' : budget.category,
+            data_by_budget[budget_tx.id] = {
+                'amount' : amount__sum,
+                'spending_limit' : budget_tx.spending_limit,
+                'category' : budget_tx.category,
             }
         
         return JsonResponse(response)
@@ -215,9 +225,7 @@ class PagedListView(LoginRequiredMixin, ListView):
     paginate_by = 10
 
     def get_queryset(self):
-        query = self.model.objects.filter(account=self.request.user, is_active=True)
-        # logger.debug(query.explain())
-        return query
+        return self.model.objects.filter(account=self.request.user, is_active=True)
     
     def paginated_queryset(self):
         paginator = Paginator(self.get_queryset(), self.paginate_by)
@@ -252,14 +260,20 @@ class ManageRepeatingTxView(PagedListView):
     model = RepeatingTransactionsModel
     template_name = 'manage_repeating_tx.html'
 
+    def get_queryset(self):
+        return super().get_queryset().select_related('budget', 'specific_place')
+
     def create_form_from_model(self, repeatingTxModel):
-        return UpdateRepeatingTxForm(initial={
-            'amount': repeatingTxModel.amount,
-            'category': repeatingTxModel.budget.get_choice_pair(),
-            'specific_place': repeatingTxModel.specific_place,
-            'frequency': repeatingTxModel.frequency,
-            'data_id': repeatingTxModel.id,
-        }, request=self.request)
+        return UpdateRepeatingTxForm(
+            initial={
+                'amount': repeatingTxModel.amount,
+                'category': repeatingTxModel.budget.get_choice_pair(),
+                'specific_place': repeatingTxModel.specific_place,
+                'frequency': repeatingTxModel.frequency,
+                'data_id': repeatingTxModel.id,
+            },
+            request=self.request
+        )
 
 
 class UpdateRepeatingTxView(BaseModifyView):

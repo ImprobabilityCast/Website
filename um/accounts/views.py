@@ -23,6 +23,15 @@ class NotLoggedInMixin(UserPassesTestMixin):
             raise PermissionDenied()
         else:
             return redirect(self.login_url)
+    
+    def try_login(self, username, password):
+        my_sweet_user = authenticate(self.request, username=username, password=password)
+        if my_sweet_user is not None:
+            login(self.request, my_sweet_user)
+            return True
+        else:
+            return False
+
 
 
 class SignUpView(NotLoggedInMixin, CreateView):
@@ -37,7 +46,8 @@ class SignUpView(NotLoggedInMixin, CreateView):
             accountsModel = form.save(commit=False)
             accountsModel.set_email_attributes(form.cleaned_data['email'])
             accountsModel.save()
-            return redirect('/accounts/login')
+            self.try_login(form.cleaned_data['username'], form.cleaned_data['password1'])
+            return redirect('/')
         else:
             context = {'form' : form}
             return render(request, self.template_name, context=context)
@@ -60,9 +70,7 @@ class LoginView(NotLoggedInMixin, LoginView):
         if form.is_valid():
             username = form.cleaned_data['username']
             password = form.cleaned_data['password']
-            my_sweet_user = authenticate(request, username=username, password=password)
-            if my_sweet_user is not None:
-                login(request, my_sweet_user)
+            if self.try_login(username, password):
                 return super().post(request)
         
         context = {'form' : form}

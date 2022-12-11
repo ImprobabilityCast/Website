@@ -46,6 +46,7 @@ var listManage = (function () {
     return {
         deleteUrl: "",
         updateUrl: "",
+        cacheKey: "",
         onSaveSuccess: function(formElement) {},
 
         delete: function (event) {
@@ -77,22 +78,39 @@ var listManage = (function () {
                 }
             });
         },
-        new: function (cacheKey) {
+        new: function (async=true) {
             // get form if not cached
-            let formHTML = sessionStorage.getItem(cacheKey);
+            let formHTML = window.cacheMan.getItem(this.cacheKey);
             let newElement = document.createElement("div");
             $(newElement).hide();
+            let obj = this;
             if (formHTML == null) {
                 let request = new XMLHttpRequest();
                 request.onload = function () {
-                    addHTML(newElement, request.responseText);
-                    sessionStorage.setItem(cacheKey, request.responseText);
+                    if (request.status == 200) {
+                        addHTML(newElement, request.responseText);
+                        window.cacheMan.setItem(obj.cacheKey, request.responseText);
+                    } else {
+                        console.warn("form request failed with status: " + request.status);
+                    }
                 };
-                request.open("GET", this.updateUrl);
+                request.open("GET", this.updateUrl, async);
                 request.send()
             } else {
                 addHTML(newElement, formHTML);
             }
         },
+        populate: function () {
+            let pageData = JSON.parse($("#pageData")[0].textContent);
+            let formsContainer = $("#formsContainer")[0];
+            let obj = this;
+            pageData.forEach(function (data, i) {
+                obj.new(false /* async */);
+                let form = $(formsContainer.lastElementChild.firstElementChild);
+                Object.keys(data).forEach( function (key, ii) {
+                    form.find("#id_" + key)[0].value = data[key];
+                });
+            });
+        }
     };
 })();

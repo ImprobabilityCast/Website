@@ -4,8 +4,10 @@
 {% block header %}
 {{ block.super }}
 <script src="/static/js/forms.js"></script>
+<script src="/static/js/cache.js"></script>
 <script src="/static/js/manage.generic.js"></script>
 <script src="/static/js/manage.repeating_tx.js"></script>
+{{ page.object_list|json_script:"pageData" }}
 {% endblock %}
 
 {% block content %}
@@ -17,7 +19,7 @@
   These are all in a line like this until there is support for the css4 definition of ':empty'.
   The new definition will include whitespace.
 {% endcomment %}
-<div class="p-1" id="formsContainer">{% for form in page.object_list %}<div>{% include "update_repeating_tx.frag.html" %}</div>{% endfor %}</div>
+<div class="p-1" id="formsContainer"></div>
 <div class="p-1" id="formInfo">
   {% csrf_token %}
   <div class="p-5 border border-secondary rounded" id="noDataMsg">

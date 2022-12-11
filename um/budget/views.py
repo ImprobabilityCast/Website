@@ -91,14 +91,20 @@ class BaseModifyView(LoginRequiredMixin, FormView):
         self.data_id = -1
 
         if form.is_valid():
-            self.post_task(form, request)
+            try:
+                self.post_task(form, request)
+                errors = {}
+            except:
+                errors = {'non_field': ['internal server error \\(^_^)/']}
+                has_errors = True
         else:
+            errors = form.errors
             has_errors = True
         
         return JsonResponse({
             'data_id': self.data_id,
             'has_errors': has_errors,
-            'errors': form.errors,
+            'errors': errors,
         })
 
 
@@ -239,7 +245,7 @@ class PagedListView(LoginRequiredMixin, ListView):
 
     def get(self, request):
         page = self.paginated_queryset()
-        page.object_list = [self.create_form_from_model(item) for item in page]
+        page.object_list = [self.create_json_from_model(item) for item in page]
         return render(request, self.template_name, {'page': page})
 
 
@@ -247,13 +253,13 @@ class ManageBudgetsView(PagedListView):
     model = BudgetsModel
     template_name = 'manage_budgets.html'
 
-    def create_form_from_model(self, budgetModel):
-        return UpdateBudgetForm(initial={
+    def create_json_from_model(self, budgetModel):
+        return {
             'category': budgetModel.category,
             'spending_limit': budgetModel.spending_limit,
             'frequency': budgetModel.frequency,
             'data_id': budgetModel.id,
-        })
+        }
 
 
 class ManageRepeatingTxView(PagedListView):
@@ -263,21 +269,20 @@ class ManageRepeatingTxView(PagedListView):
     def get_queryset(self):
         return super().get_queryset().select_related('budget', 'specific_place')
 
-    def create_form_from_model(self, repeatingTxModel):
-        return UpdateRepeatingTxForm(
-            initial={
-                'amount': repeatingTxModel.amount,
-                'category': repeatingTxModel.budget.get_choice_pair(),
-                'specific_place': repeatingTxModel.specific_place,
-                'frequency': repeatingTxModel.frequency,
-                'data_id': repeatingTxModel.id,
-            },
-            request=self.request
-        )
+    def create_json_from_model(self, repeatingTxModel):
+        return {
+            'amount': repeatingTxModel.amount,
+            'category': repeatingTxModel.budget.id,
+            'specific_place': repeatingTxModel.specific_place.place,
+            'frequency': repeatingTxModel.frequency,
+            'data_id': repeatingTxModel.id,
+        }
 
 
 class UpdateRepeatingTxView(BaseModifyView):
     form_class = UpdateRepeatingTxForm
+    http_method_names = ['get', 'post']
+    template_name = 'update_repeating_tx.frag.html'
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -287,17 +292,16 @@ class UpdateRepeatingTxView(BaseModifyView):
     def post_task(self, form, request):
         self.data_id = form.cleaned_data['data_id']
         if self.data_id > 0:
-            obj = RepeatingTransactionsModel.objects.get(id=self.data_id, account=request.user)
-            obj.budget = BudgetsModel.objects.get(
-                id=form.cleaned_data['category'],
-                account=request.user
-            )
             place, was_created = SpecificPlacesModel.objects.get_or_create(
                 place=form.cleaned_data['specific_place']
             )
+            obj = RepeatingTransactionsModel.objects.get(id=self.data_id, account=request.user)
+            obj.budget_id = form.cleaned_data['category']
             obj.specific_place = place
             obj.is_active = True
             obj.frequency = form.cleaned_data['frequency']
             obj.amount = form.cleaned_data['amount']
             obj.save()
+        else:
+            raise Exception('Invalid data id')
 

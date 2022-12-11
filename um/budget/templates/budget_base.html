@@ -9,6 +9,7 @@ window.addEventListener("load", function () {
 	$("nav").find("a").each(function (i, e) {
 		if (e.href.endsWith(window.location)) {
 			e.classList.add("disabled");
+			e.parentElement.classList.add("active");
 		}
 	});
 });
@@ -20,7 +21,7 @@ window.addEventListener("load", function () {
 {% block nav %}
 <div class="navbar navbar-dark navbar-expand-md bg-dark text-light p-0">
 
-	<div class="mr-3 ml-2">
+	<div class="mr-3 ml-3">
 		<button class="navbar-toggler mr-2" type="button" data-toggle="collapse" data-target="#collapsibleNav"
 			aria-expanded="false" aria-controls="collapse" aria-label="Toggle navigation">
 			<span class="navbar-toggler-icon"></span>
@@ -29,26 +30,30 @@ window.addEventListener("load", function () {
 	</div>
 
 	<div class="collapse navbar-collapse" id="collapsibleNav">
-		<ul class="nav row">
-			<li class="nav-item col-md-2 p-0">
-				<a class="nav-link text-light text-center w-100 h-100" href="{% url 'index' %}">Home</a>
+		<ul class="nav row m-0">
+			<li class="nav-item col-md p-0">
+				<a class="nav-link text-light text-center w-100 h-100 pl-0 pr-0"
+					href="{% url 'index' %}">Home</a>
 			</li>
-			<li class="nav-item col-md-2 p-0">
-				<a class="nav-link text-light text-center w-100 h-100" href="{% url 'manage' %}">Budgets</a>
+			<li class="nav-item col-md p-0">
+				<a class="nav-link text-light text-center w-100 h-100"
+					href="{% url 'manage' %}">Budgets</a>
 			</li>
-			<li class="nav-item col-md-2 p-0">
-				<a class="nav-link text-light text-center w-100 h-100" href="{% url 'manage_repeating_tx' %}">
-					Repeating Transactions</a>
+			<li class="nav-item col-md p-0">
+				<a class="nav-link text-light text-center w-100 h-100"
+					href="{% url 'manage_repeating_tx' %}">Repeating Transactions</a>
 			</li>
-			<li class="nav-item col-md-2 p-0">
-				<a class="nav-link text-light text-center w-100 h-100" href="{% url 'add_transaction' %}">
-					Add Transaction</a>
+			<li class="nav-item col-md p-0">
+				<a class="nav-link text-light text-center w-100 h-100"
+					href="{% url 'add_transaction' %}">Add Transaction</a>
 			</li>
-			<li class="nav-item col-md-2 p-0">
-				<a class="nav-link text-light text-center w-100 h-100" href="{% url 'status' %}">Status</a>
+			<li class="nav-item col-md p-0">
+				<a class="nav-link text-light text-center w-100 h-100"
+					href="{% url 'status' %}">Status</a>
 			</li>
-			<li class="nav-item col-md-2 p-0">
-				<a class="nav-link text-light text-center w-100 h-100" href="{% url 'logout' %}">Logout</a>
+			<li class="nav-item col-md p-0">
+				<a class="nav-link text-light text-center w-100 h-100"
+					href="{% url 'logout' %}">Logout</a>
 			</li>
 		</ul>
 	</div>

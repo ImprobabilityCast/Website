@@ -174,7 +174,7 @@ class JsonBudgetStatusView(LoginRequiredMixin, View):
         (
             SELECT budget_budgetsmodel.id as id, sum(amount) as amount__sum
             FROM budget_budgetsmodel
-            LEFT OUTER JOIN budget_transactionsmodel
+            LEFT JOIN budget_transactionsmodel
             ON budget_budgetsmodel.id=budget_transactionsmodel.budget_id
             WHERE budget_budgetsmodel.account_id=%s
             AND budget_budgetsmodel.is_active
@@ -189,8 +189,9 @@ class JsonBudgetStatusView(LoginRequiredMixin, View):
         ) as inner_table
         RIGHT JOIN budget_budgetsmodel
         ON budget_budgetsmodel.id=inner_table.id
-        WHERE budget_budgetsmodel.is_active'''
-        budget_tx_sums = BudgetsModel.objects.raw(raw_sql, [request.user.id])
+        WHERE budget_budgetsmodel.is_active
+        AND budget_budgetsmodel.account_id=%s'''
+        budget_tx_sums = BudgetsModel.objects.raw(raw_sql, [request.user.id, request.user.id])
         
         tday = date.today()
         repeating_transactions = list(RepeatingTransactionsModel.objects.filter(

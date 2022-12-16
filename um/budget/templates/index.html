@@ -1,5 +1,118 @@
 {% extends "budget_base.html" %}
+{% load filters %}
+
+{% block header %}
+{{ block.super }}
+<script src="http://127.0.0.1/js/popper.min.js"></script>
+<script src="http://127.0.0.1/js/chart.min.js"></script>
+<script src="http://127.0.0.1/js/palette.js"></script>
+<script src="/static/js/history.graph.js"></script>
+<script src="/static/js/forms.js"></script>
+<script src="/static/js/add_transaction.js"></script>
+{% endblock %}
 
 {% block content %}
-<h2>Just Why</h2>
+<div class="row">
+	<div class="col-md col-md-6 col-lg-4 m-2 p-2 graph-sib">
+		<button type="button" class="btn btn-primary"
+			onclick="window.add_transaction.toggleTransactionForm(event)"
+			data-toggle="collapse" data-target="#collapseAddTx"
+			aria-expanded="false" aria-controls="collapseAddTx">Add Transaction</button>
+		<div class="collapse" id="collapseAddTx">
+			<form method="post" autocomplete="off" onchange="$('#btn-submit')[0].disabled=false">
+				{% csrf_token %}
+
+				<fieldset>
+					<div class="form-row form-group">
+						<div class="invalid-feedback d-block __all___error">
+							{{ form.non_field_errors }}
+						</div>
+					</div>
+					<div class="form-row form-group">
+						<div class="col-4 col-sm-4">
+							{{ form.amount.label_tag }}
+						</div>
+						<div class="col-8 col-sm-8">
+							{{ form.amount|addcssclass:'form-control' }}
+							<div class="invalid-feedback d-block {{ form.amount.label|lower }}_error">
+								{{ form.amount.errors }}
+							</div>
+						</div>
+					</div>
+					<div class="form-row form-group">
+						<div class="col-4 col-sm-4">
+							{{ form.category.label_tag }}
+						</div>
+						<div class="col-8 col-sm-8">
+							{{ form.category|addcssclass:'form-control' }}
+							<div class="invalid-feedback d-block {{ form.category.label|lower }}_error">
+								{{ form.category.errors }}
+							</div>
+						</div>
+					</div>
+					<div class="form-row form-group">
+						<div class="col-4 col-sm-4">
+							{{ form.specific_place.label_tag }}
+						</div>
+						<div class="col-8 col-sm-8">
+							{{ form.specific_place|addcssclass:'form-control' }}
+							<div class="invalid-feedback d-block {{ form.specific_place.label|lower }}_error">
+								{{ form.specific_place.errors }}
+							</div>
+						</div>
+					</div>
+					<div class="form-row form-group">
+						<div class="col-4 col-sm-4" id="dateLabelContainer">
+							{{ form.date.label_tag }}
+						</div>
+						<div class="col-8 col-sm-8">
+							{{ form.date|addcssclass:'form-control' }}
+							<div class="invalid-feedback d-block {{ form.date.label|lower }}_error">
+								{{ form.date.errors }}
+							</div>
+						</div>
+					</div>
+					<div class="form-row form-group">
+						<div class="col-4 col-sm-4">
+							<label for="id_is_repeating">Repeating Transaction:</label>
+						</div>
+						<div class="col-8 col-sm-8">
+							<div class="custom-control custom-switch">
+								<input type="checkbox" autocomplete="off" id="id_is_repeating" name="is_repeating"
+									class="custom-control-input"
+									data-toggle="collapse" data-target="#collapseRepeating"
+									aria-expanded="false" aria-controls="collapseRepeating"
+									onchange="window.add_transaction.toggleRepeatingTransaction(event)">
+								<label for="id_is_repeating" class="custom-control-label"></label>
+							</div>
+						</div>
+					</div>
+					<div class="collapse" id="collapseRepeating">
+						<div class="form-row form-group">
+							<div class="col-4 col-sm-4">
+								<label for="id_frequency" class="required">{{ form.frequency.label }}:</label>
+							</div>
+							<div class="col-8 col-sm-8">
+								{{ form.frequency|addcssclass:'form-control' }}
+								<div class="invalid-feedback d-block {{ form.frequency.label|lower }}_error">
+									{{ form.frequency.errors }}
+								</div>
+							</div>
+						</div>
+					</div>
+				</fieldset>
+
+				<div class="form-row">
+					<div class="col-sm-8"></div>
+					<input type="button" id="btn-submit" class="btn btn-primary align-self-end col-sm-3"
+						data-action="{% url 'add_transaction_api' %}" value="Submit"
+						onclick="window.add_transaction.submitTransaction(event)">
+				</div>
+			</form>
+		</div>
+	</div>
+	<div class="col-lg col-md-6 col-lg-8 position-relative" id="mainGraphContainer">
+		<canvas id="mainGraph" width="300" height="300"></canvas>
+	</div>
+</div>
 {% endblock %}

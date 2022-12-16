@@ -1,9 +1,10 @@
-(function () {
+var historyObj = (function () {
     window.addEventListener("load", function () {historyObj.updateGraph($("#mainGraph")[0])});
-	var historyObj = {
+	return {
 		_parsedData: {},
 		colors: [],
 		currencyFormatter: Intl.NumberFormat("en-US", options={currency: "USD", style: "currency"}),
+		chart: null,
 
 		get parsedData() {
 			return this._parsedData;
@@ -60,7 +61,8 @@
 				datasets[0].data.push({
 					x: v.spending_limit,
 					y: counter,
-					available: v.spending_limit - v.amount
+					available: v.spending_limit - v.amount,
+					budget_id: k
 				});
 				datasets[0].backgroundColor.push(halfTransparentColor);
 				datasets[0].borderColor.push(color);
@@ -68,7 +70,8 @@
 				datasets[1].data.push({
 					x: v.amount,
 					y: counter,
-					available: v.spending_limit - v.amount
+					available: v.spending_limit - v.amount,
+					budget_id: k
 				});
 				datasets[1].backgroundColor.push(color);
 				datasets[1].borderColor.push(color);
@@ -77,7 +80,7 @@
 				counter -= 1;
 			});
 
-			return new Chart(ctx, {
+			this.chart = new Chart(ctx, {
 				type: "bar",
 				data: {
 					labels: labels,

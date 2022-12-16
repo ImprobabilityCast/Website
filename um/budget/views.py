@@ -6,7 +6,7 @@ from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django.views.generic import TemplateView, ListView
 from django.views.generic.base import View
-from django.views.generic.edit import FormView
+from django.views.generic.edit import FormView, FormMixin
 
 from datetime import date, timedelta
 import json
@@ -21,59 +21,11 @@ import logging
 logger = logging.getLogger('proj')
 
 
-class IndexView(LoginRequiredMixin, TemplateView):
-    template_name = 'index.html'
-
-
-class AddTransactionView(LoginRequiredMixin, FormView):
-    form_class = AddTransactionForm
-    http_method_names = ['get', 'post']
-    template_name = 'add_transaction.html'
-
+class TxFormMixin(FormMixin):
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs['request'] = self.request
         return kwargs
-
-    def post(self, request):
-        form = self.get_form()
-
-        if form.is_valid():
-            if form.cleaned_data['specific_place'] is None:
-                form.cleaned_data['specific_place'] = ''
-            placeModel, was_created = SpecificPlacesModel.objects.get_or_create(
-                place = form.cleaned_data['specific_place']
-            )
-            budgetModel = BudgetsModel.objects.get(
-                account = request.user,
-                id = form.cleaned_data['category'],
-                is_active = True
-            )
-            
-            date = form.cleaned_data['date']
-            
-            if form.cleaned_data['is_repeating']:
-                repeatingTransaction = RepeatingTransactionsModel()
-                if date is not None:
-                    repeatingTransaction.start_date = date
-                repeatingTransaction.frequency = form.cleaned_data['frequency']
-                model = repeatingTransaction
-            else:
-                transaction = TransactionsModel()
-                if date is not None:
-                    transaction.date = date
-                model = transaction
-
-            model.specific_place = placeModel
-            model.budget = budgetModel
-            model.amount = form.cleaned_data['amount']
-            model.account = request.user
-            model.save()
-            
-            return redirect('/budget')
-        else:
-            context = {'form' : form}
-            return render(request, self.template_name, context=context)
 
 
 class BaseModifyView(LoginRequiredMixin, FormView):
@@ -95,7 +47,7 @@ class BaseModifyView(LoginRequiredMixin, FormView):
                 self.post_task(form, request)
                 errors = {}
             except:
-                errors = {'non_field': ['internal server error \\(^_^)/']}
+                errors = {'__all__': ['internal server error \\(^_^)/']}
                 has_errors = True
         else:
             errors = form.errors
@@ -106,6 +58,54 @@ class BaseModifyView(LoginRequiredMixin, FormView):
             'has_errors': has_errors,
             'errors': errors,
         })
+
+
+class AddTransactionView(BaseModifyView, TxFormMixin):
+    form_class = AddTransactionForm
+
+    def post_task(self, form, request):
+        if form.cleaned_data['specific_place'] is None:
+            form.cleaned_data['specific_place'] = ''
+        placeModel, was_created = SpecificPlacesModel.objects.get_or_create(
+            place = form.cleaned_data['specific_place']
+        )
+        budgetModel = BudgetsModel.objects.get(
+            account = request.user,
+            id = form.cleaned_data['category'],
+            is_active = True
+        )
+        
+        date = form.cleaned_data['date']
+        
+        if form.cleaned_data['is_repeating']:
+            repeatingTransaction = RepeatingTransactionsModel()
+            if date is not None:
+                repeatingTransaction.start_date = date
+            repeatingTransaction.frequency = form.cleaned_data['frequency']
+            model = repeatingTransaction
+        else:
+            transaction = TransactionsModel()
+            if date is not None:
+                transaction.date = date
+            model = transaction
+
+        model.specific_place = placeModel
+        model.budget = budgetModel
+        model.amount = form.cleaned_data['amount']
+        model.account = request.user
+        model.save()
+        self.data_id = model.id
+
+
+class IndexView(LoginRequiredMixin, FormView):
+    form_class = AddTransactionForm
+    http_method_names = ['get', ]
+    template_name = 'index.html'
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['request'] = self.request
+        return kwargs
 
 
 class DeleteDataView(BaseModifyView):
@@ -212,16 +212,12 @@ class JsonBudgetStatusView(LoginRequiredMixin, View):
                 amount__sum += repeating.amount_for_period()
             
             data_by_budget[budget_tx.id] = {
-                'amount' : amount__sum,
-                'spending_limit' : budget_tx.spending_limit,
+                'amount' : float(amount__sum),
+                'spending_limit' : float(budget_tx.spending_limit),
                 'category' : budget_tx.category,
             }
         
         return JsonResponse(response)
-
-
-class BudgetStatusView(LoginRequiredMixin, TemplateView):
-    template_name = 'budget.html'
 
 
 class PagedListView(LoginRequiredMixin, ListView):
@@ -257,7 +253,7 @@ class ManageBudgetsView(PagedListView):
     def create_json_from_model(self, budgetModel):
         return {
             'category': budgetModel.category,
-            'spending_limit': budgetModel.spending_limit,
+            'spending_limit': float(budgetModel.spending_limit),
             'frequency': budgetModel.frequency,
             'data_id': budgetModel.id,
         }
@@ -280,15 +276,10 @@ class ManageRepeatingTxView(PagedListView):
         }
 
 
-class UpdateRepeatingTxView(BaseModifyView):
+class UpdateRepeatingTxView(BaseModifyView, TxFormMixin):
     form_class = UpdateRepeatingTxForm
     http_method_names = ['get', 'post']
     template_name = 'update_repeating_tx.frag.html'
-
-    def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-        kwargs['request'] = self.request
-        return kwargs
 
     def post_task(self, form, request):
         self.data_id = form.cleaned_data['data_id']

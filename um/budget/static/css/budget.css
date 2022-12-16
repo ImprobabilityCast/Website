@@ -19,3 +19,11 @@
 #formsContainer + #formInfo {
     display: none;
 }
+
+#mainGraphContainer {
+    max-width: 30rem;
+}
+
+.graph-sib {
+    min-width: 30rem;
+}

@@ -1,7 +1,5 @@
 (function () {
     let currencyFormatter = Intl.NumberFormat("en-US", options={currency: "USD", style: "currency"});
-    window.listManage.deleteUrl = "/budget/api/repeating_tx_delete";
-    window.listManage.updateUrl = "/budget/api/repeating_tx_update";
     window.listManage.cacheKey = "repeatingTxForm";
     let updateDisplay = function (formElement) {
         let amount = formElement.find("#id_amount")[0].value;

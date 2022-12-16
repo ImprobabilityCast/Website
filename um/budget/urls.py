@@ -3,8 +3,7 @@ from .views import *
 
 urlpatterns = [
     path('', IndexView.as_view(), name='index'),
-    path('add_transaction', AddTransactionView.as_view(), name='add_transaction'),
-    path('status', BudgetStatusView.as_view(), name='status'),
+    path('api/add_transaction', AddTransactionView.as_view(), name='add_transaction_api'),
     path('api/status', JsonBudgetStatusView.as_view(), name='status_api'),
     path('manage', ManageBudgetsView.as_view(), name='manage'),
     path('api/budget_update', UpdateBudgetView.as_view(), name='budget_update_api'),

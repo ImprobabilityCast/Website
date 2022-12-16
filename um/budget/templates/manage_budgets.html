@@ -14,14 +14,11 @@
 <header class="mt-4">
   <h3>
     <button type="button" class="btn btn-primary"
-        onclick="window.listManage.new()">+ New Budget</button>
+      data-action="{% url 'budget_update_api' %}" id="newBtn"
+      onclick="window.listManage.new(event)">+ New Budget</button>
   </h3>
 </header>
 
-{% comment %}
-  These are all in a line like this until there is support for the css4 definition of ':empty'.
-  The new definition will include whitespace.
-{% endcomment %}
 <div class="p-1" id="formsContainer"></div>
 <div class="p-1" id="formInfo">
   {% csrf_token %}

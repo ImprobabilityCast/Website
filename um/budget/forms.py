@@ -4,6 +4,7 @@ from django.utils.timezone import now
 
 from .enums import Durations
 from .fields import DateDurationFormField, LowerCaseCharField, ActualDateField
+from .fields import DefaultInvalidChoiceFormField
 from .models import BudgetsModel
 
 import logging
@@ -24,11 +25,12 @@ class BaseTransactionForm(BaseBudgetForm):
     def __init__(self, request, *args, **kwargs):
         super().__init__(*args, **kwargs)
         budgets = BudgetsModel.objects.filter(account=request.user, is_active=True)
-        self.fields['category'].choices = [budget.get_choice_pair() for budget in budgets]
+        cat = self.fields['category']
+        cat.choices = cat.choices + [budget.get_choice_pair() for budget in budgets]
 
     amount = forms.FloatField(min_value=0.00, max_value=1e15)
 
-    category = forms.ChoiceField()
+    category = DefaultInvalidChoiceFormField()
 
     specific_place = LowerCaseCharField(max_length=255, min_length=1, required=False)
 
@@ -53,7 +55,7 @@ class AddTransactionForm(BaseTransactionForm):
 
     def clean(self):
         cleaned_data = super().clean()
-        if cleaned_data['is_repeating'] and cleaned_data['frequency'] == Durations.NONE.value:
+        if cleaned_data['is_repeating'] and cleaned_data['frequency'] is None:
             raise ValidationError('Frequency is required for repeating transactions.')
         return cleaned_data
 

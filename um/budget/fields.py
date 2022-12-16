@@ -8,11 +8,32 @@ import logging
 logger = logging.getLogger('proj')
 
 
-class DateDurationFormField(forms.ChoiceField):
+class DefaultInvalidChoiceFormField(forms.ChoiceField):
+    def __init__(self, *args, **kwargs):
+        if 'choices' not in kwargs:
+            kwargs['choices'] = []
+        kwargs['choices'].insert(0, (0, ''))
+        super().__init__(*args, **kwargs)
+
+    def clean(self, value):
+        value = super().clean(value)
+        try:
+            value = int(value)
+        except:
+            raise ValidationError('Please select a valid option')
+        logger.debug(value)
+        if value == 0:
+            if self.required:
+                raise ValidationError('This field is required.')
+            else:
+                value = None
+        return value
+
+
+class DateDurationFormField(DefaultInvalidChoiceFormField):
     def __init__(self, *args, **kwargs):
         if 'choices' not in kwargs:
             kwargs['choices'] = [
-                (Durations.NONE.value, ''),
                 (Durations.DAILY.value, 'Daily'),
                 (Durations.WEEKLY.value, 'Weekly'),
                 (Durations.SEMI_MONTHLY.value, 'Semi-Monthly'),
@@ -20,16 +41,6 @@ class DateDurationFormField(forms.ChoiceField):
                 (Durations.YEARLY.value, 'Yearly'),
             ]
         super().__init__(*args, **kwargs)
-
-    def clean(self, value):
-        value = super().clean(value)
-        try:
-            value = Durations(int(value)).value
-        except:
-            raise ValidationError('Select a valid duration.')
-        if value == Durations.NONE.value and self.required:
-            raise ValidationError('This field is required.')
-        return value
 
 
 class LowerCaseCharField(forms.CharField):

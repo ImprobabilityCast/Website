@@ -55,8 +55,17 @@ class AddTransactionForm(BaseTransactionForm):
 
     def clean(self):
         cleaned_data = super().clean()
-        if cleaned_data['is_repeating'] and cleaned_data['frequency'] is None:
-            raise ValidationError('Frequency is required for repeating transactions.')
+        if cleaned_data['is_repeating']:
+            if cleaned_data['frequency'] is None:
+                self.add_error('frequency',
+                    ValidationError('Frequency is required for repeating transactions.')
+                )
+            date = cleaned_data['date']
+            if date is not None and date.day > 28:
+                self.add_error('date',
+                    ValidationError('Start Date cannot be on the 29th-31st of any month for '
+                        + 'repeating transactions. Why? Because it made my maths easier.')
+                )
         return cleaned_data
 
 

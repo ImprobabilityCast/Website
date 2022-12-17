@@ -99,6 +99,7 @@ class TransactionsModel(BaseTransactionModel):
 
 class RepeatingTransactionsModel(BaseTransactionModel, TimespanMixin):
     # this assumes that tx only begin on the days of the month in range [1, 28]
+    # budget range can be on any day
     def get_first_tx_in_period(self, period_start_date):
         tx_begin_date = self.start_date
         if tx_begin_date > period_start_date:
@@ -118,6 +119,7 @@ class RepeatingTransactionsModel(BaseTransactionModel, TimespanMixin):
             return date(year=year, month=month, day=day) + timedelta(days=self.frequency)
 
     # this assumes that tx only begin on the days of the month in range [1, 28]
+    # budget range can be on any day
     def get_num_tx_until_period_end(self, first_tx_in_period, period_end_date):
         num_tx = 1 # for the first tx
         match self.frequency:
@@ -144,7 +146,8 @@ class RepeatingTransactionsModel(BaseTransactionModel, TimespanMixin):
         else:
             return self.get_num_tx_until_period_end(first_tx, period[1])
 
-    # take 2, assume day of month to be in range [1, 28]
+    # ssumes day of month to be in range [1, 28]
+    # budget range can be on any day
     def amount_for_period(self):
         return self.amount * self.get_num_tx_in_period()
 

@@ -11,11 +11,12 @@ var listManage = (function () {
         onSaveSuccess: function(formElement) {},
 
         delete: function (event) {
+            let jForm = $(event.target.form)
             let delayedDelete = function () {
-                let juiceyPears = event.traget.form.parents();
+                let juiceyPears = jForm.parents();
                 juiceyPears[1].removeChild(juiceyPears[0]);
             };
-            if (event.traget.form.find("#id_data_id")[0].value != -1) {
+            if (jForm.find("#id_data_id")[0].value != -1) {
                 event.target.disabled = true;
                 window.forms.ajaxFormSubmit(event.target, function (requester) {
                     setTimeout(delayedDelete, 500);
@@ -23,13 +24,13 @@ var listManage = (function () {
             } else { // don't care about errors bc this doesn't exist on srv
                 setTimeout(delayedDelete, 550);
             }
-            event.traget.form.hide(500);
+            jForm.hide(500);
         },
         save: function (event) {
             event.target.disabled = true;
             let obj = this;
             window.forms.ajaxFormSubmit(event.target, function (json) {
-                event.target.form.find("#id_data_id")[0].value = json.data_id;
+                $(event.target.form).find("#id_data_id")[0].value = json.data_id;
                 obj.onSaveSuccess(event.target);
             });
         },

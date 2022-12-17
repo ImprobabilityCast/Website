@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.paginator import Paginator
 from django.db.models import Sum, F
@@ -44,7 +45,8 @@ class BaseModifyView(LoginRequiredMixin, FormView):
 
         if form.is_valid():
             try:
-                self.post_task(form, request)
+                if request.user.id != 1 or settings.DEBUG == True:
+                    self.post_task(form, request)
                 errors = {}
             except:
                 errors = {'__all__': ['internal server error \\(^_^)/']}

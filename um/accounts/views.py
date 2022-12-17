@@ -3,6 +3,9 @@ from django.contrib.auth.mixins import UserPassesTestMixin
 from django.contrib.auth.views import LoginView
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import redirect, render
+from django.utils.encoding import iri_to_uri
+from django.utils.http import url_has_allowed_host_and_scheme
+from django.views.generic.base import View
 from django.views.generic import TemplateView
 from django.views.generic.edit import CreateView
 
@@ -24,14 +27,14 @@ class NotLoggedInMixin(UserPassesTestMixin):
         else:
             return redirect(self.login_url)
     
-    def try_login(self, username, password):
-        my_sweet_user = authenticate(self.request, username=username, password=password)
+    @classmethod
+    def try_login(cls, request, username, password):
+        my_sweet_user = authenticate(request, username=username, password=password)
         if my_sweet_user is not None:
-            login(self.request, my_sweet_user)
+            login(request, my_sweet_user)
             return True
         else:
             return False
-
 
 
 class SignUpView(NotLoggedInMixin, CreateView):
@@ -46,7 +49,10 @@ class SignUpView(NotLoggedInMixin, CreateView):
             accountsModel = form.save(commit=False)
             accountsModel.set_email_attributes(form.cleaned_data['email'])
             accountsModel.save()
-            self.try_login(form.cleaned_data['username'], form.cleaned_data['password1'])
+            NotLoggedInMixin.try_login(request,
+                form.cleaned_data['username'],
+                form.cleaned_data['password1']
+            )
             return redirect('/')
         else:
             context = {'form' : form}
@@ -70,11 +76,21 @@ class LoginView(NotLoggedInMixin, LoginView):
         if form.is_valid():
             username = form.cleaned_data['username']
             password = form.cleaned_data['password']
-            if self.try_login(username, password):
+            if NotLoggedInMixin.try_login(request, username, password):
                 return super().post(request)
         
         context = {'form' : form}
         return render(request, self.template_name, context=context)
+
+
+class LoginDemoView(View):
+    def get(self, request):
+        logout(request)
+        if NotLoggedInMixin.try_login(request, 'demo', 'password'):
+            url = iri_to_uri(request.GET['next'])
+            if url_has_allowed_host_and_scheme(url, ['*.adoodleydo.dev', 'localhost']):
+                return redirect(url)
+        return redirect('/')
 
 
 class LogoutView(TemplateView):

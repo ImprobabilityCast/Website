@@ -66,13 +66,11 @@ class HistoryGenerator:
         }
 
         for category in mockery:
-
             budgetModel = self.generate_budget(category)
             self.set_category_transaction_amount_range()
 
             for place in mockery[category]:
                 placeModel, was_created = self.SpecificPlacesModel.objects.get_or_create(place=place)
-                placeModel.save()
 
                 self.generate_transactions(budgetModel, placeModel)
                 self.generate_repeating_transactions(budgetModel, placeModel)
@@ -98,7 +96,7 @@ class HistoryGenerator:
             count -= 1
             repeatingTransaction = self.RepeatingTransactionsModel()
             repeatingTransaction.budget = budgetModel
-            repeatingTransaction.place = placeModel
+            repeatingTransaction.specific_place = placeModel
             repeatingTransaction.start_date = self.generate_random_recent_date()
             repeatingTransaction.amount = self.get_random_transaction_amount() / 100.0
             repeatingTransaction.account = self.account
@@ -131,7 +129,7 @@ class HistoryGenerator:
             count -= 1
             transaction = self.TransactionsModel()
             transaction.budget = budgetModel
-            transaction.place = placeModel
+            transaction.specific_place = placeModel
             transaction.date = self.generate_random_recent_date()
             
             transaction.amount = self.get_random_transaction_amount()

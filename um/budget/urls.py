@@ -1,4 +1,5 @@
 from django.urls import path
+from django.views.generic.base import RedirectView
 from .views import *
 
 urlpatterns = [
@@ -11,4 +12,5 @@ urlpatterns = [
     path('manage_repeating_tx', ManageRepeatingTxView.as_view(), name='manage_repeating_tx'),
     path('api/repeating_tx_update', UpdateRepeatingTxView.as_view(), name='repeating_tx_update_api'),
     path('api/repeating_tx_delete', DeleteRepeatingTxView.as_view(), name='repeating_tx_delete_api'),
+    path('demo', RedirectView.as_view(url='/accounts/demo?next=/budget', permanent=False), name='demo')
 ]

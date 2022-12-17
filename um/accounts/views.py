@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.contrib.auth.views import LoginView
@@ -17,7 +18,6 @@ logger = logging.getLogger('proj')
 
 class NotLoggedInMixin(UserPassesTestMixin):
     raise_exception = False
-    login_url = '/'
     def test_func(self):
         return not self.request.user.is_authenticated
     
@@ -25,7 +25,7 @@ class NotLoggedInMixin(UserPassesTestMixin):
         if self.raise_exception:
             raise PermissionDenied()
         else:
-            return redirect(self.login_url)
+            return redirect(settings.LOGIN_URL)
     
     @classmethod
     def try_login(cls, request, username, password):
@@ -53,7 +53,7 @@ class SignUpView(NotLoggedInMixin, CreateView):
                 form.cleaned_data['username'],
                 form.cleaned_data['password1']
             )
-            return redirect('/')
+            return redirect(settings.LOGIN_REDIRECT_URL)
         else:
             context = {'form' : form}
             return render(request, self.template_name, context=context)
@@ -90,7 +90,7 @@ class LoginDemoView(View):
             url = iri_to_uri(request.GET['next'])
             if url_has_allowed_host_and_scheme(url, ['*.adoodleydo.dev', 'localhost']):
                 return redirect(url)
-        return redirect('/')
+        return redirect(settings.LOGIN_REDIRECT_URL)
 
 
 class LogoutView(TemplateView):

@@ -37,6 +37,7 @@
         <button type="button" class="btn btn-danger"
           data-action="{% url 'budget_delete_api' %}"
           onclick="window.listManage.delete(event)">Delete</button>
+        <div id="saveFeedback" class="pt-2 pr-2 w-100 text-right text-success" style="display:none">Saved!</div>
         <button type="button" class="btn btn-success save-btn"
           data-action="{% url 'budget_update_api' %}"
           onclick="window.listManage.save(event)" disabled="true">Save</button>

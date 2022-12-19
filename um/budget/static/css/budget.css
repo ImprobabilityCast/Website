@@ -27,3 +27,9 @@
 .graph-sib {
     min-width: 30rem;
 }
+
+#noDataMsg {
+    border-style: dashed;
+    border-radius: 0.5rem;
+    border-width: 3px;
+}

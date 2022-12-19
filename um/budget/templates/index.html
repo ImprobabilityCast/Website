@@ -9,6 +9,7 @@
 <script src="/static/js/history.graph.js"></script>
 <script src="/static/js/forms.js"></script>
 <script src="/static/js/add_transaction.js"></script>
+<script src="/static/js/index.js"></script>
 {% endblock %}
 
 {% block content %}
@@ -17,7 +18,8 @@
 		<button type="button" class="btn btn-primary"
 			onclick="window.add_transaction.toggleTransactionForm(event)"
 			data-toggle="collapse" data-target="#collapseAddTx"
-			aria-expanded="false" aria-controls="collapseAddTx">Add Transaction</button>
+			aria-expanded="false" aria-controls="collapseAddTx"
+			id="addTxBtn">Add Transaction</button>
 		<div class="collapse" id="collapseAddTx">
 			<form method="post" autocomplete="off" onchange="$('#btn-submit')[0].disabled=false">
 				{% csrf_token %}
@@ -112,7 +114,13 @@
 		</div>
 	</div>
 	<div class="col-lg col-md-6 col-lg-8 position-relative" id="mainGraphContainer">
-		<canvas id="mainGraph" width="300" height="300"></canvas>
+		<canvas id="mainGraph" class="d-none" width="300" height="300"></canvas>
+	</div>
+	<div class="col-lg col-md-6 col-lg-8 p-5 border-secondary d-none" id="noDataMsg">
+		<p class="m-5 text-center">
+			Your budget usage will appear here.
+			<a href="/budget/manage">Add a budget</a>.
+		</p>
 	</div>
 </div>
 {% endblock %}

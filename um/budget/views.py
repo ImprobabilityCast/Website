@@ -118,7 +118,7 @@ class DeleteDataView(BaseModifyView):
 
     def post_task(self, form, request):
         self.data_id = form.cleaned_data['data_id']
-        self.model_class.objects.get(
+        self.model_class.objects.filter(
             id=self.data_id, account=request.user
         ).update(is_active=False, end_date = date.today())
 
@@ -153,13 +153,10 @@ class UpdateBudgetView(BaseModifyView):
         budget.save()
 
     def get(self, request):
-        id = -1
         try:
-            id = int(request.GET['data_id'])
+            self.initial['data_id'] = int(request.GET['data_id'])
         except:
             pass
-        finally:
-            self.initial['data_id'] = id
         return super().get(request)
 
 

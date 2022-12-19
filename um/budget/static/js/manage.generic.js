@@ -30,7 +30,12 @@ var listManage = (function () {
             event.target.disabled = true;
             let obj = this;
             window.forms.ajaxFormSubmit(event.target, function (json) {
-                $(event.target.form).find("#id_data_id")[0].value = json.data_id;
+                let form = $(event.target.form)
+                form.find("#id_data_id")[0].value = json.data_id;
+                let saveFeedback = form.find("#saveFeedback");
+                saveFeedback.show(300, function () {
+                        setTimeout(function () {saveFeedback.hide(600);}, 4000);
+                    });
                 obj.onSaveSuccess(event.target);
             });
         },
@@ -46,8 +51,6 @@ var listManage = (function () {
                     if (request.status == 200) {
                         addHTML(newElement, request.responseText);
                         window.cacheMan.setItem(obj.cacheKey, request.responseText);
-                    } else {
-                        console.warn("form request failed with status: " + request.status);
                     }
                 };
                 let url = (event == undefined ? $("#newBtn")[0] : event.target)

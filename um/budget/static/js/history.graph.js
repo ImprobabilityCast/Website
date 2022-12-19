@@ -1,19 +1,28 @@
 var historyObj = (function () {
-    window.addEventListener("load", function () {historyObj.updateGraph($("#mainGraph")[0])});
 	return {
-		_parsedData: {},
-		colors: [],
+		_parsedData: {data: []},
+		_palette: palette("sol-accent", 8),
 		currencyFormatter: Intl.NumberFormat("en-US", options={currency: "USD", style: "currency"}),
 		chart: null,
+
+		get numBudgets() {
+			return Object.keys(this._parsedData.data).length;
+		},
 
 		get parsedData() {
 			return this._parsedData;
 		},
-		set parsedData(value)
-		{
+		set parsedData(value) {
 			this._parsedData = value;
-			this.colors = palette("sol-accent", Object.keys(this._parsedData.data).length);
 		},
+
+		colors: (function* () {
+			let idx = 0;
+			do {
+				yield historyObj._palette[idx];
+				idx = (idx + 1) % historyObj._palette.length;
+			} while (true);
+		})(),
 
 		customTooltipLabel: function(context) {
 			return context.dataset.label + ": "
@@ -40,6 +49,7 @@ var historyObj = (function () {
 					type: "bar",
 					data: [],
 					fill: false,
+					maxBarThickness: 40,
 					backgroundColor: [],
 					borderColor: [],
 				},
@@ -48,14 +58,15 @@ var historyObj = (function () {
 					type: "bar",
 					data: [],
 					fill: false,
+					maxBarThickness: 40,
 					backgroundColor: [],
 					borderColor: [],
 				},
 			];
 			let obj = this;
-			let counter = this.colors.length - 1;
+			let counter = this.numBudgets - 1;
 			$.each(historyObj.parsedData.data, function (k, v) {
-				let color = "#" + obj.colors[counter];
+				let color = "#" + obj.colors.next().value;
 				let halfTransparentColor = color + "80";
 
 				datasets[0].data.push({
@@ -80,6 +91,8 @@ var historyObj = (function () {
 				counter -= 1;
 			});
 
+			ctx.parentElement.style.height = (this.numBudgets * 4.1) + "rem";
+
 			this.chart = new Chart(ctx, {
 				type: "bar",
 				data: {
@@ -89,6 +102,7 @@ var historyObj = (function () {
 				options: {
 					indexAxis: "y",
 					parsing: parsing,
+					maintainAspectRatio: false,
 					// scales: {
 					// 	xAxes: {
 					// 		type: "time",
@@ -139,12 +153,15 @@ var historyObj = (function () {
 			});
 		},
 
+		onload: function(){},
+
 		updateGraph: function (graph)
 		{
 			let requester = new XMLHttpRequest();
 			let obj = this;
 			requester.onload = function () {
 				obj.parsedData = JSON.parse(requester.responseText);
+				obj.onload();
 				obj.drawChart(graph);
 			};
 			requester.onerror = function () {

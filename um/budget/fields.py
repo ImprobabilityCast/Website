@@ -9,10 +9,13 @@ logger = logging.getLogger('proj')
 
 
 class DefaultInvalidChoiceFormField(forms.ChoiceField):
+    def get_placeholder_text(self):
+        return ''
+
     def __init__(self, *args, **kwargs):
         if 'choices' not in kwargs:
             kwargs['choices'] = []
-        kwargs['choices'].insert(0, (0, ''))
+        kwargs['choices'].insert(0, (0, self.get_placeholder_text()))
         super().__init__(*args, **kwargs)
 
     def clean(self, value):
@@ -31,6 +34,9 @@ class DefaultInvalidChoiceFormField(forms.ChoiceField):
 
 
 class DateDurationFormField(DefaultInvalidChoiceFormField):
+    def get_placeholder_text(self):
+        return 'frequency'
+
     def __init__(self, *args, **kwargs):
         if 'choices' not in kwargs:
             kwargs['choices'] = [

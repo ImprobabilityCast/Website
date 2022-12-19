@@ -73,7 +73,12 @@ class UpdateRepeatingTxForm(BaseTransactionForm, IdentiferMixin):
     frequency = DateDurationFormField()
 
 
-class UpdateBudgetForm(BaseBudgetForm, IdentiferMixin):
+class UpdateBudgetForm(IdentiferMixin, BaseBudgetForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['category'].widget.attrs['placeholder'] = 'category'
+        self.fields['spending_limit'].widget.attrs['placeholder'] = 'spending limit'
+
     spending_limit = forms.FloatField(min_value=0.00, max_value=1e15)
 
     category = LowerCaseCharField(max_length=127, min_length=1)

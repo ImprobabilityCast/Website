@@ -15,6 +15,16 @@
 {% block content %}
 <div class="row">
 	<div class="col-md col-md-6 col-lg-4 m-2 p-2 graph-sib">
+		<!-- <form autocomplete="off"
+				class="p-3 asky-form mb-4 border-bottom border-secondary">
+			When will I have
+			<input type="number" name="amount" placeholder="monies"
+				class="form-control inline-form">
+			in my
+			{{ form.category|addcssclass:'form-control inline-form' }}
+			budget?
+			<i><b><span id="moneyAnswer"></span></b></i>
+		</form> -->
 		<button type="button" class="btn btn-primary"
 			onclick="window.add_transaction.toggleTransactionForm(event)"
 			data-toggle="collapse" data-target="#collapseAddTx"

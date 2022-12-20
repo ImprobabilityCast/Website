@@ -85,3 +85,7 @@ class UpdateBudgetForm(IdentiferMixin, BaseBudgetForm):
 
     frequency = DateDurationFormField()
 
+
+# class WhenMoneyFreeForm(BaseTransactionForm):
+#     pass
+

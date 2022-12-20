@@ -16,6 +16,7 @@ from .models import SpecificPlacesModel, BudgetsModel, TransactionsModel
 from .models import RepeatingTransactionsModel
 from .enums import Durations
 from .forms import AddTransactionForm, UpdateRepeatingTxForm, UpdateBudgetForm, DeleteDataForm
+#from .forms import WhenMoneyFreeForm
 from accounts.models import AccountsModel
 
 import logging
@@ -168,6 +169,7 @@ class JsonBudgetStatusView(LoginRequiredMixin, View):
             budget_budgetsmodel.id as id,
             spending_limit,
             category,
+            frequency,
             COALESCE(amount__sum, 0) as amount__sum
         FROM
         (
@@ -196,7 +198,8 @@ class JsonBudgetStatusView(LoginRequiredMixin, View):
         repeating_transactions = list(RepeatingTransactionsModel.objects.filter(
             account=request.user,
             end_date__gte=tday,
-            start_date__lte=tday
+            start_date__lte=tday,
+            is_active=True
         ).order_by('budget_id').select_related('budget'))
 
         response = {'data' : {}}
@@ -210,10 +213,15 @@ class JsonBudgetStatusView(LoginRequiredMixin, View):
             for repeating in budget_repeating_tx:
                 amount__sum += repeating.amount_for_period()
             
+            duration = Durations(budget_tx.frequency)
             data_by_budget[budget_tx.id] = {
                 'amount' : float(amount__sum),
                 'spending_limit' : float(budget_tx.spending_limit),
                 'category' : budget_tx.category,
+                'frequency' : {
+                    'name': str(duration),
+                    'value': duration.value,
+                },
             }
         
         return JsonResponse(response)
@@ -296,3 +304,47 @@ class UpdateRepeatingTxView(BaseModifyView, TxFormMixin):
         else:
             raise Exception('Invalid data id')
 
+
+# class FreeWhenView(FormView, TxFormMixin):
+#     http_method_names = ['get',]
+#     form_class = WhenMoneyFreeForm
+
+#     def get(self, request):
+#         form = self.get_form()
+
+#         if form.is_valid():
+#             raw_sql = '''
+#                 SELECT date, amount, spending_limit
+#                 FROM budget_budgetsmodel
+#                 LEFT JOIN budget_transactionsmodel
+#                 ON budget_budgetsmodel.id=budget_transactionsmodel.budget_id
+#                 WHERE budget_budgetsmodel.account_id=%s
+#                 AND budget_budgetsmodel.id=%s
+#                 AND budget_budgetsmodel.is_active
+#                 AND (
+#                         (frequency=30 AND date >= DATE_SUB(CURRENT_DATE(), INTERVAL 1 MONTH)
+#                             AND date <= DATE_ADD(CURRENT_DATE(), INTERVAL 1 MONTH)
+#                         )
+#                     OR
+#                         (frequency=365 AND date >= DATE_SUB(CURRENT_DATE(), INTERVAL 1 YEAR)
+#                             AND date <= DATE_ADD(CURRENT_DATE(), INTERVAL 1 YEAR)
+#                         )
+#                     OR
+#                         (date >= DATE_SUB(CURRENT_DATE(), INTERVAL frequency DAY)
+#                             AND date >= DATE_ADD(CURRENT_DATE(), INTERVAL frequency DAY)
+#                         )
+#                     )
+#                 ORDER BY date'''
+#             budget_id = form.cleaned_data['category']
+#             tx_list = list(BudgetsModel.objects.raw(raw_sql, [request.user.id, budget_id]))
+
+#             tday = date.today()
+#             tx = RepeatingTransactionsModel.objects.filter(
+#                 account=request.user,
+#                 is_active=True,
+#                 budget_id=budget_id
+#             )
+# select all tx in this period
+# add to avail starting with newest
+# until avail >= amount we looking for
+# if not find, return 9999-12-31

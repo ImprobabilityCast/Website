@@ -40,11 +40,11 @@ class DateDurationFormField(DefaultInvalidChoiceFormField):
     def __init__(self, *args, **kwargs):
         if 'choices' not in kwargs:
             kwargs['choices'] = [
-                (Durations.DAILY.value, 'Daily'),
-                (Durations.WEEKLY.value, 'Weekly'),
-                (Durations.SEMI_MONTHLY.value, 'Semi-Monthly'),
-                (Durations.MONTHLY.value, 'Monthly'),
-                (Durations.YEARLY.value, 'Yearly'),
+                Durations.DAILY.to_choice_tuple(),
+                Durations.WEEKLY.to_choice_tuple(),
+                Durations.SEMI_MONTHLY.to_choice_tuple(),
+                Durations.MONTHLY.to_choice_tuple(),
+                Durations.YEARLY.to_choice_tuple(),
             ]
         super().__init__(*args, **kwargs)
 

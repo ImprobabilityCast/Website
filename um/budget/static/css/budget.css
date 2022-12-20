@@ -24,12 +24,17 @@
     max-width: 30rem;
 }
 
-.graph-sib {
-    min-width: 30rem;
-}
-
 #noDataMsg {
     border-style: dashed;
     border-radius: 0.5rem;
     border-width: 3px;
+}
+
+.inline-form {
+    width: 7rem !important;
+    display: inline;
+}
+
+.asky-form {
+    line-height: 3rem;
 }

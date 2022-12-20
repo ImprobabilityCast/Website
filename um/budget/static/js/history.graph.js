@@ -24,6 +24,10 @@ var historyObj = (function () {
 			} while (true);
 		})(),
 
+		customTooltipTitle: function (context) {
+			return context[0].label + " (" + context[0].raw.frequency.name + ")";
+		},
+
 		customTooltipLabel: function(context) {
 			return context.dataset.label + ": "
 				+ this.currencyFormatter.format(context.parsed.x)
@@ -73,7 +77,8 @@ var historyObj = (function () {
 					x: v.spending_limit,
 					y: counter,
 					available: v.spending_limit - v.amount,
-					budget_id: k
+					budget_id: k,
+					frequency: v.frequency,
 				});
 				datasets[0].backgroundColor.push(halfTransparentColor);
 				datasets[0].borderColor.push(color);
@@ -82,7 +87,8 @@ var historyObj = (function () {
 					x: v.amount,
 					y: counter,
 					available: v.spending_limit - v.amount,
-					budget_id: k
+					budget_id: k,
+					frequency: v.frequency,
 				});
 				datasets[1].backgroundColor.push(color);
 				datasets[1].borderColor.push(color);
@@ -138,6 +144,7 @@ var historyObj = (function () {
 					plugins: {
 						tooltip: {
 							callbacks: {
+								title: function (context) { return obj.customTooltipTitle(context); },
 								label: function (context) { return obj.customTooltipLabel(context); },
 								footer: function (context) { return obj.customTooltipFooterLabel(context); }
 							}
@@ -146,9 +153,6 @@ var historyObj = (function () {
 							display: false,
 						},
 					},
-					// tooltips: {
-					// 	enabled: true,
-					// },
 				}
 			});
 		},

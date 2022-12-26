@@ -35,3 +35,7 @@ um/env
 um/static
 
 *.log
+
+# ignore secrets
+um/proj/secret_key.txt
+um/proj/db_pwd.txt

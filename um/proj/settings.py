@@ -21,13 +21,23 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-2)cv(==vw8j8704#9nq)0qedwmcevj1faa9*86^m4aop-cphoe'
+with open(BASE_DIR / 'proj/secret_key.txt') as f:
+    SECRET_KEY = f.read().strip()
+# SECRET_KEY = 'django-insecure-2)cv(==vw8j8704#9nq)0qedwmcevj1faa9*86^m4aop-cphoe'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
 ALLOWED_HOSTS = []
+CONN_MAX_AGE = 2
+ADMINS = [('His Majesty', '1segfault@pm.me')]
+SESSION_COOKIE_SECURE = False
+CSRF_COOKIE_SECURE = False
+SECURE_SSL_REDIRECT = False
+SECURE_HSTS_SECONDS = 0
 
+DEFAULT_FROM_EMAIL = 'no-reply@um.adoodleydo.dev'
+SERVER_EMAIL = 'server@um.adoodleydo.dev'
 
 # Application definition
 
@@ -82,6 +92,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'adoodleydo',
         'USER': 'adoodleydo_user',
+        'PASSWORD': '',
         'HOST': 'localhost',
         'PORT': '3306',
     }

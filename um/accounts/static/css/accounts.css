@@ -2,3 +2,24 @@
     position: relative;
     top: 10rem;
 }
+
+body {
+    background-image: url(/static/img/grey_ocean.JPG);
+}
+
+@media (prefers-color-scheme:dark) {
+    .form-side {
+        background-color: #223D;
+    }
+}
+
+@media (prefers-color-scheme:light) {
+    .form-side {
+        background-color: #CCDD;
+    }
+}
+
+.abs-footer {
+    bottom: 0;
+    right: 0;
+}

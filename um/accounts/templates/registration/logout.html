@@ -1,8 +1,11 @@
 {% extends "accounts_base.html" %}
 
 {% block header %}
+{{ block.super }}
 <link rel="stylesheet" type="text/css" href="/static/css/logout.css">
 {% endblock %}
+
+{% block title %}Logout{% endblock %}
 
 {% block content %}
 <div class="v-center">

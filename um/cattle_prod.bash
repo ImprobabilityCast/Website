@@ -44,4 +44,4 @@ else
 fi
 
 # tell server to update apps
-touch 'wsgi.py'
+touch 'tmp/restart.txt'

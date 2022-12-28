@@ -63,3 +63,12 @@
     setNavSelected($("[href=" + $.escapeSelector(bookmark) + "]")[0].parentElement);
     showRadioContent(removeHash(bookmark));
 })();
+
+(function () {
+    window.addEventListener("load", function () {
+        let choices = ["Isaac", "Issaac", "Isssac", "Issac", "Isac", "Isaak"];
+        $(".myName").each(function (i, e) {
+            e.textContent = choices[Math.floor(Math.random() * choices.length)];
+        });
+    });
+})();

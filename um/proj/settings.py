@@ -87,12 +87,14 @@ WSGI_APPLICATION = 'proj.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
+with open(BASE_DIR / 'proj/db_pwd.txt') as f:
+    db_pwd = ''
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'adoodleydo',
         'USER': 'adoodleydo_user',
-        'PASSWORD': '',
+        'PASSWORD': db_pwd,
         'HOST': 'localhost',
         'PORT': '3306',
     }
@@ -136,7 +138,7 @@ USE_TZ = True
 STATIC_URL = 'static/'
 STATICFILES_DIRS = (
 )
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+STATIC_ROOT = os.path.join(BASE_DIR, 'public/static')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field

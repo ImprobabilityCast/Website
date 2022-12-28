@@ -32,7 +32,7 @@ um/env
 #*/**/migrations
 
 # Ignore static desination dir
-um/static
+um/public/static
 
 *.log
 

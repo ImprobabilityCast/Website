@@ -5,6 +5,8 @@ from django.db.models import Sum, F
 from django.db.models.query import QuerySet
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import never_cache
 from django.views.generic import TemplateView, ListView
 from django.views.generic.base import View
 from django.views.generic.edit import FormView, FormMixin
@@ -161,6 +163,7 @@ class UpdateBudgetView(BaseModifyView):
         return super().get(request)
 
 
+@method_decorator(never_cache, name='get')
 class JsonBudgetStatusView(LoginRequiredMixin, View):
     http_method_names = ['get', ]
 

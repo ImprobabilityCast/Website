@@ -9,6 +9,7 @@ https://docs.djangoproject.com/en/4.0/howto/deployment/wsgi/
 
 import sys, os
 
+# Remember to set this to the proper path:
 INTERP = "/home/name/Website/um/env/bin/python3"
 #INTERP is present twice so that the new python interpreter
 #knows the actual executable path

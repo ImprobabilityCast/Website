@@ -1,15 +1,15 @@
 {% load filters %}
 
-<form class="row p-1" autocomplete="off" method="post"
+<form class="row p-1 pr-3 pl-3" autocomplete="off" method="post"
     onchange="$(this).find('.save-btn')[0].disabled=false">
   {{ form.data_id }}
-  <fieldset class="rounded border border-secondary p-1 w-100"
+  <fieldset class="card w-100 light-dark"
       onfocusin="window.forms.accordion($(this).find('.accordion-member'))">
-    <div class="d-flex justify-content-between m-2">
+    <div class="d-flex justify-content-between card-header">
       <h5 class="w-100 mb-0 mt-1 data-summary"></h5>
       <div><button type="button" class="btn btn-primary">Edit</button></div>
     </div>
-    <div class="collapse accordion-member">
+    <div class="collapse accordion-member card-body">
       {% for field in form %}
         {% if field != form.data_id %}
           <div class="form-row m-1">

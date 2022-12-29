@@ -7,9 +7,9 @@
         let place = formElement.find("#id_specific_place")[0].value;
         let frequency = formElement.find("#id_frequency")[0].selectedOptions[0].textContent;
         formElement.find(".data-summary")[0].innerHTML =
-            "<div class='row'><div class='col-md'>" + place + "</div><div class='col-md'><b>"
+            "<div class='w-100'>" + place + "</div><div class='w-100'><b>"
             + currencyFormatter.format(amount) + " " + frequency
-            + "</b></div></div><div><i>" + category + "</i></div>";
+            + "</b></div><div class='w-100'><i>" + category + "</i></div>";
     };
     window.listManage.onSaveSuccess = updateDisplay;
     window.addEventListener("load", function () {

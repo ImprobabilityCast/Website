@@ -3,3 +3,10 @@
 {% block header %}
 <link rel="stylesheet" type="text/css" href="/static/css/accounts.css">
 {% endblock %}
+
+{% block content %}
+    <div class="container">
+    {% block inner_content %}
+    {% endblock %}
+    </div>
+{% endblock %}

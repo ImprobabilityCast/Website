@@ -25,9 +25,23 @@
 }
 
 #noDataMsg {
+    border-width: 3px;
     border-style: dashed;
     border-radius: 0.5rem;
-    border-width: 3px;
+}
+
+@media (prefers-color-scheme: light)
+{
+    #noDataMsg {
+        border-color: #cacaca;
+    }
+}
+
+@media (prefers-color-scheme: dark)
+{
+    #noDataMsg {
+        border-color: #605e5e;
+    }
 }
 
 .inline-form {

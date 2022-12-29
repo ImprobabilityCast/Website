@@ -3,7 +3,7 @@
 <form class="row p-1" autocomplete="off" method="post"
     onchange="$(this).find('.save-btn')[0].disabled=false">
   {{ form.data_id }}
-  <fieldset class="rounded border border-secondary p-1">
+  <fieldset class="p-2 pb-1 pt-1">
     <div class="form-row form-group m-1"
         onfocusin="window.forms.accordion($(this).siblings('.accordion-member'))">
       <div class="col-4 col-sm-4 child-w-100 pl-0">
@@ -32,7 +32,7 @@
         {{ form.non_field_errors }}
       </div>
     </div>
-    <div class="form-group m-2 collapse accordion-member">
+    <div class="form-group m-1 mt-2 collapse accordion-member">
       <div class="d-flex justify-content-between">
         <button type="button" class="btn btn-danger"
           data-action="{% url 'budget_delete_api' %}"

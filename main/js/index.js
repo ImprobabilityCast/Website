@@ -1,28 +1,5 @@
 (function () {
 
-    var checker = null;
-    var colorSwitcher = function () {
-        let newChecker = window.matchMedia("(prefers-color-scheme: dark)").matches;
-        if (newChecker == checker) return;
-        checker = newChecker;
-        if (checker) {
-            for (var ele of document.getElementsByClassName("navbar")) {
-                ele.classList.remove("navbar-light", "bg-lightblue");
-                ele.classList.add("navbar-dark", "bg-dark");
-            }
-        }
-        else {
-            for (var ele of document.getElementsByClassName("navbar")) {
-                ele.classList.remove("navbar-dark", "bg-dark");
-                ele.classList.add("navbar-light", "bg-lightblue");
-            }
-        }
-    };
-    setInterval(colorSwitcher, 300);
-})();
-
-(function () {
-
     var showRadioContent = function (contentID) {
         for (let ele of elements) {
             if (ele.id === contentID) {

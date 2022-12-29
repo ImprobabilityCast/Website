@@ -2,22 +2,22 @@
 {
     .nav-item:hover, .nav-item.active
     {
-        background-color:#d0fcfc;
+        background-color:#e1dfdf;
     }
     body
     {
-        background-color:#abe8df;
+        background-color:#e8e8e8;
         color:#10161c;
     }
     .text-bg
     {
-        background-color:lightcyan;
+        background-color:#f9f9f9;
         color:#10161c;
     }
     .box
     {
         background-color: #fdfdff;
-        box-shadow: 0 0 1em #326c61;
+        box-shadow: 0 0 1em #606060;
     }
     hr
     {
@@ -73,11 +73,6 @@
 .transparent
 {
     opacity: 0;
-}
-
-.bg-lightblue
-{
-    background-color: lightcyan;
 }
 
 .text-bg

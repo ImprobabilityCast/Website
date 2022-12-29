@@ -98,7 +98,9 @@ var historyObj = (function () {
 			});
 
 			ctx.parentElement.style.height = (this.numBudgets * 4.1) + "rem";
-
+			let isDarkMode = window.matchMedia("(prefers-color-scheme: dark)").matches;
+			let fontColor = isDarkMode ? "#ddd" : "#555";
+			let lineColor = isDarkMode ? "#282828" : "#e0e0e0";
 			this.chart = new Chart(ctx, {
 				type: "bar",
 				data: {
@@ -131,6 +133,10 @@ var historyObj = (function () {
 									}
 									return label;
 								},
+								color: fontColor,
+							},
+							grid: {
+								color: lineColor,
 							},
 						},
 						x: {
@@ -138,6 +144,10 @@ var historyObj = (function () {
 								callback: function (val, index) {
 									return obj.customXScaleLabel(val, index);
 								},
+								color: fontColor,
+							},
+							grid: {
+								color: lineColor,
 							},
 						},
 					},

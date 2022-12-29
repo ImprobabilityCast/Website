@@ -11,22 +11,22 @@
 {% endblock %}
 
 {% block content %}
-<header class="mt-4">
-  <h3>
-    <button type="button" class="btn btn-primary"
-      data-action="{% url 'budget_update_api' %}" id="newBtn"
-      onclick="window.listManage.new(event)">+ New Budget</button>
-  </h3>
-</header>
-
-<div class="p-1" id="formsContainer"></div>
-<div class="p-1" id="formInfo">
-  {% csrf_token %}
-  <div class="p-5 border-secondary" id="noDataMsg">
-    <p class="m-5 text-center">Your budgets will appear here.</p>
+<div class="text-bg container">
+  <header class="pt-3">
+    <h3>
+      <button type="button" class="btn btn-primary"
+        data-action="{% url 'budget_update_api' %}" id="newBtn"
+        onclick="window.listManage.new(event)">+ New Budget</button>
+    </h3>
+    <hr>
+  </header>
+  <div id="formsContainer"></div>
+  <div class="p-1" id="formInfo">
+    {% csrf_token %}
+    <div class="p-5" id="noDataMsg">
+      <p class="m-5 text-center">Your budgets will appear here.</p>
+    </div>
   </div>
+  {% include "pagination.frag.html" %}
 </div>
-
-{% include "pagination.frag.html" %}
-
 {% endblock %}

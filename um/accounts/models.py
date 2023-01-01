@@ -2,8 +2,11 @@ from django.contrib.auth.models import AbstractBaseUser
 from django.db.models.signals import pre_save
 from django.db import models
 from django.dispatch import receiver
+from django.utils.timezone import datetime
 
 from hashlib import sha256
+from datetime import timedelta
+from secrets import randbits
 
 from .managers import AccountsManager
 
@@ -25,7 +28,7 @@ class AccountsModel(AbstractBaseUser):
 
     modified = models.DateTimeField(auto_now=True)
 
-    is_active = models.BooleanField(default=True)
+    is_active = models.BooleanField(default=False)
 
     USERNAME_FIELD = 'username'
 
@@ -39,6 +42,24 @@ class AccountsModel(AbstractBaseUser):
     def set_email_attributes(self, email):
         self.email_mask = email[0:3] + '***' + email[email.find('@'):]
         self.email_hash = sha256(email.encode(encoding='UTF-8')).hexdigest()
+
+
+class AccountsValidationModel(models.Model):
+    expiration = models.DateTimeField(default=datetime.now()+timedelta(minutes=15))
+
+    validation_code = models.BigIntegerField(default=randbits(63))
+
+    account = models.OneToOneField(AccountsModel,
+        on_delete=models.CASCADE
+    )
+
+    def set_new_validation_code(self):
+        validate_code = randbits(63)
+        expiration = datetime.now() + timedelta(minutes=15)
+    
+    # An account_id cookie must have been set already, otherwise the link will not work
+    def create_verification_link(self):
+        return 'https://um.adoodleydo.dev/accounts/validate?code=' + str(self.validation_code)
 
 
 # @receiver(pre_save, sender=AccountsModel, dispatch_uid='accounts_pre_save')

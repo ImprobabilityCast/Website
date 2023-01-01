@@ -23,3 +23,21 @@ body {
     bottom: 0;
     right: 0;
 }
+
+.btn-as-link {
+    display: inherit;
+    background: inherit;
+    border: inherit;
+    color: inherit;
+    text-decoration: inherit;
+    padding: 0;
+    margin: 0;
+}
+
+.btn-as-link:focus {
+    outline: inherit;
+}
+
+.btn-as-link:active {
+    color: inherit;
+}

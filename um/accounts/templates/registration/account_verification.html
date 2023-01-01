@@ -1,0 +1,26 @@
+{% extends "fullscreen_base.html" %}
+
+{% block title %}Email Verification{% endblock %}
+
+{% block inner_content %}
+	<h3 class="text-center p-3">We've sent
+		{% if 'tries' in request.COOKIES %}
+			{% if request.COOKIES.tries != '1' %}
+				yet
+			{% endif %}
+			another
+		{% else %}
+			a
+		{% endif %}
+		link to your email to to verify your email address.</h3>
+	<div class="text-center">
+		<form action="{% url 'new_validation_code' %}" type="submit" method="post"
+				class="d-inline">
+			{% csrf_token %}
+			<p>If you don't see it in the next few minutes, 
+				<a class="behave-bootstrap"><button type="submit" class="btn-as-link">Resend</button></a>,
+					or check your spam folder.
+			</p>
+		</form>
+	</div>
+{% endblock %}

@@ -24,7 +24,6 @@ class DefaultInvalidChoiceFormField(forms.ChoiceField):
             value = int(value)
         except:
             raise ValidationError('Please select a valid option')
-        logger.debug(value)
         if value == 0:
             if self.required:
                 raise ValidationError('This field is required.')

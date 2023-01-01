@@ -9,7 +9,7 @@ from accounts.models import AccountsModel
 def create_demo_user(apps, schema_editor):
     #AccountsModel = apps.get_model('accounts', 'AccountsModel')
     demo_user = AccountsModel.objects.create_user(
-        username='demo', email='demo@example.com', password='password'
+        username='demo', email='demo@example.com', password='password', is_active=True
     )
     demo_user.save()
 

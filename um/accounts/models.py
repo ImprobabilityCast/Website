@@ -44,18 +44,25 @@ class AccountsModel(AbstractBaseUser):
         self.email_hash = sha256(email.encode(encoding='UTF-8')).hexdigest()
 
 
-class AccountsValidationModel(models.Model):
-    expiration = models.DateTimeField(default=datetime.now()+timedelta(minutes=15))
+def new_exp_date():
+    return datetime.now() + timedelta(minutes=15)
 
-    validation_code = models.BigIntegerField(default=randbits(63))
+def new_code():
+    return randbits(63)
+
+
+class AccountsValidationModel(models.Model):
+    expiration = models.DateTimeField(default=new_exp_date)
+
+    validation_code = models.BigIntegerField(default=new_code)
 
     account = models.OneToOneField(AccountsModel,
         on_delete=models.CASCADE
     )
 
     def set_new_validation_code(self):
-        validate_code = randbits(63)
-        expiration = datetime.now() + timedelta(minutes=15)
+        validate_code = new_code()
+        expiration = new_exp_date()
     
     # An account_id cookie must have been set already, otherwise the link will not work
     def create_verification_link(self):

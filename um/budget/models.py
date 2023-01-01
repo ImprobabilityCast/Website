@@ -42,11 +42,14 @@ class SpecificPlacesModel(BaseModel):
 
 
 class BudgetsModel(BaseModel, TimespanMixin):
+    class Meta:
+        unique_together = [['account', 'category']]
+
     account = models.ForeignKey(AccountsModel,
         on_delete=models.CASCADE
     )
 
-    category = models.CharField(max_length=127, unique=True, validators=[MinLengthValidator(1)])
+    category = models.CharField(max_length=127, validators=[MinLengthValidator(1)])
 
     spending_limit = models.DecimalField(max_digits=15,
         decimal_places=2,

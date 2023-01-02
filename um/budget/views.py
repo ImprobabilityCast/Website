@@ -230,6 +230,7 @@ class JsonBudgetStatusView(LoginRequiredMixin, View):
         return JsonResponse(response)
 
 
+@method_decorator(never_cache, name='get')
 class PagedListView(LoginRequiredMixin, ListView):
     class Meta:
         abstract = True

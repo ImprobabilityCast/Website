@@ -8,7 +8,9 @@ var listManage = (function () {
 
     return {
         cacheKey: "",
+        updateCache: false,
         onSaveSuccess: function(formElement) {},
+        onDeleteSuccess: function() {},
 
         delete: function (event) {
             let jForm = $(event.target.form)
@@ -18,11 +20,14 @@ var listManage = (function () {
             };
             if (jForm.find("#id_data_id")[0].value != -1) {
                 event.target.disabled = true;
+                let obj = this;
                 window.forms.ajaxFormSubmit(event.target, function (requester) {
                     setTimeout(delayedDelete, 500);
+                    obj.onDeleteSuccess();
                 });
             } else { // don't care about errors bc this doesn't exist on srv
                 setTimeout(delayedDelete, 550);
+                obj.onDeleteSuccess();
             }
             jForm.hide(500);
         },
@@ -39,39 +44,50 @@ var listManage = (function () {
                 obj.onSaveSuccess(event.target);
             });
         },
-        new: function (event, async=true) {
+        new: function (event, onFinish = function () {}) {
             // get form if not cached
             let formHTML = window.cacheMan.getItem(this.cacheKey);
             let newElement = document.createElement("div");
             $(newElement).hide();
             let obj = this;
-            if (formHTML == null) {
+            if (formHTML == null || this.updateCache) {
                 let request = new XMLHttpRequest();
                 request.onload = function () {
                     if (request.status == 200) {
                         addHTML(newElement, request.responseText);
                         window.cacheMan.setItem(obj.cacheKey, request.responseText);
+                        obj.updateCache = false;
+                        onFinish();
                     }
                 };
                 let url = (event == undefined ? $("#newBtn")[0] : event.target)
                         .getAttribute("data-action");
-                request.open("GET", url, async);
+                request.open("GET", url);
                 request.send();
             } else {
                 addHTML(newElement, formHTML);
+                onFinish();
             }
         },
-        populate: function () {
+        populate: function (onFinish = function () {}) {
             let pageData = JSON.parse($("#pageData")[0].textContent);
             let formsContainer = $("#formsContainer")[0];
             let obj = this;
-            pageData.forEach(function (data, i) {
-                obj.new(undefined /* event */, false /* async */);
-                let form = $(formsContainer.lastElementChild.firstElementChild);
-                Object.keys(data).forEach( function (key, ii) {
-                    form.find("#id_" + key)[0].value = data[key];
+            let recusriveWaitingNew = function (idx=0) {
+                if (idx >= pageData.length) {
+                    onFinish();
+                    return;
+                }
+                let data = pageData[idx];
+                obj.new(undefined /* event */, function () {
+                    let form = $(formsContainer.lastElementChild.firstElementChild);
+                    Object.keys(data).forEach( function (key, ii) {
+                        form.find("#id_" + key)[0].value = data[key];
+                    });
+                    recusriveWaitingNew(idx + 1);
                 });
-            });
+            };
+            recusriveWaitingNew();
         }
     };
 })();

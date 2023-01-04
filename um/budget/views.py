@@ -134,6 +134,7 @@ class DeleteRepeatingTxView(DeleteDataView):
     model_class = RepeatingTransactionsModel
 
 
+@method_decorator(never_cache, name='get')
 class UpdateBudgetView(BaseModifyView):
     form_class = UpdateBudgetForm
     http_method_names = ['get', 'post']
@@ -287,6 +288,7 @@ class ManageRepeatingTxView(PagedListView):
         }
 
 
+@method_decorator(never_cache, name='get')
 class UpdateRepeatingTxView(BaseModifyView, TxFormMixin):
     form_class = UpdateRepeatingTxForm
     http_method_names = ['get', 'post']

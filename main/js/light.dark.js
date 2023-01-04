@@ -1,10 +1,6 @@
 (function () {
-
-    var checker = null;
     var colorSwitcher = function () {
-        let newChecker = window.matchMedia("(prefers-color-scheme: dark)").matches;
-        if (newChecker == checker) return;
-        checker = newChecker;
+        let checker = window.matchMedia("(prefers-color-scheme: dark)").matches;
         if (checker) {
             for (var ele of document.getElementsByClassName("navbar")) {
                 ele.classList.remove("navbar-light", "bg-light");
@@ -18,8 +14,7 @@
                 ele.classList.remove("text-dark");
                 ele.classList.add("text-light");
             }
-        }
-        else {
+        } else {
             for (var ele of document.getElementsByClassName("navbar")) {
                 ele.classList.remove("navbar-dark", "bg-dark");
                 ele.classList.add("navbar-light", "bg-light");
@@ -34,5 +29,5 @@
             }
         }
     };
-    setInterval(colorSwitcher, 300);
+    setInterval(colorSwitcher, 500);
 })();

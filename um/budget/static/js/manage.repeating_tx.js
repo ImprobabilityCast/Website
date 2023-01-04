@@ -11,11 +11,21 @@
             + currencyFormatter.format(amount) + " " + frequency
             + "</b></div><div class='w-100'><i>" + category + "</i></div>";
     };
-    window.listManage.onSaveSuccess = updateDisplay;
+    let setDirtyCache = function () {
+        window.app.isRepeatingTxCacheOutdated = true;
+    };
+    window.listManage.onSaveSuccess = function (formElement) {
+        updateDisplay(formElement);
+        setDirtyCache();
+    }
+    window.listManage.onDeleteSuccess = setDirtyCache;
+    window.listManage.updateCache = window.app.isRepeatingTxCacheOutdated;
     window.addEventListener("load", function () {
-        window.listManage.populate();
-        $("form").each(function (i, e) {
-            updateDisplay($(e));
+        window.listManage.populate(function () {
+            $("form").each(function (i, e) {
+                updateDisplay($(e));
+            });
         });
+        window.app.isRepeatingTxCacheOutdated = false;
     });
 })();

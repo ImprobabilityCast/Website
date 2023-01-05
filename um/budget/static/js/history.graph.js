@@ -157,7 +157,8 @@ var historyObj = (function () {
 								title: function (context) { return obj.customTooltipTitle(context); },
 								label: function (context) { return obj.customTooltipLabel(context); },
 								footer: function (context) { return obj.customTooltipFooterLabel(context); }
-							}
+							},
+							intersect: false,
 						},
 						legend: {
 							display: false,

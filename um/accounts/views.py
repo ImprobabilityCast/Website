@@ -48,6 +48,9 @@ class SignUpView(NotLoggedInMixin, CreateView):
     template_name = 'registration/signup.html'
     http_method_names = ['get', 'post']
 
+    def test_func(self):
+        return super().test_func() or self.request.user.id == 1
+
     def post(self, request):
         form = self.get_form()
 
@@ -147,8 +150,11 @@ class NewAccountValidationView(View):
                     login(request, verification.account)
                     break
             response = redirect(settings.LOGIN_REDIRECT_URL)
-            del request.session['account_id']
-            del request.session['email']
+            try:
+                del request.session['account_id']
+                del request.session['email']
+            except:
+                logger.debug("session vars did not exist")
         except:
             response = redirect('validation_expired')
 

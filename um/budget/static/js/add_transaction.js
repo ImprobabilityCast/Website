@@ -10,14 +10,18 @@ var add_transaction = (function () {
                 let form  = $(event.target.form);
                 let categoryControl = form.find("#id_category")[0];
                 let amountControl = form.find("#id_amount")[0];
-                let categoryIdx = categoryControl.selectedIndex - 1; // -1 to skip empty default value
+                let categoryID = categoryControl.selectedOptions[0].value;
                 let amount  = amountControl.value - 0;
-                let spentData = $.grep(window.historyObj.chart.data.datasets, function (e, i) {
+                let spentData = $.grep($.grep(window.historyObj.chart.data.datasets, function (e, i) {
                     return e.label === "spent";
-                })[0].data[categoryIdx];
-                let budgetedData = $.grep(window.historyObj.chart.data.datasets, function (e, i) {
+                })[0].data, function (e, i) {
+                    return e.budget_id === categoryID;
+                })[0];
+                let budgetedData = $.grep($.grep(window.historyObj.chart.data.datasets, function (e, i) {
                     return e.label === "budgeted";
-                })[0].data[categoryIdx];
+                })[0].data, function (e, i) {
+                    return e.budget_id === categoryID;
+                })[0];
 
                 // update graph, ignore repeating tx for now bc I can't be bothered
                 if (!$("#id_is_repeating")[0].checked) {

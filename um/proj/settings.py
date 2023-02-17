@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'budget.apps.BudgetConfig',
     'accounts.apps.AccountsConfig',
     'common.apps.CommonConfig',
+    'rando.apps.RandoConfig',
 ]
 
 MIDDLEWARE = [

@@ -3,9 +3,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-<meta name="description" content="This is Isaac's website.
-It tells the story of his life and interests. Spoilers, it's
-mostly software development and photography.">
+<meta name="description" content="This is Isaac's website. Bruh.">
 
 <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css" />
 <link rel="stylesheet" href="/css/index.css" />
@@ -24,19 +22,28 @@ mostly software development and photography.">
         <div class="navbar-collapse collapse" id="navCollapse">
             <div class="navbar-nav">
                 <label class="nav-item m-0">
-                    <a class="nav-link light-dark-text p-3" href="#home">Home</a>
+                    <a class="nav-link light-dark-text p-3" data-toggle="collapse" data-target="#navCollapse"
+                        href="#home">Home</a>
                 </label>
                 <label class="nav-item m-0">
-                    <a class="nav-link light-dark-text p-3" href="#about">About</a>
+                    <a class="nav-link light-dark-text p-3" data-toggle="collapse" data-target="#navCollapse"
+                        href="#about">About</a>
                 </label>
                 <label class="nav-item m-0">
-                    <a class="nav-link light-dark-text p-3" href="#projects">Projects</a>
+                    <a class="nav-link light-dark-text p-3" data-toggle="collapse" data-target="#navCollapse"
+                        href="#projects">Projects</a>
                 </label>
                 <label class="nav-item m-0">
-                    <a class="nav-link light-dark-text p-3" href="#contact">Contact</a>
+                    <a class="nav-link light-dark-text p-3" data-toggle="collapse" data-target="#navCollapse"
+                        href="#contact">Contact</a>
                 </label>
                 <label class="nav-item m-0">
-                    <a class="nav-link light-dark-text p-3" href="#funnies">Funnies</a>
+                    <a class="nav-link light-dark-text p-3" data-toggle="collapse" data-target="#navCollapse"
+                        href="#funnies">Funnies</a>
+                </label>
+                <label class="nav-item m-0">
+                    <a class="nav-link light-dark-text p-3" data-toggle="collapse" data-target="#navCollapse"
+                        href="#art">Art</a>
                 </label>
             </div>
         </div>
@@ -47,9 +54,8 @@ mostly software development and photography.">
             <div class="col-md-7">
                 <br>
                 <p class="lead">
-                    This is my website. I made it myself using Bootstrap and a bit of jQuery.
-                    Of course, I also used ye olde HTML, CSS, & JavaScript. It's named
-                    <i>adoodleydo.dev</i> because I like to sketch and write code.
+                    This is a website I made. It's named <i>adoodleydo.dev</i>
+                    because I like sketching and computer programming. Look at the pretty flower.
                 </p>
             </div>
             <div class="col-md-5 text-center">
@@ -250,7 +256,10 @@ mostly software development and photography.">
         <p class="code">&nbsp;&nbsp;&nbsp;&nbsp;throw new Exception(e.Message);</p>
         <p class="code">}</p>
 
-
+    </div>
+    <div class="text-bg container hidden" id="art" data-info="content"
+        data-call-on-show="lazyLoadArt">
+        Loading...
     </div>
     <script src="/js/jquery.min.js"></script>
     <script src="/bootstrap/js/bootstrap.min.js"></script>

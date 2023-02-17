@@ -111,6 +111,7 @@ class RepeatingTransactionsModel(BaseTransactionModel, TimespanMixin):
             month = period_start_date.month
             year = period_start_date.year
             day = tx_begin_date.day
+            td = timedelta(days=0)
             match self.frequency:
                 case Durations.MONTHLY.value:
                     if period_start_date.day > tx_begin_date.day:
@@ -118,8 +119,9 @@ class RepeatingTransactionsModel(BaseTransactionModel, TimespanMixin):
                         year = period_start_date.year + math.floor(period_start_date.month / 12)
                 case Durations.YEARLY.value:
                     year += 1
-            # everything else (daily, weekly, semi-monthly) is literal days
-            return date(year=year, month=month, day=day) + timedelta(days=self.frequency)
+                case _: # everything else (daily, weekly, semi-monthly) is literal days
+                    td = timedelta(days=self.frequency)
+            return date(year=year, month=month, day=day) + td
 
     # this assumes that tx only begin on the days of the month in range [1, 28]
     # budget range can be on any day

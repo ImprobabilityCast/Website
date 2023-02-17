@@ -1,9 +1,13 @@
 var listManage = (function () {
     let addHTML = function (element, HTMLtext) {
-        element.innerHTML = HTMLtext;
-        $(element).hide();
-        $('#formsContainer')[0].appendChild(element);
-        $(element).show(300);
+        let formsContainer = $('#formsContainer')[0];
+        let unsaved = $(formsContainer).find("#id_data_id[value=-1]");
+        if (unsaved.length === 0) {
+            element.innerHTML = HTMLtext;
+            $(element).hide();
+            $('#formsContainer')[0].prepend(element);
+            $(element).show(300);
+        }
     };
 
     return {
@@ -80,7 +84,7 @@ var listManage = (function () {
                 }
                 let data = pageData[idx];
                 obj.new(undefined /* event */, function () {
-                    let form = $(formsContainer.lastElementChild.firstElementChild);
+                    let form = $(formsContainer.firstElementChild.firstElementChild);
                     Object.keys(data).forEach( function (key, ii) {
                         form.find("#id_" + key)[0].value = data[key];
                     });

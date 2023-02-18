@@ -16,6 +16,12 @@ then
         sed -i 's/http:\/\/127.0.0.1/https:\/\/adoodleydo.dev/g' $file
     done
 
+    # replace all http://127.0.0.1 with adoodleydo.dev
+    for file in $(tree -fi -P views.py --noreport | grep -P '^./((?!env).)*.py$')
+    do
+        sed -i 's/http:\/\/127.0.0.1/https:\/\/adoodleydo.dev/g' $file
+    done
+
     # update settings.py
     sed -i "s/DEBUG = True/DEBUG = False/g;
             s/SESSION_COOKIE_SECURE = False/SESSION_COOKIE_SECURE = True/g;
@@ -31,6 +37,12 @@ else
 
     # replace all http://127.0.0.1 with adoodleydo.dev
     for file in $(tree -fi -P *.html --noreport | grep -P '^./((?!env).)*.html$')
+    do
+        sed -i 's/https:\/\/adoodleydo.dev/http:\/\/127.0.0.1/g' $file
+    done
+
+    # replace all http://127.0.0.1 with adoodleydo.dev
+    for file in $(tree -fi -P views.py --noreport | grep -P '^./((?!env).)*.py$')
     do
         sed -i 's/https:\/\/adoodleydo.dev/http:\/\/127.0.0.1/g' $file
     done

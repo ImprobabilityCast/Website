@@ -52,11 +52,24 @@
     }
 }
 
+.art
+{
+    max-width: 450pt;
+}
+
 @media screen and (max-width: 500pt)
 {
     .nav-item
     {
         width: 100%;
+    }
+}
+
+@media screen and (max-width: 600pt)
+{
+    .art
+    {
+        max-width: 100%;
     }
 }
 
@@ -97,9 +110,4 @@
 .flower
 {
     max-width: 200pt;
-}
-
-.art
-{
-    max-width: 450pt;
 }

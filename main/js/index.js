@@ -3,6 +3,9 @@
     var isAddingImages = false;
     
     document.addEventListener("scroll", scrolled);
+    $("#navCollapse div label a").each(function (i, e) {
+        e.addEventListener("click", collapseNavIfShown);
+    });
 
     function scrolled() {
         let art = $("#art");
@@ -23,7 +26,7 @@
         let fullUrl = "http://127.0.0.1:81" + imgUrl;
         img.src = fullUrl;
         img.alt = imgUrl;
-        img.classList.add("img-fluid", "p-3", "art", "mw-100");
+        img.classList.add("img-fluid", "p-3", "art");
         a.href = fullUrl;
         a.appendChild(img);
         div.appendChild(a);
@@ -84,6 +87,14 @@
             item.classList.remove("active");
         }
         navElement.classList.add("active");
+    }
+
+    function collapseNavIfShown()
+    {
+        let nav = $('#navCollapse');
+        if (nav[0].classList.contains('show')) {
+            nav.collapse('hide');
+        }
     }
 
     var removeHash = function (hashed) {

@@ -21,7 +21,7 @@
 }
 
 #mainGraphContainer {
-    max-width: 30rem;
+    max-width: 38rem;
 }
 
 #noDataMsg {
@@ -35,6 +35,10 @@
     #noDataMsg {
         border-color: #cacaca;
     }
+    #id_is_repeating[value="1"] + div {
+        background-color: #e1ddff;
+        background: linear-gradient(90deg, #fff0, #e1ddff, #fff0);
+    }
 }
 
 @media (prefers-color-scheme: dark)
@@ -42,13 +46,29 @@
     #noDataMsg {
         border-color: #605e5e;
     }
+    #id_is_repeating[value="1"] + div {
+        background-color: #172a35;
+        background: linear-gradient(90deg, #fff0, #1d3442, #fff0);
+    }
+}
+
+#id_num_times[value="1"] {
+    visibility: hidden;
+}
+
+#id_num_times:not([value="1"])::before {
+    content: "x";
 }
 
 .inline-form {
-    width: 7rem !important;
+    width: 14rem;
     display: inline;
 }
 
 .asky-form {
     line-height: 3rem;
+}
+
+.text-date-control {
+    width: 6rem;
 }

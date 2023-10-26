@@ -15,6 +15,7 @@ var listManage = (function () {
         updateCache: false,
         onSaveSuccess: function(formElement) {},
         onDeleteSuccess: function() {},
+        sortDataCallback: null,
 
         delete: function (event) {
             let jForm = $(event.target.form)
@@ -75,10 +76,13 @@ var listManage = (function () {
         },
         populate: function (onFinish = function () {}) {
             let pageData = JSON.parse($("#pageData")[0].textContent);
+            if (this.sortDataCallback != null) {
+                pageData.sort(this.sortDataCallback);
+            }
             let formsContainer = $("#formsContainer")[0];
             let obj = this;
-            let recusriveWaitingNew = function (idx=0) {
-                if (idx >= pageData.length) {
+            let recusriveWaitingNew = function (idx=pageData.length - 1) {
+                if (idx < 0) {
                     onFinish();
                     return;
                 }
@@ -86,9 +90,14 @@ var listManage = (function () {
                 obj.new(undefined /* event */, function () {
                     let form = $(formsContainer.firstElementChild.firstElementChild);
                     Object.keys(data).forEach( function (key, ii) {
-                        form.find("#id_" + key)[0].value = data[key];
+                        let formChild = form.find("#id_" + key)[0];
+                        formChild.value = data[key];
+                        formChild.setAttribute("value", data[key])
+                        if (!formChild.classList.contains("form-control")) {
+                            formChild.innerText = data[key];
+                        }
                     });
-                    recusriveWaitingNew(idx + 1);
+                    recusriveWaitingNew(idx - 1);
                 });
             };
             recusriveWaitingNew();

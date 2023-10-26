@@ -1,0 +1,29 @@
+<div class="form-group pl-1" id="id_timespan_form">
+    <p class="mb-2" id="id_timespan_form_title"></p>
+    <div class="form-check mb-2">
+        <input type="radio" autocomplete="off" id="id_current_period" name="graph_mode"
+            class="form-check-input" checked
+            onchange="window.timespanFormConfig.toCurrentPeriod(event)">
+        <label for="id_current_period" class="form-check-label">Current period</label>
+    </div>
+    <div class="form-check">
+        <input type="radio" autocomplete="off" id="id_timespan" name="graph_mode"
+            class="form-check-input"
+            onchange="window.timespanFormConfig.toTimespan(event)">
+        <label for="id_timespan" class="form-check-label">
+            <div class="input-group">
+                <span class="d-inline pr-2">Timespan</span>
+                <div class="d-inline">
+                    <input type="text" class="text-date-control" placeholder="From Date"
+                        autocomplete="off" id="id_timespan_from" value="{{ range_start }}"
+                        onfocus="window.timespanFormConfig.handleTimeSpanDateChange(event)"
+                        onblur="window.timespanFormConfig.handleTimeSpanDateChange(event)">
+                    <input type="text" class="text-date-control" placeholder="To Date"
+                        autocomplete="off" id="id_timespan_to" value="{{ range_end }}"
+                        onfocus="window.timespanFormConfig.handleTimeSpanDateChange(event)"
+                        onblur="window.timespanFormConfig.handleTimeSpanDateChange(event)">
+                </div>
+            </div>
+        </label>
+    </div>
+</div>

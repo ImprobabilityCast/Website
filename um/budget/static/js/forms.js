@@ -21,7 +21,7 @@ var forms = (function () {
     };
     let handleResponse = function (triggerElement, onSuccessfulResponse, requester) {
         let has_errors = true;
-        if (requester.status == 200) {
+        try {
             let json = JSON.parse(requester.responseText);
             let formElement = $(triggerElement.tagName == "FORM" ? triggerElement : triggerElement.form);
             // log errors, enable save if bad
@@ -35,6 +35,9 @@ var forms = (function () {
             // call regardless bc it will clear existing error msgs
             writeErrors(json, formElement);
             has_errors = json.has_errors;
+        } catch (e) {
+            console.error(e);
+            console.log(requester.responseText);
         }
         return has_errors;
     };
@@ -59,6 +62,16 @@ var forms = (function () {
             requester.setRequestHeader("Content-Type", "application/x-www-form-urlencoded")
             requester.setRequestHeader("X-CSRFTOKEN", csrftokenNode.value);
 			requester.send($(triggerElement.form).serialize());
+        },
+        toggleDateControl: function (event) {
+            let ele = event.target;
+            if (ele.type == "date") {
+                if (ele.value == "") {
+                    ele.type = "text";
+                }
+            } else {
+                ele.type = "date";
+            }
         },
     };
 })();

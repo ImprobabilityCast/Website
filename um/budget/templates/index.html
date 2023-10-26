@@ -9,6 +9,7 @@
 <script src="/static/js/history.graph.js"></script>
 <script src="/static/js/forms.js"></script>
 <script src="/static/js/add_transaction.js"></script>
+<script src="/static/js/timespan.form.config.js"></script>
 <script src="/static/js/index.js"></script>
 {% endblock %}
 
@@ -34,7 +35,7 @@
 			<div class="collapse" id="collapseAddTx">
 				<form method="post" autocomplete="off" onchange="$('#btn-submit')[0].disabled=false">
 					{% csrf_token %}
-
+					{{ form.data_id }}
 					<fieldset>
 						<div class="form-row form-group">
 							<div class="invalid-feedback d-block __all___error">
@@ -123,9 +124,11 @@
 					</div>
 				</form>
 			</div>
+			<hr>
+			{% include "timespan.form.frag.html" %}
 		</div>
-		<div class="col-lg col-lg-8 position-relative" id="mainGraphContainer">
-			<canvas id="mainGraph" class="d-none" width="300" height="300"></canvas>
+		<div class="col col-lg col-lg-8 position-relative" id="mainGraphContainer">
+			<canvas id="mainGraph" width="300" height="300"></canvas>
 		</div>
 		<div class="col-lg col-lg-8 p-5 d-none m-3" id="noDataMsg">
 			<p class="m-5 text-center">

@@ -4,7 +4,12 @@ var add_transaction = (function () {
             $("#id_frequency")[0].required=event.target.checked;
             $("#dateLabelContainer label")[0].innerHTML = event.target.checked ? "Start Date:" : "Date:";
         },
+        canUpdateGraph: function () {
+            // ignore repeating tx for now bc I can't be bothered
+            return !$("#id_is_repeating")[0].checked && $("#id_current_period")[0].checked;
+        },
         submitTransaction: function (event) {
+            let obj = this;
             window.forms.ajaxFormSubmit(event.target, function (json) {
                 // get data
                 let form  = $(event.target.form);
@@ -22,9 +27,9 @@ var add_transaction = (function () {
                 })[0].data, function (e, i) {
                     return e.budget_id === categoryID;
                 })[0];
-
-                // update graph, ignore repeating tx for now bc I can't be bothered
-                if (!$("#id_is_repeating")[0].checked) {
+                
+                // try update graph,
+                if (obj.canUpdateGraph()) {
                     spentData.x += amount;
                     spentData.available -= amount;
                     budgetedData.available -= amount;

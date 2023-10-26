@@ -1,0 +1,32 @@
+{% extends "budget_base.html" %}
+
+{% block header %}
+{{ block.super }}
+<script src="/static/js/forms.js"></script>
+<script src="/static/js/cache.js"></script>
+<script src="/static/js/manage.generic.js"></script>
+<script src="/static/js/manage.tx.js"></script>
+<!-- <script src="/static/js/add_transaction.js"></script> -->
+{{ page.object_list|json_script:"pageData" }}
+{% endblock %}
+
+{% block content %}
+<div class="text-bg container">
+    <header class="pt-3">
+      <h3>
+        <button type="button" class="btn btn-primary hidden"
+          data-action="{% url 'add_transaction_api' %}" id="newBtn"
+          onclick="window.listManage.new(event)">+ New Transaction</button>
+      </h3>
+      <hr>
+    </header>
+    <div id="formsContainer"></div>
+    <div class="p-1" id="formInfo">
+      {% csrf_token %}
+      <div class="p-5" id="noDataMsg">
+        <p class="m-5 text-center">Your transactions will appear here.</p>
+      </div>
+    </div>
+    {% include "pagination.frag.html" %}
+  </div>
+{% endblock %}

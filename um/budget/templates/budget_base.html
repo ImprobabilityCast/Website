@@ -47,6 +47,10 @@ window.addEventListener("load", function () {
 			</label>
 			<label class="nav-item col-md p-0 m-0">
 				<a class="nav-link light-dark-text text-center w-100 h-100 pr-4 pl-4"
+					href="{% url 'history' %}">Transaction History</a>
+			</label>
+			<label class="nav-item col-md p-0 m-0">
+				<a class="nav-link light-dark-text text-center w-100 h-100 pr-4 pl-4"
 					href="{% url 'logout' %}">
 				{% if request.user.id == 1 %}
 					Leave Demo

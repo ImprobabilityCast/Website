@@ -51,7 +51,7 @@
     var lazyLoadArt = function () {
         let artDiv = $("#art");
         let artLoadingMsgID = "artLoadingMsg";
-        if (artDiv[0].lastElementChild.id = artLoadingMsgID) {
+        if (artDiv[0].lastElementChild.id == artLoadingMsgID) {
             // show loading animation, nah just loading text :P
             // get list of images um.adoodleydo.dev/rando/img_list?category=art
             let request = new XMLHttpRequest();

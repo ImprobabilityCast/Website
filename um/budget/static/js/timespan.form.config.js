@@ -34,8 +34,11 @@ window.timespanFormConfig = (function() {
             _toDate = _toDate[0];
 
             if (_fromDate.value.length > 0 && _toDate.value.length > 0) {
+                this.fromDateStr = _fromDate.value;
+                this.toDateStr = _toDate.value;
                 _fromDate.type = "date";
                 _toDate.type = "date";
+                _useDates = true;
                 $(_timespanRadio)[0].checked = true;
             }
 

@@ -506,13 +506,12 @@ class ListAllTxView(PagedListView):
             if self.got_range:
                 self.range_start = date.fromisoformat(self.request.GET['from'])
                 self.range_end = date.fromisoformat(self.request.GET['to'])
-                has_err = False
             else:
                 self.range_start = date.min
                 self.range_end = date.today()
-                ret = self.form.get_constraint_sql_from_request(self.request)
-                has_err = ret == True
-                self.extra_cond = '' if has_err else ret
+            ret = self.form.get_constraint_sql_from_request(self.request)
+            has_err = ret == True
+            self.extra_cond = '' if has_err else ret
             return has_err
         except Exception as e:
             logger.debug(e)

@@ -4,13 +4,35 @@
         let filterBtn = $("#filterBtn")[0];
         let cuteCat = $("#id_category")[0];
         let spPlace = $("#id_specific_place")[0];
-        let urlCat = window.location.search.split(/[\?\&]/).filter(item => item.startsWith("category"))[0];
-        let potentialValue = (urlCat == undefined) ? NaN : urlCat.split("=")[1] - 0;
-        if (potentialValue != NaN)
-            cuteCat.value = potentialValue.toString();
+        let palcesUrl = "/budget/api/places";
 
         cuteCat.addEventListener("change", function () {
-            // update spPlace from API
+            spPlace.disabled = true;
+			let requester = new XMLHttpRequest();
+			requester.onload = function () {
+                let placesJson = JSON.parse(requester.responseText);
+                spPlace.innerHTML = "";
+                let opt = document.createElement("option");
+                opt.value = 0;
+                opt.innerText = ""
+                spPlace.appendChild(opt);
+                for (let placeItem of placesJson.data) {
+                    opt = document.createElement("option");
+                    opt.value = placeItem.id;
+                    opt.innerText = placeItem.place;
+                    spPlace.appendChild(opt);
+                }
+                spPlace.disabled = false;
+            };
+			requester.onerror = function () {
+				console.log(requester.status + " : " + requester.responseText);
+			};
+            let url = palcesUrl;
+            if (cuteCat.value != 0) {
+                url += '?category=' + cuteCat.value;
+            }
+			requester.open("GET", url);
+			requester.send();
         });
 
         filterBtn.addEventListener("click", function () {
@@ -39,5 +61,7 @@
         window.timespanFormConfig.toTimespanAction = filterBtnDisabler;
 
         window.timespanFormConfig.formTitle = "";
+
+        $("label[for=id_current_period")[0].innerText = "All of time";
     });
 })();

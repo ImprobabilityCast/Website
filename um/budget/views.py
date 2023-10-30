@@ -556,6 +556,19 @@ class ListAllTxView(PagedListView):
         }
 
 
+@method_decorator(never_cache, name='get')
+class JsonSpecificPlacesView(LoginRequiredMixin, View):
+    http_method_names = ['get', ]
+    def get(self, request):
+        try:
+            budget_id = int(request.GET['category']) if 'category' in request.GET else None
+        except:
+            return HttpResponseBadRequest()
+        places = SpecificPlacesModel.get_places_from_filter(request.user.id, budget_id)
+        responseData = {'data' : [{'id': p.id, 'place': p.place} for p in places]}
+        return JsonResponse(responseData)
+
+
 # class FreeWhenView(FormView, TxFormMixin):
 #     http_method_names = ['get',]
 #     form_class = WhenMoneyFreeForm

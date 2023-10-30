@@ -17,5 +17,6 @@ urlpatterns = [
     path('manage_tx', ManageTxView.as_view(), name='manage_tx'),
     path('history', ListAllTxView.as_view(), name='history'),
     path('api/history', AllTxFragView.as_view(), name='history_api'),
+    path('api/places', JsonSpecificPlacesView.as_view(), name='places_api'),
     path('demo', RedirectView.as_view(url='/accounts/demo?next=/budget', permanent=False), name='demo')
 ]

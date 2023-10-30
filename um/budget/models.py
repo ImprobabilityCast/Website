@@ -43,6 +43,25 @@ class SpecificPlacesModel(BaseModel):
 
     def get_choice_pair(self):
         return (self.id, self.place)
+    
+    @classmethod
+    def get_places_from_filter(cls, account_id: int, budget_id: int):
+        what_budget = ' AND budget_id = ' + str(budget_id) if budget_id is not None  else ''
+        raw_sql = '''
+            SELECT uni.specific_place_id as id, place
+            FROM (
+                SELECT specific_place_id
+                FROM budget_repeatingtransactionsmodel
+                WHERE is_active AND account_id = %s''' + what_budget + '''
+                UNION
+                SELECT specific_place_id
+                FROM budget_transactionsmodel
+                WHERE is_active AND account_id = %s''' + what_budget + '''
+            ) uni
+            LEFT JOIN budget_specificplacesmodel
+            ON uni.specific_place_id=budget_specificplacesmodel.id
+        '''
+        return SpecificPlacesModel.objects.raw(raw_sql, [account_id, account_id])
 
     def __str__(self):
         return self.place

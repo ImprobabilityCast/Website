@@ -57,21 +57,7 @@ class BudgetChooserForm(BudgetTxBaseForm):
     def __init__(self, request, *args, **kwargs):
         super().__init__(request, *args, **kwargs)
         self.get_constraint_sql_from_request(request)
-        raw_sql = '''
-            SELECT uni.specific_place_id as id, place
-            FROM (
-                SELECT specific_place_id
-                FROM budget_repeatingtransactionsmodel
-                WHERE is_active AND account_id = %s ''' + self.what_budget + '''
-                UNION
-                SELECT specific_place_id
-                FROM budget_transactionsmodel
-                WHERE is_active AND account_id = %s ''' + self.what_budget + '''
-            ) uni
-            LEFT JOIN budget_specificplacesmodel
-            ON uni.specific_place_id=budget_specificplacesmodel.id
-        '''
-        places = SpecificPlacesModel.objects.raw(raw_sql, [request.user.id, request.user.id])
+        places = SpecificPlacesModel.get_places_from_filter(request.user.id, budget_id=self.category_filter)
         spp = self.fields['specific_place']
         spp.choices = spp.choices + [p.get_choice_pair() for p in places]
         spp.initial = self.sp_place_filter

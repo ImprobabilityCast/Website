@@ -21,8 +21,8 @@
           data-action="{% url 'history_api' %}" id="newBtn"
           onclick="window.listManage.new(event)">+ New Transaction</button>
         <div class="form group">
-          <div class="form-row">
-            <div class="col-sm-2">
+          <div class="form-row mb-1">
+            <div class="col-sm-3 col-md-2">
               <label for="id_category">{{ form.category.label }}:</label>
             </div>
             <div class="col">
@@ -30,7 +30,7 @@
             </div>
           </div>
           <div class="form-row">
-            <div class="col-sm-2">
+            <div class="col-sm-3 col-md-2">
               <label for="id_specific_place">{{ form.specific_place.label }}:</label>
             </div>
             <div class="col">

@@ -502,11 +502,11 @@ class ListAllTxView(PagedListView):
 
     def set_paramters_from_request(self):
         try:
-            self.got_range = 'to' in self.request.GET and 'from' in self.request.GET
-            logger.debug(self.got_range)
+            self.got_range = 'from' in self.request.GET and 'to' in self.request.GET
             if self.got_range:
                 self.range_start = date.fromisoformat(self.request.GET['from'])
                 self.range_end = date.fromisoformat(self.request.GET['to'])
+                has_err = False
             else:
                 self.range_start = date.min
                 self.range_end = date.today()
@@ -514,7 +514,8 @@ class ListAllTxView(PagedListView):
                 has_err = ret == True
                 self.extra_cond = '' if has_err else ret
             return has_err
-        except:
+        except Exception as e:
+            logger.debug(e)
             return True
 
     def get(self, request):

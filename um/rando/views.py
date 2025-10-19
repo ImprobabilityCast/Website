@@ -29,6 +29,6 @@ class ImageList(View):
         file_list = listdir(path)
 
         response = JsonResponse({'urls': [settings.STATIC_URL + tail + file_name for file_name in file_list]})
-        response.headers['Access-Control-Allow-Origin'] = 'http://127.0.0.1'
+        response.headers['Access-Control-Allow-Origin'] = 'https://127.0.0.1'
         return response
 

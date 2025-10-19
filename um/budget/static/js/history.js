@@ -45,8 +45,8 @@
 				params.push("specific_place=" + spPlace.value);
 			}
 			if (window.timespanFormConfig.useDates && window.timespanFormConfig.isValid) {
-				params.push("from=" + window.timespanFormConfig.fromDateStr);
-				params.push("to=" + window.timespanFormConfig.toDateStr);
+				params.push("from=" + window.timespanFormConfig.fromDateStr());
+				params.push("to=" + window.timespanFormConfig.toDateStr());
 			}
 			if (params.length > 0) {
 				newLoc += "?" + params.join("&");
@@ -55,8 +55,9 @@
 		});
 
 		let filterBtnDisabler = function () {
-			filterBtn.disabled = !window.timespanFormConfig.isValid;
+			filterBtn.disabled = false; //!window.timespanFormConfig.isValid;
 		};
+		filterBtnDisabler();
 		filterForm.addEventListener("change", filterBtnDisabler);
 		window.timespanFormConfig.toTimespanAction = filterBtnDisabler;
 

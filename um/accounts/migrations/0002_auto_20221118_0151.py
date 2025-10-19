@@ -9,8 +9,10 @@ from accounts.models import AccountsModel
 def create_demo_user(apps, schema_editor):
     #AccountsModel = apps.get_model('accounts', 'AccountsModel')
     demo_user = AccountsModel.objects.create_user(
-        username='demo', email='demo@example.com', password='password', is_active=True
+        username='demo', email='demo@example.com', password='password'
     )
+    # The default value overrides this if it is put int the create_user call.
+    demo_user.is_active = True
     demo_user.save()
 
 

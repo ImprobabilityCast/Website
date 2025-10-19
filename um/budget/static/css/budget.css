@@ -30,6 +30,11 @@
     border-radius: 0.5rem;
 }
 
+.card {
+    color: unset;
+    background-color: unset;
+}
+
 @media (prefers-color-scheme: light)
 {
     #noDataMsg {

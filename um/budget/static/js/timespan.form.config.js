@@ -12,13 +12,13 @@ window.timespanFormConfig = (function() {
     let _idTo = "#id_timespan_to";
     let _validFunc = function () {
         // No point in extensive date validation, have to do that server side anyway
-        return !_useDates || _fromDate.value.length !== 0 && _toDate.value.length !== 0
+        return _useDates && _fromDate.value.length !== 0 && _toDate.value.length !== 0
             && _fromDate.value <= _toDate.value;
     };
 
     let obj = {
-        fromDateStr: '0001-01-01',
-        toDateStr: '9999-12-31',
+        fromDateStr: () => '0001-01-01',
+        toDateStr: () => '9999-12-31',
         init: function (findStart = null) {
             if (findStart != null) {
                 _fromDate = $(findStart).find(_idFrom);
@@ -34,10 +34,9 @@ window.timespanFormConfig = (function() {
             _toDate = _toDate[0];
 
             if (_fromDate.value.length > 0 && _toDate.value.length > 0) {
-                this.fromDateStr = _fromDate.value;
-                this.toDateStr = _toDate.value;
-                _fromDate.type = "date";
-                _toDate.type = "date";
+                this.fromDateStr = () => _fromDate.value;
+                this.toDateStr = () => _toDate.value;
+                console.log(this);
                 _useDates = true;
                 $(_timespanRadio)[0].checked = true;
             }

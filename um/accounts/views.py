@@ -187,7 +187,7 @@ class LoginDemoView(View):
         logout(request)
         if NotLoggedInMixin.try_login(request, 'demo', 'password'):
             url = iri_to_uri(request.GET['next'])
-            if url_has_allowed_host_and_scheme(url, ['*.adoodleydo.dev', 'localhost']):
+            if url_has_allowed_host_and_scheme(url, ['*.adoodleydo.dev', 'localhost:444']):
                 return redirect(url)
         return redirect(settings.LOGIN_REDIRECT_URL)
 

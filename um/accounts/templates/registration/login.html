@@ -17,7 +17,7 @@
         <fieldset>
           <div class="form-row form-group">
             <div class="invalid-feedback d-block">
-              {{ form.non_field_errors }}
+              {{ form.non_field_errors | join:"<br>" }}
             </div>
           </div>
           <div class="form-row form-group">
@@ -27,7 +27,7 @@
             <div class="col-7 col-sm-7">
               {{ form.username|addcssclass:'form-control' }}
               <div class="invalid-feedback d-block">
-                {{ form.username.errors }}
+                {{ form.username.errors | join:"<br>" }}
               </div>
             </div>
           </div>
@@ -38,7 +38,7 @@
             <div class="col-7 col-sm-7">
               {{ form.password|addcssclass:'form-control' }}
               <div class="invalid-feedback d-block">
-                {{ form.password.errors }}
+                {{ form.password.errors | join:"<br>" }}
               </div>
             </div>
           </div>

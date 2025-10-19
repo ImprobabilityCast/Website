@@ -10,16 +10,16 @@ TO_PROD=${1:-1}
 if [ $TO_PROD != 0 ]
 then
 
-    # replace all http://127.0.0.1 with adoodleydo.dev
+    # replace all https://127.0.0.1 with adoodleydo.dev
     for file in $(tree -fi -P *.html --noreport | grep -P '^./((?!env).)*.html$')
     do
-        sed -i 's/http:\/\/127.0.0.1/https:\/\/adoodleydo.dev/g' $file
+        sed -i 's/https:\/\/127.0.0.1/https:\/\/adoodleydo.dev/g' $file
     done
 
-    # replace all http://127.0.0.1 with adoodleydo.dev
+    # replace all https://127.0.0.1 with adoodleydo.dev
     for file in $(tree -fi -P views.py --noreport | grep -P '^./((?!env).)*.py$')
     do
-        sed -i 's/http:\/\/127.0.0.1/https:\/\/adoodleydo.dev/g' $file
+        sed -i 's/https:\/\/127.0.0.1/https:\/\/adoodleydo.dev/g' $file
     done
 
     # update settings.py
@@ -35,16 +35,16 @@ then
     sed -i "s/^#if sys.executable != INTERP/if sys.executable != INTERP/g" "./passenger_wsgi.py"
 else
 
-    # replace all http://127.0.0.1 with adoodleydo.dev
+    # replace all https://127.0.0.1 with adoodleydo.dev
     for file in $(tree -fi -P *.html --noreport | grep -P '^./((?!env).)*.html$')
     do
-        sed -i 's/https:\/\/adoodleydo.dev/http:\/\/127.0.0.1/g' $file
+        sed -i 's/https:\/\/adoodleydo.dev/https:\/\/127.0.0.1/g' $file
     done
 
-    # replace all http://127.0.0.1 with adoodleydo.dev
+    # replace all https://127.0.0.1 with adoodleydo.dev
     for file in $(tree -fi -P views.py --noreport | grep -P '^./((?!env).)*.py$')
     do
-        sed -i 's/https:\/\/adoodleydo.dev/http:\/\/127.0.0.1/g' $file
+        sed -i 's/https:\/\/adoodleydo.dev/https:\/\/127.0.0.1/g' $file
     done
 
     # update settings.py

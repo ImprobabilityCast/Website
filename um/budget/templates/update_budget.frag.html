@@ -18,18 +18,18 @@
     </div>
     <div class="form-row">
       <div class="col-4 col-sm-4 invalid-feedback d-block m-0 category_error">
-        {{ form.category.errors }}
+        {{ form.category.errors | join:"<br>" }}
       </div>
       <div class="col-4 col-sm-4 invalid-feedback d-block m-0 spending_limit_error">
-        {{ form.spending_limit.errors }}
+        {{ form.spending_limit.errors | join:"<br>" }}
       </div>
       <div class="col-4 col-sm-4 invalid-feedback d-block m-0 frequency_error">
-        {{ form.frequency.errors }}
+        {{ form.frequency.errors | join:"<br>" }}
       </div>
     </div>
     <div class="form-row">
       <div class="invalid-feedback d-block m-0 __all___error">
-        {{ form.non_field_errors }}
+        {{ form.non_field_errors | join:"<br>" }}
       </div>
     </div>
     <div class="form-group m-1 mt-2 collapse accordion-member">

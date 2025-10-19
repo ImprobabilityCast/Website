@@ -1,4 +1,4 @@
--- delte the old stuff if it exists
+-- delete the old stuff if it exists
 DROP USER 'php'@'localhost';
 DROP DATABASE mood;
 

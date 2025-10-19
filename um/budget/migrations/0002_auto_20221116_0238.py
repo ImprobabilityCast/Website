@@ -114,7 +114,7 @@ class HistoryGenerator:
 
     def set_category_transaction_amount_range(self):
         self.max_amount = random.choice([100_000, 50_000, 20_000, 10_000, 5_000])
-        self.min_amount = (self.max_amount * 8) / 10
+        self.min_amount = (int)((self.max_amount * 8) / 10)
         if self.max_amount - self.min_amount < 10_000:
             self.min_amount = 100
 

@@ -65,6 +65,7 @@ var forms = (function () {
         },
         toggleDateControl: function (event) {
             let ele = event.target;
+            ele.onfocus = null;
             if (ele.type == "date") {
                 if (ele.value == "") {
                     ele.type = "text";

@@ -13,15 +13,14 @@
         <label for="id_timespan" class="form-check-label">
             <div class="input-group">
                 <span class="d-inline pr-2">Timespan</span>
+                &nbsp;
                 <div class="d-inline">
                     <input type="text" class="text-date-control" placeholder="From Date"
                         autocomplete="off" id="id_timespan_from" value="{{ range_start }}"
-                        onfocus="window.timespanFormConfig.handleTimeSpanDateChange(event)"
-                        onblur="window.timespanFormConfig.handleTimeSpanDateChange(event)">
+                        onfocus="window.timespanFormConfig.handleTimeSpanDateChange(event)">
                     <input type="text" class="text-date-control" placeholder="To Date"
                         autocomplete="off" id="id_timespan_to" value="{{ range_end }}"
-                        onfocus="window.timespanFormConfig.handleTimeSpanDateChange(event)"
-                        onblur="window.timespanFormConfig.handleTimeSpanDateChange(event)">
+                        onfocus="window.timespanFormConfig.handleTimeSpanDateChange(event)">
                 </div>
             </div>
         </label>

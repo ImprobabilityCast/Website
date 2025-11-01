@@ -42,8 +42,8 @@ function addMechLineHTML(name) {
     ele.innerHTML = '<span class="col"></span>' 
     + '<button type="button" onclick="removeMech(event)" '
     + 'class="btn btn-primary align-self-end mr-3" '
-    + 'data-target="#' + target + '" '
-    + 'data-toggle="collapse" aria-expanded="true" '
+    + 'data-bs-target="#' + target + '" '
+    + 'data-bs-toggle="collapse" aria-expanded="true" '
     + 'aria-controls="' + target +'">Remove</button>';
 	ele.firstChild.innerText = name.replace(/~/g, ' ') + ":";
 	dest.appendChild(ele);

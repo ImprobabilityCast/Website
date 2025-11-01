@@ -39,3 +39,4 @@ um/public/static
 # ignore secrets
 um/proj/secret_key.txt
 um/proj/db_pwd.txt
+mood_db_php_user_pwd.txt

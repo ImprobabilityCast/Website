@@ -49,7 +49,7 @@ require_once 'login_check.php'; ?>
 			
 			<div class="form-group form-row">
 				<label class="col-sm-4 col-form-label" for="suicidal-thoughts">Suicidal&nbsp;thoughts:</label>
-				<div class="col-auto btn-group btn-group-toggle" data-toggle="buttons">
+				<div class="col-auto btn-group btn-group-toggle" data-bs-toggle="buttons">
 					<label class="btn btn-outline-primary">
 						<input type="radio" name="suicidal-thoughts" id="suicidal-thoughts-0" value="0" waschecked="0">
 						None
@@ -71,7 +71,7 @@ require_once 'login_check.php'; ?>
 			
 			<div class="form-group form-row">
 				<label class="col-sm-4 col-form-label" for="suicidal-urges">Suicidal&nbsp;urges:</label>
-				<div class="col-auto btn-group btn-group-toggle" data-toggle="buttons">
+				<div class="col-auto btn-group btn-group-toggle" data-bs-toggle="buttons">
 					<label class="btn btn-outline-primary">
 						<input type="radio" name="suicidal-urges" id="suicidal-urges-0" value="0" waschecked="0">
 						None
@@ -118,7 +118,7 @@ require_once 'login_check.php'; ?>
 			</div>
 			<div class="form-group form-row">
 				<label class="col-form-label" for="harm-purpose">Purpose:</label>
-				<div class="col btn-group btn-group-toggle" data-toggle="buttons">
+				<div class="col btn-group btn-group-toggle" data-bs-toggle="buttons">
 					<label class="btn btn-outline-primary col-sm-3">
 						<input type="radio" name="harm-purpose" id="harm-purpose-0" value="0" waschecked="0">
 						To bleed
@@ -247,7 +247,7 @@ require_once 'login_check.php'; ?>
 			
 			<div class="form-group form-row">
 				<label class="col-sm-9 col-form-label" for="forgets">Forgeting what I was thinking/saying/doing in the middle of it:</label>
-				<div class="col-auto btn-group btn-group-toggle" data-toggle="buttons">
+				<div class="col-auto btn-group btn-group-toggle" data-bs-toggle="buttons">
 					<label class="btn btn-outline-primary">
 						<input type="radio" name="forgets" id="forgets-0" value="0" waschecked="0">
 						None
@@ -269,7 +269,7 @@ require_once 'login_check.php'; ?>
 			
 			<div class="form-group form-row">
 				<label class="col-sm-9 col-form-label" for="slurrs">Slurring words/stuttering:</label>
-				<div class="col-auto btn-group btn-group-toggle" data-toggle="buttons">
+				<div class="col-auto btn-group btn-group-toggle" data-bs-toggle="buttons">
 					<label class="btn btn-outline-primary">
 						<input type="radio" name="slurrs" id="slurrs-0" value="0" waschecked="0">
 						None
@@ -366,7 +366,7 @@ require_once 'login_check.php'; ?>
 			
 			<div class="form-group form-row">
 				<label class="col-form-label" for="sleep-quality">Sleep quality:</label>
-				<div class="col btn-group btn-group-toggle" data-toggle="buttons">
+				<div class="col btn-group btn-group-toggle" data-bs-toggle="buttons">
 					<label class="btn btn-outline-primary col-sm-3">
 						<input type="radio" name="sleep-quality" id="sleep-quality-0" value="0" waschecked="0">
 						Restless

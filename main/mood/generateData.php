@@ -6,7 +6,7 @@ if (PHP_SAPI !== 'cli') {
 	exit(0);
 }
 
-$IP = 'localhost';
+$IP = '127.0.0.1:443';
 $lorem = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
 
 function randomVeryShort($lorem) {
@@ -121,20 +121,22 @@ function createOptions($url, $post_str) {
 	global $cookie;
 	global $IP;
 	return array(
-		CURLOPT_URL => "http://$IP$url",
+		CURLOPT_URL => "https://$IP$url",
 		CURLOPT_POST => true,
 		CURLOPT_POSTFIELDS => $post_str,
 		CURLOPT_FOLLOWLOCATION => true,
 		CURLOPT_VERBOSE => true,
 		CURLOPT_HEADERFUNCTION => 'cookieMan',
 		CURLOPT_COOKIE => $cookie,
+		CURLOPT_SSL_VERIFYPEER => false, // do NOT verify cert
+		CURLOPT_SSL_VERIFYHOST => false, // do NOT verify hostname
 	);
 }
 
 function login($ch) {
 	$url = '/mood/login_action.php';
 	$login_str = http_build_query(array(
-		'uname' => 'demo',
+		'uname' => 'demo_user',
 		'password' => 'hunter2',
 	));
 	$options = createOptions($url, $login_str);
@@ -189,7 +191,7 @@ while ($num > 0) {
 	postData($ch, $mechs);
 	postSwings($ch);
 	echo 'taking a short break...';
-	sleep(3);
+	sleep(1);
 	$num -= 1;
 }
 

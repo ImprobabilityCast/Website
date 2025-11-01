@@ -1,6 +1,6 @@
 -- delete the old stuff if it exists
-DROP USER 'php'@'localhost';
-DROP DATABASE mood;
+DROP USER IF EXISTS 'php'@'localhost';
+DROP DATABASE IF EXISTS mood;
 
 -- db setup script
 
@@ -158,18 +158,14 @@ CREATE TABLE mood.notes (
 	FOREIGN KEY (id) REFERENCES mood.users(id)
 );
 
-CREATE USER 'php'@'localhost'
-	IDENTIFIED BY 'bcsdhj%^763SVOW+p2#S';
-GRANT SELECT, INSERT, UPDATE ON mood.* TO 'php'@'localhost';
-
 INSERT INTO mood.users (nonce, salt, recovery_dkey, pwd_dkey, pwd_hash, uname, sec_q_1, sec_q_2, sec_a_hash) VALUES (
-	'18ff036c5549c9138acaa67a04e90cc3f70e620fca3cf9c6',
-	'b75c36112b20e27ea3b12e1f36b5cc7926c5b1f5c17187c8f58e7e588f5a02a1',
-	'eeebfddd1fcd7f4316294224f7f316b8e4a295d6bed4c3d8ba12b19796eb76ba',
-	'752ad616d4c207c9c309bba25e29fcc1c25921723238c63bc12d107797ccb83c',
-	'$2y$10$3TS14xFibYkTS5dYBxuCve2oDoG1FqOWrx99kVh6I7KoiFy4qrE/m',
-	'demo',
+	'5f063301f31241f1a1d94b3bc1eed7308f1a2a494b8828ea',
+	'16f990a96e55f977825f8586f3f7f44e7276146678c6df7375739e6b967ab7b7',
+	'0bb605af6493ef39cddcd19a5caa5754c71987df5b4d958dd0bd524aec9fd421',
+	'772b31595e45ae9ea41308aa7756bfb7470c2b8e81504e4b763a1f3f4c9d0c1f',
+	'$2y$10$PCASlQIRaVyR7IfkeaOgUO0dDQL1YA2jYsYNm1ZdROfhdrKUI2gjW',
+	'demo_user',
 	'Childhood bff',
 	'favorite color when 12',
-	'$2y$10$QxEWmTK2eJleVzaeRsb2YecyFSlbA8ydMSVzrRq3EBt0CGsXNVEOe'
+	'$2y$10$TzUBM7dTggkoDR7ALpeYx.oFFVg/PujBbdKkQFYmZ8HwbuCOPwh4i'
 );

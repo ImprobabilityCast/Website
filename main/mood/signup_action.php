@@ -1,5 +1,6 @@
 <?php
 // disable signup
+header('Location: signup.html');
 exit(); 
 
 require_once 'mood_util.php';

@@ -3,9 +3,10 @@
 function create_db_conn() {
 	$dsn = 'mysql:host=localhost;dbname=mood';
 	$db_username = 'php';
-	$db_password = 'bcsdhj%^763SVOW+p2#S';
 	$options = array(PDO::ATTR_ERRMODE=>PDO::ERRMODE_WARNING);
 	try {
+		$db_password = file_get_contents('../../mood_db_php_user_pwd.txt');
+		error_log($db_password);
 		$dbh = new PDO($dsn, $db_username, $db_password, $options);
 	} catch (PDOException $e) {
 		error_log($e->getMessage());

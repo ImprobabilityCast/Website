@@ -9,7 +9,7 @@ var text = (function () {
         link.setAttribute("href", "#" + id);
         link.setAttribute("aria-expanded", "false");
         link.setAttribute("aria-controls", id);
-        link.setAttribute("data-toggle", "collapse");
+        link.setAttribute("data-bs-toggle", "collapse");
         link.classList.add('long');
 
         let hidden = document.createElement("div");

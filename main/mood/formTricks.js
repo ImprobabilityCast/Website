@@ -7,7 +7,7 @@ function addMech(name) {
 	ele.innerHTML = '<label class="col-sm-4 col-form-label" for="'
 	+ name + '"></label>'
 	+ '<div class="col">'
-	+   '<div id="' + name.toLowerCase() + '" class="btn-group btn-group-toggle" data-toggle="buttons">'
+	+   '<div id="' + name.toLowerCase() + '" class="btn-group btn-group-toggle" data-bs-toggle="buttons">'
 	+	  '<label class="btn btn-outline-primary">'
 	+		'<input type="radio" value="2" name="' + name + '">Helpful</input></label>'
 	+	  '<label class="btn btn-outline-primary">'

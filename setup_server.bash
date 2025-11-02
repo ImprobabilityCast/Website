@@ -3,17 +3,17 @@
 cd ~
 source ~/Website/config/prod.toml
 
-apt install apache2 libmariadb-dev-compat
-apt install php$PHP_VERSION-curl libapache2-mod-php$PHP_VERSION \
+apt -y install apache2 libmariadb-dev-compat
+apt -y install php$PHP_VERSION-curl libapache2-mod-php$PHP_VERSION \
      php$PHP_VERSION php$PHP_VERSION-cli php$PHP_VERSION-common php-$PHP_VERSION-mysql
-apt install python3 python3-dev libapache2-mod-wsgi-py3 
+apt -y install python3 python3-dev libapache2-mod-wsgi-py3 
 
 a2enmod ssl
 a2enmod userdir
 a2enmod php$PHP_VERSION
 
 # optional
-apt install fortune
+apt -y install fortune
 
 # TODO: git clone prod branch
 

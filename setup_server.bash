@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cd ~
+cd ~/Website
 source ~/Website/config/prod.toml
 
 apt -y install apache2 libmariadb-dev-compat
@@ -17,6 +17,8 @@ apt -y install fortune-mod
 
 TO_PROD=${1:-1}
 
+./cattle_prod.bash $TO_PROD
+
 # clone website repo
 # git clone --single-branch --branch master https://github.com/ImprobabilityCast/Website.git
 
@@ -24,7 +26,7 @@ TO_PROD=${1:-1}
 cd ~/Website/config
 cp ports.conf /etc/apache2/
 cp main.conf um.conf default.conf /etc/apache2/sites-available/
-cd ~
+cd ../
 ln -s /etc/apache2/sites-available/um.conf /etc/apache2/sites-enabled/um.conf
 ln -s /etc/apache2/sites-available/main.conf /etc/apache2/sites-enabled/main.conf
 ln -s /etc/apache2/sites-available/default.conf /etc/apache2/sites-enabled/default.conf

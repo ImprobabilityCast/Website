@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 
 from pathlib import Path
 import os
+import tomllib
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -20,21 +21,23 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
+config_name = '../config/debug.toml'
+config = {}
+with open(BASE_DIR / config_name, 'rb') as f:
+    config = tomllib.load(f)
 # SECURITY WARNING: keep the secret key used in production secret!
-with open(BASE_DIR / 'proj/secret_key.txt') as f:
-    SECRET_KEY = f.read().strip()
-# SECRET_KEY = 'django-insecure-2)cv(==vw8j8704#9nq)0qedwmcevj1faa9*86^m4aop-cphoe'
+SECRET_KEY = config['DJANGO_SECRET_KEY']
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = config['DJANGO_DEBUG']
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = config['ALLOWED_HOSTS']
 CONN_MAX_AGE = 2
-ADMINS = [('His Majesty', '1segfault@pm.me')]
-SESSION_COOKIE_SECURE = False
-CSRF_COOKIE_SECURE = False
-SECURE_SSL_REDIRECT = False
-SECURE_HSTS_SECONDS = 0
+ADMINS = [('His Majesty', 'webmaster@um.adoodleydo.dev')]
+SESSION_COOKIE_SECURE = config['SESSION_COOKIE_SECURE']
+CSRF_COOKIE_SECURE = config['CSRF_COOKIE_SECURE']
+SECURE_SSL_REDIRECT = config['SECURE_SSL_REDIRECT']
+SECURE_HSTS_SECONDS = config['SECURE_HSTS_SECONDS']
 
 DEFAULT_FROM_EMAIL = 'no-reply@um.adoodleydo.dev'
 SERVER_EMAIL = 'server@um.adoodleydo.dev'
@@ -93,15 +96,13 @@ WSGI_APPLICATION = 'proj.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
-with open(BASE_DIR / 'proj/db_pwd.txt') as f:
-    db_pwd = ''
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'adoodleydo',
         'USER': 'adoodleydo_user',
-        'PASSWORD': db_pwd,
-        'HOST': 'localhost',
+        'PASSWORD': config['ADOODLEYDO_DB_DJANGO_USER_PWD'],
+        'HOST': config['DB_HOST'],
         'PORT': '3306',
     }
 }

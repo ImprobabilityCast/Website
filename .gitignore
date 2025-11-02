@@ -37,6 +37,8 @@ um/public/static
 *.log
 
 # ignore secrets
-um/proj/secret_key.txt
-um/proj/db_pwd.txt
-mood_db_php_user_pwd.txt
+config/prod.toml
+config/mood_db_php_user_pwd.txt
+
+# ignore img
+um/rando/static/img

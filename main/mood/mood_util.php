@@ -5,7 +5,7 @@ function create_db_conn() {
 	$db_username = 'php';
 	$options = array(PDO::ATTR_ERRMODE=>PDO::ERRMODE_WARNING);
 	try {
-		$db_password = file_get_contents('../../mood_db_php_user_pwd.txt');
+		$db_password = file_get_contents('../../config/mood_db_php_user_pwd.txt');
 		error_log($db_password);
 		$dbh = new PDO($dsn, $db_username, $db_password, $options);
 	} catch (PDOException $e) {

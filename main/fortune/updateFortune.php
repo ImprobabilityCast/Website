@@ -6,6 +6,6 @@ if ($_GET['cat'] != "") {
 	$arg = "";
 }
 
-echo htmlspecialchars(shell_exec("/usr/games/fortune " . $arg));
+echo htmlspecialchars(shell_exec("/usr/games/fortune")) # . $arg));
 
 ?>

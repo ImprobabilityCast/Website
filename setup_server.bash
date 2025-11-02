@@ -13,9 +13,12 @@ a2enmod userdir
 a2enmod php$PHP_VERSION
 
 # optional
-apt -y install fortune
+apt -y install fortune-mod
 
-# TODO: git clone prod branch
+TO_PROD=${1:-1}
+
+# clone website repo
+git clone --single-branch --branch master https://github.com/ImprobabilityCast/Website.git
 
 # copy config
 cd ~/Website/config
@@ -33,8 +36,6 @@ mysql < mood_db_setup.sql
 mysql -e "CREATE USER 'php'@'localhost' IDENTIFIED BY $MOOD_DB_PHP_USER_PWD;"
 mysql -e "GRANT SELECT, INSERT, UPDATE ON mood.* TO 'php'@'localhost';"
 php -e ~/Website/main/mood/generateData.php 10
-
-TO_PROD=${1:-1}
 
 if [ $TO_PROD != 0 ]
 then # prod

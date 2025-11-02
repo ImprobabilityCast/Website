@@ -16,7 +16,7 @@ h1 { color: red }
 <p>You do not have permission to access
 <i> <?php echo htmlspecialchars($_SERVER['REQUEST_URI']); ?> </i>
 on this server</p>
-<a href='http://<?php echo $_SERVER['SERVER_NAME']; ?>'>Home</a>
+<a href='https://<?php echo $_SERVER['SERVER_NAME']; ?>'>Home</a>
 <hr>
 <p><i><?php echo $_SERVER['SERVER_SOFTWARE']; ?></i></p>
 </body>

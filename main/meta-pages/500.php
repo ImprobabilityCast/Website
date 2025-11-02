@@ -11,7 +11,7 @@
 <span>500</span>
 <h1>Internal Server Error</h1>
 <p>The server made a boo boo.</p>
-<a href='http://<?php echo $_SERVER['SERVER_NAME']; ?>'>Home</a>
+<a href='https://<?php echo $_SERVER['SERVER_NAME']; ?>'>Home</a>
 <hr>
 <p><i><?php echo $_SERVER['SERVER_SOFTWARE']; ?></i></p>
 </body>

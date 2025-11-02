@@ -6,7 +6,7 @@ TO_PROD=${1:-1}
 if [ $TO_PROD != 0 ]
 then
     # replace all https://127.0.0.1:444 with um.adoodleydo.dev
-    REP_STR='s/http:\/\/127.0.0.1:444/https:\/\/um.adoodleydo.dev/g'
+    REP_STR='s/https:\/\/127.0.0.1:444/https:\/\/um.adoodleydo.dev/g'
     for file in $(tree -fi -P *.js --noreport './main/js/' | grep -P '^.*\.js$')
     do
         sed -i $REP_STR $file
@@ -30,7 +30,7 @@ then
 
 else
     # replace all um.adoodleydo.dev with https://127.0.0.1:444
-    REP_STR='s/https:\/\/um.adoodleydo.dev/http:\/\/127.0.0.1:444/g'
+    REP_STR='s/https:\/\/um.adoodleydo.dev/https:\/\/127.0.0.1:444/g'
     for file in $(tree -fi -P *.js --noreport './main/js/' | grep -P '^.*\.js$')
     do
         sed -i $REP_STR $file

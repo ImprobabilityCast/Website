@@ -1,0 +1,35 @@
+{
+    "cards": [
+        { "card_type": "Suspect", "name": "Miss Scarlet" },
+        { "card_type": "Suspect", "name": "Colonel Mustard" },
+        { "card_type": "Suspect", "name": "Mrs. White" },
+        { "card_type": "Suspect", "name": "Mr. Green" },
+        { "card_type": "Suspect", "name": "Mrs. Peacock" },
+        { "card_type": "Suspect", "name": "Professor Plum" },
+    
+        { "card_type": "Weapon", "name": "Candlestick" },
+        { "card_type": "Weapon", "name": "Knife" },
+        { "card_type": "Weapon", "name": "Lead Pipe" },
+        { "card_type": "Weapon", "name": "Revolver" },
+        { "card_type": "Weapon", "name": "Rope" },
+        { "card_type": "Weapon", "name": "Wrench" },
+    
+        { "card_type": "Room", "name": "Kitchen" },
+        { "card_type": "Room", "name": "Ballroom" },
+        { "card_type": "Room", "name": "Conservatory" },
+        { "card_type": "Room", "name": "Dining Room" },
+        { "card_type": "Room", "name": "Billiard Room" },
+        { "card_type": "Room", "name": "Library" },
+        { "card_type": "Room", "name": "Lounge" },
+        { "card_type": "Room", "name": "Hall" },
+        { "card_type": "Room", "name": "Study" }
+    ],
+    "colors": [
+        { "color": "darkred", "name": "Miss Scarlet" },
+        { "color": "gold", "name": "Colonel Mustard" },
+        { "color": "white", "name": "Mrs. White" },
+        { "color": "darkgreen", "name": "Mr. Green" },
+        { "color": "blue", "name": "Mrs. Peacock" },
+        { "color": "indigo", "name": "Professor Plum" }
+    ]
+}  

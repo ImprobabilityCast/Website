@@ -1,71 +1,118 @@
-use std::collections::BTreeSet;
 use std::cmp::Ordering;
 use wasm_bindgen::prelude::*;
+use serde::Deserialize;
+use serde::Serialize;
 
 #[wasm_bindgen]
 extern {
     pub fn alert(s: &str);
 }
 
-#[wasm_bindgen]
-pub fn greet(name: &str) {
-    alert(&format!("Heyo Bacon McDude {}", name));
+#[derive(Deserialize)]
+struct JsonCards {
+    cards: Vec<Card>,
+    colors: Vec<JsonColor>,
 }
 
-#[derive(Clone, Copy, PartialEq, Eq)]
-enum CardType {
-    Unknown = 0,
-    Person,
-    Room,
-    Weapon,
+#[wasm_bindgen]
+#[derive(Clone, Copy, PartialEq, Eq, Deserialize, Serialize)]
+pub enum CardType {
+    Unknown = -1,
+    Suspect = 0,
+    Weapon = 1,
+    Room = 2,
     MaxCardType,
 }
 
-#[derive(Clone, Eq)]
-struct Card {
+#[wasm_bindgen]
+pub struct GameOptions {
+    #[wasm_bindgen(getter, setter)]
+    pub num_players: usize,
+    #[wasm_bindgen(getter, setter)]
+    pub disable_conservatory: bool,
+}
+
+const SOLUTION_ID: usize = 1;
+const DEFAULT_CARD_COLOR: &str = "lightgrey";
+
+#[wasm_bindgen]
+#[derive(Deserialize, Serialize)]
+pub struct JsonColor {
+    color: String,
+    name: String,
+}
+
+#[wasm_bindgen]
+#[derive(Clone, Eq, Deserialize, Serialize)]
+pub struct Card {
     card_type: CardType,
     name: String,
-    id: i32,
+    #[serde(default)]
+    id: usize, // sequential: 0, 1, 2, 3...
+}
+
+#[wasm_bindgen]
+#[derive(Serialize)]
+pub struct JsCard {
+    card_type_idx: usize,
+    id: usize,
+    name: String,
+    owner: Player,
+}
+
+#[wasm_bindgen]
+#[derive(Clone, Serialize, Deserialize)]
+pub struct Player {
+    #[wasm_bindgen(getter, setter)]
+    id: usize, // by 2: 2, 4, 8, 16, 32...
+    #[wasm_bindgen(getter, setter)]
+    max_cards: usize,
+    #[wasm_bindgen(getter, setter)]
+    color: String,
+    #[wasm_bindgen(getter, setter)]
+    name: String,
 }
 
 #[derive(Clone)]
-struct Player {
-    player_id: i32,
-    max_cards: usize,
-    known_cards: Vec<Card>,
-    not_my_cards: BTreeSet<Card>,
-}
-
-struct Guess<'a> {
+pub struct Guess {
     cards: Vec<Card>,
-    who_told: Vec<&'a mut Player>,
-    who_told_not: Vec<&'a mut Player>,
-    guesser: &'a mut Player,
+    who_told: Vec<usize>,
+    who_told_not: Vec<usize>,
+    guesser: usize,
 }
 
-struct ClueSolver<'a> {
+#[wasm_bindgen]
+pub struct ClueSolver {
     players: Vec<Player>,
-    guesses: Vec<Box<Guess<'a>>>,
+    guesses: Vec<Guess>,
     cards_left_by_type: Vec<Vec<Card>>,
-    solution: Vec<Card>,
+    cards_by_id: Vec<Card>,
+    // [bits 31-1 = players][is_solution]
+    // so with 3 players 0...01111 means the card could be anyone's
+    // 0...00001 would mean that the card is part of the solution
+    // 0...00101 would mean that the card is either part of the solution
+    // or part of player 2's hand
+    // 0...00010 would mean that the card is part of player 1's hand
+    owner_mask_by_card_id: Vec<usize>,
+    colors: Vec<JsonColor>,
 }
 
-trait GuessEngine<'a> {
-    fn add_guess(&'a mut self, guess: Box<Guess<'a>>);
-    fn update_cards_left_by_type(&mut self, found_cards: &Vec<Card>);
-    fn new_game(&mut self, num_players: i32);
-}
+trait GuessEngine {
+    fn add_guess(&mut self, guess: Guess);
+    fn _new_game(&mut self, options: &GameOptions);
 
-trait KnownCards<'a> {
-    fn remove_owned_cards(&mut self, possible_owner: &Player) -> bool;
-    fn add_not_my_cards(&mut self);
-    fn resolve_cards_to_who_told(&mut self) -> Vec<Card>;
-    fn remove_solution(&mut self, partial_solution: &Vec<Card>);
-    fn resolve_cards(&mut self, partial_solution: &Vec<Card>) -> Vec<Card>;
-}
+    fn partial_solution(&self) -> Vec<Card>;
+    fn _own_card(&mut self, player_id: usize, card: &Card);
+    fn _update_player(&mut self, player: Player);
 
-trait PlayerInfo {
-    fn are_all_cards_known(&self) -> bool;
+    fn remove_owned_cards(&mut self, guess: &mut Guess) -> bool;
+    fn add_not_my_cards(&mut self, guess: &Guess);
+    fn resolve_cards_to_who_told(&mut self, guess: &mut Guess) -> usize;
+    fn resolve_cards(&mut self, guess: &mut Guess) -> usize;
+    fn disable_card(&mut self, card_name: &str);
+
+    fn are_all_cards_known(&self, player: &Player) -> bool;
+    fn get_player(&self, player_id: usize) -> Player;
 }
 
 impl PartialEq for Card {
@@ -104,53 +151,167 @@ impl Ord for Card {
     }
 }
 
-impl PlayerInfo for Player {
-    fn are_all_cards_known(&self) -> bool {
-        self.known_cards.len() == self.max_cards
+#[wasm_bindgen]
+impl Player {
+    pub fn get_main_player_id() -> usize {
+        2
     }
 }
 
-impl <'a> KnownCards<'a> for Guess<'a> {
-    fn remove_owned_cards(&mut self, possible_owner: &Player) -> bool {
+#[wasm_bindgen]
+impl GameOptions {
+    #[wasm_bindgen(constructor)]
+    pub fn new() -> GameOptions {
+        GameOptions {
+            num_players: 2,
+            disable_conservatory: false,
+        }
+    }
+}
+
+impl GuessEngine for ClueSolver {
+    fn get_player(&self, mut player_id: usize) -> Player {
+        let mut idx = 0;
+        while player_id > 2 { // player ids start at 2
+            player_id >>= 1;
+            idx += 1;
+        }
+        self.players[idx].clone()
+    }
+
+    fn are_all_cards_known(&self, player: &Player) -> bool {
+        self.owner_mask_by_card_id.iter().filter(|&x| *x == player.id)
+            .count() == player.max_cards
+    }
+
+    // fn update_cards_left_by_type(&mut self, found_cards: &[Card]) {
+    //     for found_card in found_cards {
+    //         if let Some(stored_idx) = self.cards_left_by_type[found_card.card_type as usize]
+    //                 .iter().position(|c| c == found_card) {
+    //             self.cards_left_by_type[found_card.card_type as usize].swap_remove(stored_idx);
+    //         }
+    //     }
+    // }
+
+    fn add_guess(&mut self, guess: Guess) {
+        // Add guess to list, then process all cards in list
+
+        self.guesses.push(guess);
+
+        let mut guess_idx = self.guesses.len() - 1;
+        while guess_idx < usize::MAX {
+            let mut current = self.guesses[guess_idx].clone();
+
+            // Add the cards in guess to not-my-cards for those who did not show.
+            self.add_not_my_cards(&current);
+
+            // Remove cards if we know who they belong to, later removing those
+            // cards from self.cards_by_type_left
+            let mut cards_resolved = self.resolve_cards(&mut current);
+
+            // If no showers left and guesser cannot have it, IT'S THE ONE
+            let player = self.get_player(current.guesser);
+            if current.who_told.len() == 0 && self.are_all_cards_known(&player) {
+                cards_resolved += current.cards.len();
+                for card in current.cards.drain(..) {
+                    self._own_card(SOLUTION_ID, &card);
+                }
+            }
+
+            // If all cards in a guess are known, remove guess from list
+            if current.cards.len() == 0 {
+                self.guesses.swap_remove(guess_idx);
+            } else { // otherwise update the guess in the list
+                self.guesses[guess_idx] = current;
+            }
+
+            // If only one card of a type is left in cards_left_by_type, add to solution
+            let to_be_owned_by_solution = self.cards_left_by_type.iter_mut().filter_map(|x|
+                if x.len() == 1 {
+                    Some(x.pop().unwrap())
+                } else {
+                    None
+                }
+            ).collect::<Vec<Card>>();
+            for card in to_be_owned_by_solution {
+                self.owner_mask_by_card_id[card.id] = SOLUTION_ID;
+            }
+
+            // Calling this down here so we can borrow mut again
+            //self.update_cards_left_by_type(&cards_resolved[..]);
+
+            
+            guess_idx = if cards_resolved > 0 {
+                // Found a new card, go through all the guesses again O(n^2) where n = num of guesses
+                self.guesses.len() - 1
+            } else {
+                // Did not find a new card, move on to the next guess
+                guess_idx - 1
+            };
+        }
+    }
+
+    // remove cards mapped to either players or the solution
+    fn remove_owned_cards(&mut self, guess: &mut Guess) -> bool {
         let mut were_cards_removed = false;
-        let mut card_idx = self.cards.len() - 1;
+        let mut card_idx = guess.cards.len() - 1;
+
         while card_idx > 0 {
-            let card = self.cards[card_idx].clone();
-            if possible_owner.known_cards.contains(&card) {
-                self.cards.remove(card_idx);
+            let card = guess.cards[card_idx].clone();
+            let mask = self.owner_mask_by_card_id[card.id];
+            // if solution bit is 0, a player owns it
+            // if the solution bit is 1 and the rest are 0, then it is part of the solution
+            if mask % 2 == 0 || mask == SOLUTION_ID {
+                guess.cards.remove(card_idx);
                 were_cards_removed = true;
+                guess.who_told.retain(|x| *x == mask);
             }
             card_idx -= 1;
         }
         were_cards_removed
     }
 
-    fn add_not_my_cards(&mut self) {
-        for player in &mut self.who_told_not {
-            player.not_my_cards.extend(self.cards.clone().into_iter());
+    fn add_not_my_cards(&mut self, guess: &Guess) {
+        let mut no_tell_mask = 0;
+        for player_id in &guess.who_told_not {
+            no_tell_mask |= player_id;
+        }
+        for card in &guess.cards {
+            self.owner_mask_by_card_id[card.id] &= !no_tell_mask;
         }
     }
 
-    fn resolve_cards_to_who_told(&mut self) -> Vec<Card> {
-        let mut cards_found = Vec::<Card>::new();
+    fn partial_solution(&self) -> Vec<Card> {
+        self.owner_mask_by_card_id.iter().enumerate()
+            .filter_map(|(mask, &idx)|
+                if mask == SOLUTION_ID { Some(self.cards_by_id[idx].clone()) } else { None }
+            ).collect::<Vec<Card>>()
+    }
+
+    fn _own_card(&mut self, player_id: usize, card: &Card) {
+        self.cards_left_by_type[card.card_type as usize].retain(|c| c != card);
+        self.owner_mask_by_card_id[card.id] = player_id;
+    }
+
+    fn resolve_cards_to_who_told(&mut self, guess: &mut Guess) -> usize {
+        let mut cards_found = 0;
         let mut told_idx = 0;
-        while told_idx < self.who_told.len() {
-            let mut told_clone = self.who_told[told_idx].clone();
-            let mut possible_cards = self.cards.iter()
-                .filter(|card| !told_clone.not_my_cards.contains(&card))
+        // see if we can assign any of the cards in the guess to
+        // the player who has them
+        while told_idx < guess.who_told.len() {
+            let rat_id = guess.who_told[told_idx];
+            let possible_cards = guess.cards.iter()
+                .filter(|card| (self.owner_mask_by_card_id[card.id] & rat_id) != 0)
                 .collect::<Vec<_>>();
             
             if possible_cards.len() == 0 { // told a card we already know
-                self.remove_owned_cards(&told_clone);
-                self.who_told.remove(told_idx);
+                alert("why");
             } else if possible_cards.len() == 1 { // told a card we did not know
                 // unwrap is fine here, because length is 1
-                let found_card: Card = (*possible_cards.pop().unwrap()).clone();
-                self.who_told[told_idx].known_cards.push(found_card.clone());
-                cards_found.push(found_card);
-                told_clone = self.who_told[told_idx].clone();
-                self.remove_owned_cards(&told_clone);
-                self.who_told.remove(told_idx);
+                let found_card = guess.cards.pop().unwrap();
+                self._own_card(rat_id, &found_card);
+                cards_found += 1;
+                guess.who_told.remove(told_idx);
                 told_idx = 0; // reduced number of cards, so re-examine any previous tellers
             } else { // too many possible cards, cannot conclude anything
                 told_idx += 1;
@@ -160,119 +321,182 @@ impl <'a> KnownCards<'a> for Guess<'a> {
         cards_found
     }
 
-    fn remove_solution(&mut self, solution: &Vec<Card>) {
-        for solution_card in solution {
-            if let Some(idx) = self.cards.iter().position(|c| c == solution_card) {
-                self.cards.swap_remove(idx);
-            }
-        }
-    }
-
-    fn resolve_cards(&mut self, partial_solution: &Vec<Card>) -> Vec<Card> {
-        self.remove_solution(partial_solution);
-        self.remove_owned_cards(&self.guesser.clone());
-        
-        let mut cards_found = self.resolve_cards_to_who_told();
+    fn resolve_cards(&mut self, guess: &mut Guess) -> usize {
+        self.remove_owned_cards(guess);
+        let mut cards_found = self.resolve_cards_to_who_told(guess);
 
         // If a card of a type is unresolved, and the solution for that type is known,
         // then the guesser guessed one of his/her own cards.
-        let mut card_idx = self.cards.len() - 1;
+        let mut card_idx = guess.cards.len() - 1;
         while card_idx < usize::MAX { // yes, using integer overflow to signal the end of the loop
-            let card = self.cards[card_idx].clone();
-            if partial_solution.iter().any(|sol_card| sol_card.card_type == card.card_type) {
-                self.guesser.known_cards.push(card);
-                let the_same_card = self.cards.swap_remove(card_idx);
-                cards_found.push(the_same_card);
+            let card = &guess.cards[card_idx];
+            if self.partial_solution().iter().any(|sol_card| sol_card.card_type == card.card_type) {
+                self._own_card(guess.guesser, card);
+                guess.cards.swap_remove(card_idx);
+                cards_found += 1;
             }
             card_idx -= 1;
         }
 
         cards_found
     }
-}
 
-impl <'a> GuessEngine<'a> for ClueSolver<'a> {
-    fn update_cards_left_by_type(&mut self, found_cards: &Vec<Card>) {
-        for found_card in found_cards {
-            if let Some(stored_idx) = self.cards_left_by_type[found_card.card_type as usize]
-                    .iter().position(|c| c == found_card) {
-                self.cards_left_by_type[found_card.card_type as usize].swap_remove(stored_idx);
-            }
-        }
-
-        // If only one card of a type is left in cards_left_by_type, add to solution if that
-        // type is not already in the solution
-        for cards_of_a_type in &self.cards_left_by_type {
-            if cards_of_a_type.len() == 1 && !self.solution.contains(&cards_of_a_type[0]) {
-                self.solution.push(cards_of_a_type[0].clone());
-            }
+    fn disable_card(&mut self, card_name: &str) {
+        if let Some(idx) = self.cards_by_id.iter().position(|c| &c.name == card_name) {
+            self.owner_mask_by_card_id[idx] = 0;
+            self._own_card(0, &self.cards_by_id[idx].clone());
         }
     }
 
-    fn add_guess(&mut self, guess: Box<Guess<'a>>) {
-        // Add guess to list, then process all cards in list
-
-        self.guesses.push(guess);
-
-        let mut guess_idx = 0;
-        while guess_idx < self.guesses.len() {
-            let current = &mut self.guesses[guess_idx];
-
-            // Add the cards in guess to not-my-cards for those who did not show.
-            current.add_not_my_cards();
-
-            // Remove cards if we know who they belong to, later removing those
-            // cards from self.cards_by_type_left
-            let mut cards_found = current.resolve_cards(&self.solution);
-
-            // If no showers left and guesser cannot have it, IT'S THE ONE
-            if current.who_told.len() == 0 && current.guesser.are_all_cards_known() {
-                cards_found.extend(current.cards.clone());
-                self.solution.extend(current.cards.drain(..));
-            }
-
-            // If all cards in a guess are known, remove guess from list
-            if current.cards.len() == 0 {
-                self.guesses.swap_remove(guess_idx);
-            }
-
-            // Calling this down here so we can borrow mut again
-            self.update_cards_left_by_type(&cards_found);
-            
-            guess_idx = if cards_found.len() > 0 {
-                // Found a new card, go through all the guesses again O(n^2) where n = num of guesses
-                0
-            } else {
-                // Did not find a new card, move on to the next guess
-                guess_idx + 1
-            };
-        }
-    }
-
-    fn new_game(&mut self, num_players: i32) {
-        self.players.clear();
-        self.solution.clear();
+    fn _new_game(&mut self, options: &GameOptions) {
         self.guesses.clear();
+
+        // refill self.cards_by_type_left
+        self.cards_left_by_type[CardType::Suspect as usize].clear();
+        self.cards_left_by_type[CardType::Weapon as usize].clear();
+        self.cards_left_by_type[CardType::Room as usize].clear();
+        for card in &self.cards_by_id {
+            self.cards_left_by_type[card.card_type as usize].push(card.clone());
+        }
+
+        // reset self.owner_mask_by_card_id
+        self.owner_mask_by_card_id = vec![!0; self.cards_by_id.len()];
+
+        if options.disable_conservatory {
+            self.disable_card("Conservatory");
+        }
+
+        self.players.clear();
+        let total_cards_for_players = self.cards_left_by_type[CardType::Suspect as usize].len()
+            + self.cards_left_by_type[CardType::Weapon as usize].len()
+            + self.cards_left_by_type[CardType::Room as usize].len()
+            - 3; // solution cards
+        let extra_cards = total_cards_for_players % options.num_players;
+        let base_cards = total_cards_for_players / options.num_players;
+        for i in 1..=options.num_players {
+            let player = Player {
+                id: 1 << i,
+                max_cards: base_cards + ((i <= extra_cards) as usize),
+                name: String::new(),
+                color: String::new(),
+            };
+            self.players.push(player);
+        }
+    }
+
+    fn _update_player(&mut self, player: Player) {
+        self.players.retain(|p| p.id != player.id);
+        self.players.push(player);
     }
 }
 
-impl <'a> ClueSolver<'a> {
-    const fn new() -> ClueSolver<'a> {
+#[wasm_bindgen]
+impl ClueSolver {
+    const fn new() -> ClueSolver {
         let cards_left_by_type = Vec::<Vec::<Card>>::new();
         let players = Vec::<Player>::new();
 
-        let card_type = CardType.
-        cards_by_type_left.push(Vec::<Card>::new());
-
         ClueSolver {
             players: players,
-            guesses: Vec::<Box::<Guess::<'a>>>::new(),
+            guesses: Vec::<Guess>::new(),
             cards_left_by_type: cards_left_by_type,
-            solution: Vec::<Card>::new(),
+            cards_by_id: Vec::<Card>::new(),
+            owner_mask_by_card_id: Vec::<usize>::new(),
+            colors: Vec::<JsonColor>::new(),
         }
     }
-}
 
-fn init() {
-    let solver = ClueSolver::new();
+    pub fn from_json(json_value: JsValue) -> Result<ClueSolver, String> {
+        let json_thingy = serde_wasm_bindgen::from_value::<JsonCards>(json_value);
+        if let Err(err) = json_thingy {
+            return Err(err.to_string());
+        }
+        let mut json = json_thingy.unwrap();
+        let mut solver = ClueSolver::new();
+        solver.cards_left_by_type.extend(vec![Vec::<Card>::new(); 3]);
+        let mut card_id_counter = 0;
+
+        for mut card in json.cards.drain(..)  {
+            card.id = card_id_counter;
+            solver.cards_left_by_type[card.card_type as usize].push(card.clone());
+            solver.cards_by_id.push(card);
+            card_id_counter += 1;
+        }
+        solver.owner_mask_by_card_id = vec![!0; card_id_counter];
+
+        solver.colors = json.colors;
+
+        Ok(solver)
+    }
+
+    pub fn new_game(&mut self, options: &GameOptions) {
+        self._new_game(options)
+    }
+
+    pub fn get_players(&self) -> js_sys::Array {
+        self.players.iter().map(|p| serde_wasm_bindgen::to_value(&p).unwrap()).collect::<js_sys::Array>()
+    }
+
+    pub fn get_cards_left_by_type(&self) ->js_sys::Array {
+        self.cards_left_by_type.iter().map(|cards|
+            cards.iter().map(|c| serde_wasm_bindgen::to_value(&c).unwrap()).collect::<js_sys::Array>()
+        ).collect::<js_sys::Array>()
+    }
+
+    pub fn own_card(&mut self, player_id: usize, js_card: JsValue) -> String {
+        let json_thingy = serde_wasm_bindgen::from_value::<Card>(js_card);
+        if let Err(err) = json_thingy {
+            return err.to_string();
+        }
+        self._own_card(player_id, &json_thingy.unwrap());
+        return String::new();
+    }
+
+    pub fn get_colors(&self) -> js_sys::Array {
+        self.colors.iter().map(|c| serde_wasm_bindgen::to_value(&c).unwrap()).collect::<js_sys::Array>()
+    }
+
+    pub fn update_player(&mut self, js_player: JsValue) -> String {
+        let json_thingy = serde_wasm_bindgen::from_value::<Player>(js_player);
+        if let Err(err) = json_thingy {
+            return err.to_string();
+        }
+        self._update_player(json_thingy.unwrap());
+        return String::new();
+    }
+
+    pub fn get_card_display_data(&self) -> js_sys::Array {
+        let nobody_player = Player {
+            id: usize::MAX,
+            name: String::new(),
+            color: String::from(DEFAULT_CARD_COLOR),
+            max_cards: usize::MAX,
+        };
+        self.cards_by_id.iter().map(|c|
+            serde_wasm_bindgen::to_value(
+                &JsCard {
+                    card_type_idx: c.card_type as usize,
+                    id: c.id,
+                    name: c.name.clone(),
+                    owner: if let Some(owner) = self.players.iter().find(|p| p.id == self.owner_mask_by_card_id[c.id]) {
+                        owner.clone()
+                    } else {
+                        nobody_player.clone()
+                    },
+                }
+            ).unwrap()
+        ).collect::<js_sys::Array>()
+    }
+
+    pub fn get_card_types(&self) -> js_sys::Array {
+        let mut card_types = vec![CardType::Unknown; 3];
+        card_types[CardType::Suspect as usize] = CardType::Suspect;
+        card_types[CardType::Weapon as usize] = CardType::Weapon;
+        card_types[CardType::Room as usize] = CardType::Room;
+        card_types.iter().map(|x| serde_wasm_bindgen::to_value(&x).unwrap()).collect::<js_sys::Array>()
+    }
+
+    pub fn get_card(&self, id: usize) -> JsValue {
+        serde_wasm_bindgen::to_value(&self.cards_by_id[id]).unwrap()
+    }
 }

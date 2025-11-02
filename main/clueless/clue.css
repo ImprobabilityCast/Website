@@ -1,0 +1,49 @@
+.owner-darkred { box-shadow: 0 0 10pt darkred; border: 2pt solid darkred; }
+.owner-gold { box-shadow: 0 0 10pt gold; border: 2pt solid gold; }
+.owner-white { box-shadow: 0 0 10pt white; border: 2pt solid white; }
+.owner-darkgreen { box-shadow: 0 0 10pt darkgreen; border: 2pt solid darkgreen; }
+.owner-blue { box-shadow: 0 0 10pt blue; border: 2pt solid blue; }
+.owner-indigo { box-shadow: 0 0 10pt indigo; border: 2pt solid indigo; }
+.owner-lightgrey { box-shadow: 0 0 10pt grey; border: 1pt solid lightgrey; }
+body {
+  background: radial-gradient(circle at 30% 30%, #3a8fd0 0%, #1f6fb2 40%, #144c7e 100%);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+.hand {
+  background: rgba(255,255,255,.12);
+  border-radius: 16pt; padding: 12pt; box-shadow: 0 6pt 18pt rgba(0,0,0,.2);
+}
+.fake-guess-card {
+    border: 1pt dashed lightgrey;
+    background: #fff3;
+}
+.fake-guess-card:hover {
+    background: #fff6;
+}
+#guessCardsHand {
+    background: #3a8fd0;
+    border-radius: 0;
+}
+.cards { display: flex; flex-wrap: wrap; gap: 10pt; }
+.cl-card {
+  width: 52pt; height: 83pt;
+  border-radius: 8pt;
+  font-size: 10pt;
+  position: relative; display: grid; place-items: center;
+  padding: 6pt;
+  transition: 0.3s box-shadow, backround;
+}
+.big-cards > .cl-card {
+  width: 62pt;
+  height: 80pt;
+  font-weight: 500; font-size: 12pt; padding: 6pt;
+}
+.cl-card:hover, .cl-card:focus {
+    box-shadow: 0 0 8pt yellow;
+}
+.modal {
+  /* --bs-modal-bg: #FFF4; */
+  backdrop-filter: blur(10pt);
+}

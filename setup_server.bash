@@ -18,7 +18,7 @@ apt -y install fortune-mod
 TO_PROD=${1:-1}
 
 # clone website repo
-git clone --single-branch --branch master https://github.com/ImprobabilityCast/Website.git
+# git clone --single-branch --branch master https://github.com/ImprobabilityCast/Website.git
 
 # copy config
 cd ~/Website/config

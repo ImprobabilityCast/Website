@@ -23,10 +23,11 @@ then
     # update settings.py
     sed -i "s/config_name = '..\/config\/debug.toml'/config_name = '..\/config\/prod.toml'/g;" "./um/proj/settings.py"
 
-    sed -i "s/^#if sys.executable != INTERP/if sys.executable != INTERP/g" "./um/wsgi.py"
+    #sed -i "s/^#if sys.executable != INTERP/if sys.executable != INTERP/g" "./um/wsgi.py" # only needed for passenger
 
-    sed -i "s/^\t#ServerName/\tServerName/g;s/^\tSSLCertificate/\t#SSLCertificate/g;" "./config/main.conf"
-    sed -i "s/^\t#ServerName/\tServerName/g;s/^\tSSLCertificate/\t#SSLCertificate/g;" "./config/um.conf"
+    sed -i "s/^\tSSLCertificate/\t#SSLCertificate/g;" "./config/main.conf"
+    sed -i "s/^\tSSLCertificate/\t#SSLCertificate/g;" "./config/um.conf"
+    sed -i "s/^\Redirect/\t#Redirect/g;" "./config/default.conf"
 
 else
     # replace all um.adoodleydo.dev with https://127.0.0.1:444
@@ -47,10 +48,11 @@ else
     # update settings.py
     sed -i "s/config_name = '..\/config\/prod.toml'/config_name = '..\/config\/debug.toml'/g;" './um/proj/settings.py'
 
-    sed -i "s/^if sys.executable != INTERP/#if sys.executable != INTERP/g" "./um/wsgi.py"
+    #sed -i "s/^if sys.executable != INTERP/#if sys.executable != INTERP/g" "./um/wsgi.py" # only needed for passenger
 
-    sed -i "s/^\tServerName/\t#ServerName/g;s/^\t#SSLCertificate/\tSSLCertificate/g;" "./config/main.conf"
-    sed -i "s/^\tServerName/\t#ServerName/g;s/^\t#SSLCertificate/\tSSLCertificate/g;" "./config/um.conf"
+    sed -i "s/^\t#SSLCertificate/\tSSLCertificate/g;" "./config/main.conf"
+    sed -i "s/^\t#SSLCertificate/\tSSLCertificate/g;" "./config/um.conf"
+    sed -i "s/^\Redirect/\t#Redirect/g;" "./config/default.conf"
 fi
 
 # tell server to update apps

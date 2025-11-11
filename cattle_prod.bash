@@ -24,10 +24,14 @@ then
     sed -i "s/config_name = '..\/config\/debug.toml'/config_name = '..\/config\/prod.toml'/g;" "./um/proj/settings.py"
 
     #sed -i "s/^#if sys.executable != INTERP/if sys.executable != INTERP/g" "./um/wsgi.py" # only needed for passenger
+    sed -i "s/ssl\/certs\/ssl-cert-snakeoil/apache2\/sslfullchain/g;
+        s/ssl\/private\/ssl-cert-snakeoil/apache2\/sslkey/g" "./config/999-main.conf"
 
-    sed -i "s/^\tSSLCertificate/\t#SSLCertificate/g;" "./config/main.conf"
-    sed -i "s/^\tSSLCertificate/\t#SSLCertificate/g;" "./config/um.conf"
-    sed -i "s/^\Redirect/\t#Redirect/g;" "./config/default.conf"
+    sed -i "s/ssl\/certs\/ssl-cert-snakeoil/apache2\/sslfullchain/g;
+        s/ssl\/private\/ssl-cert-snakeoil/apache2\/sslkey/g
+        s/VirtualHost \*:444/VirtualHost \*:443/g;" "./config/001-um.conf"
+
+    sed -i "s/^\Redirect/\t#Redirect/g;" "./config/000-default.conf"
 
 else
     # replace all um.adoodleydo.dev with https://127.0.0.1:444
@@ -50,9 +54,13 @@ else
 
     #sed -i "s/^if sys.executable != INTERP/#if sys.executable != INTERP/g" "./um/wsgi.py" # only needed for passenger
 
-    sed -i "s/^\t#SSLCertificate/\tSSLCertificate/g;" "./config/main.conf"
-    sed -i "s/^\t#SSLCertificate/\tSSLCertificate/g;" "./config/um.conf"
-    sed -i "s/^\Redirect/\t#Redirect/g;" "./config/default.conf"
+    sed -i "s/apache2\/sslfullchain/ssl\/certs\/ssl-cert-snakeoil/g;
+        s/apache2\/sslkey/ssl\/private\/ssl-cert-snakeoil/g;" "./config/999-main.conf"
+    sed -i "s/apache2\/sslfullchain/ssl\/certs\/ssl-cert-snakeoil/g;
+        s/apache2\/sslkey/ssl\/private\/ssl-cert-snakeoil/g;
+        s/VirtualHost \*:443/VirtualHost \*:444/g;" "./config/001-um.conf"
+
+    sed -i "s/^\Redirect/\t#Redirect/g;" "./config/000-default.conf"
 fi
 
 # tell server to update apps

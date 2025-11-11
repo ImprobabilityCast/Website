@@ -2,11 +2,18 @@ var page = (function () {
     let obj = {};
 	let requestID = -1;
 
+	/*
 	$("#start-date").val(
 		// past week
 		new Date(Date.now() - 7000 * 60 * 60 * 24).toLocaleDateString('en-CA')
 	);
 	$("#end-date").val(new Date().toLocaleDateString('en-CA'));
+	*/
+
+	$("#start-date").val(
+		new Date(new Date(2025, 11 - 1, 2) - 7000 * 60 * 60 * 24).toLocaleDateString('en-CA')
+	);
+	$("#end-date").val(new Date(2025, 11 - 1, 2).toLocaleDateString('en-CA'));
 
 	obj.getData = function () {
 		clearTimeout(requestID); // invalid ids do nothing

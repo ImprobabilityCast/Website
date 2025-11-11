@@ -64,9 +64,6 @@ fi
 
 a2enmod ssl
 
-# TODO enable ssl on the config files too
-
-
 # setup php project
 mysql < mood_db_setup.sql
 mysql -e "CREATE USER 'php'@'localhost' IDENTIFIED BY '$(cat ~/Website/config/mood_db_php_user_pwd.txt)';"
@@ -91,7 +88,6 @@ chmod uo+rw ~/Webite/um/um.log
 apache2ctl restart
 
 # TODO: make subdomain use different port with proxypass
-# TODO in general: make the mood app default date to one with data (automate this with the script that adds data)
-# and update index.html to include stuff like etsy and upwork
+# TODO in general: update index.html to include stuff like etsy and upwork
 # update upwork to link to specific projects instead of all of them in one
 

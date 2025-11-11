@@ -5,6 +5,7 @@
 
 body {
     background-image: url(/static/img/grey_ocean.JPG);
+    background-repeat: round;
 }
 
 @media (prefers-color-scheme:dark) {

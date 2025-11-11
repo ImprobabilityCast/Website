@@ -1,9 +1,8 @@
-import init, { Card, Player, GameOptions, ClueSolver } from "./pkg/clueless.js";
+import init, { Card, Guess, Player, GameOptions, ClueSolver } from "./pkg/clueless.js";
 
 var solver;
-var selectedPlayerCardSlot = null;
 var guessCardsDragDrop = gimmieADraggyDroppy();
-var playerCardsDragDrop = gimmieADraggyDroppy();
+var nextStepGuess = gimmieADraggyDroppy();
 
 function cardEl(centerText="?", modalTrigger=""){
   return `
@@ -35,7 +34,7 @@ function render() {
   let cardTypes = solver.get_card_types();
   cardTypes.forEach((cardType, idx) => {
     let handBox = $(`
-      <div class="" id="${cardType}">
+      <div class="p-0" id="${cardType}">
         <div class="hand">
           <h5 class="text-white">
             ${cardType}s
@@ -64,10 +63,12 @@ function render() {
 
   // setup guess stuff
   addGuessCards();
+  $("#guessBtn").prop("disable", true);
   $('#guessCardsHand').removeClass("d-none");
 }
 
 function updatePlayerData() {
+  $("#clueStye")[0].sheet
   solver.get_players().forEach((player, _) => {
     let playerSuspect = $("#playerColor" + player.id)[0].selectedOptions[0];
     let nickname = $("#nickname" + player.id).val();
@@ -142,7 +143,7 @@ function gimmieADraggyDroppy() {
 
   function _handleDragOverCard(e) {
     let data = e.dataTransfer.getData("text/plain") - 0;
-    if (_obj.dropCondition(e.target, data) ?? true) {
+    if (_obj.dropCondition(e.target, data)) {
       e.preventDefault(); // allow dropping
     }
   }
@@ -164,9 +165,10 @@ function gimmieADraggyDroppy() {
     onCardMoveComplete: null,
     setMoveCardBehaviorToClone: () => _moveModeIsMove = false,
     setMoveCardBehaviorToMove: () => _moveModeIsMove = true,
+    setMoveCardBehaviorToCustom: (customMove) => _moveCard = customMove,
     emptySlotGenerator: (idx) => "",
     stilDraggableAfterDrop: false,
-    dropCondition: null,
+    dropCondition: () => true,
     filter: null,
     unfilter: null,
     registerDestination: function (node) {
@@ -204,39 +206,100 @@ function addGuessCards() {
 }
 
 function clickAddGuessBtn() {
-  populatePlayers();
-  addPlayerSlotsForGuess();
-}
-
-function populatePlayers() {
-  let htmlList = $("#playerListForGuess");
+  let htmlList = $("#guesserList");
   htmlList.empty();
   for (let player of solver.get_players()) {
     let ele = $(cardEl(player.name, `player-id="${player.id}"`));
-    playerCardsDragDrop.registerSource(ele);
+    ele.addClass("owner-tab-" + player.color);
+    ele.addClass("owner-" + player.color);
+    ele.on("click", clickPlayerCard);
+    nextStepGuess.registerSource(ele);
     htmlList.append(ele);
   }
+
+  $("#nextGuessStepBtn").prop("disabled", true);
+
+  // disable / hide guess entry cards
+  $("#table").toggleClass("d-none");
+  $("#guessCardsHand").toggleClass("d-none");
+  $("#addGuessPlayersStep").toggleClass("d-none");
 }
 
-function createPlayerSlot() {
-  let ele = $(cardEl("?"));
-  ele.prop("draggable", false);
-  ele.addClass("fake-guess-card");
-  return ele;
-}
+function clickNextGuessStepBtn() {
+  // copy the guessed cards to the next step
+  let markerRow = $("<div class='marker-box d-flex position-relative top-50'></div>")[0];
+  let guessList = $("#guessList");
+  guessList.empty();
 
-function addPlayerSlotsForGuess() {
-  let dad = $('#playerSlotsForGuess');
-  dad.empty();
-  for (let _ of solver.get_card_types()) {
-    let slot = createPlayerSlot();
-    playerCardsDragDrop.registerDestination(slot);
-    dad.append(slot);
+  for (let card of $("#guessCards > *")) {
+    let newNode = card.cloneNode(true);
+    newNode.id = "";
+    newNode.append(markerRow.cloneNode());
+    $(newNode).attr("max-players", 1);
+    nextStepGuess.registerDestination(newNode);
+    guessList.append(newNode);
   }
+  // add an idk slot after the og cards
+  let idkEle = $(cardEl("idk which", "max-players=3"));
+  idkEle.addClass("owner-lightgrey");
+  idkEle.append(markerRow);
+  nextStepGuess.registerDestination(idkEle);
+  guessList.append(idkEle);
+
+  clonePlayersLeft();
+}
+
+function clickPlayerCard(e) {
+  $(e.target.parentElement.children).attr("selected-player", false);
+  $(e.target).attr("selected-player", true);
+  $("#nextGuessStepBtn").prop("disabled", false);
+}
+
+function clonePlayersLeft() {
+  let destNode = $("#playerListForGuess");
+  destNode.empty();
+  for (let playerCard of $("#guesserList > [selected-player=false]")) {
+    let cloned = playerCard.cloneNode(true);
+    cloned.removeAttribute("selected-player");
+    nextStepGuess.registerSource(cloned);
+    destNode.append(cloned);
+  }
+}
+
+function clickFinalGuessBtn() {
+  // get data from guess and pass to rust
+  let guess = new Guess();
+  guess.cards = [];
+  guess.who_told = [];
+  guess.who_told_not = [];
+  for(let card of $("#guessList > div")) {
+    let cardId = $(card).attr("card-id");
+    let players = $(card).find("[player-id]");
+    if (cardId !== undefined) {
+      guess.cards.push(solver.get_card(cardId));
+      if (players.length > 0) { // will only ever be one here
+        solver.own_card(players.attr("player-id"), cardId);
+      }
+    }
+    for (let player of players) {
+      guess.who_told.push($(player).attr("player-id"));
+    }
+  }
+
+  guess.guesser = $("#guesserList > [selected-player=true]").attr("player-id");
+  solver.add_guess(guess);
+
+  // reset everything
+  $("#table").toggleClass("d-none");
+  $("#guessCardsHand").toggleClass("d-none");
+  $("#addGuessPlayersStep").toggleClass("d-none");
+
+  // re-render everything from updated rust data
+  render();
 }
 
 function ownCardForMainPlayer(card) {
-  let err = solver.own_card(Player.get_main_player_id(), card);
+  let err = solver.own_card(Player.get_main_player_id(), card.id);
   if (err.length > 0 ) console.log(err);
   let ele = $(cardEl(card.name));
   $('#addCardBtn').before(ele);
@@ -300,6 +363,43 @@ function populateCardsLeftModal(idx) {
   }
 }
 
+function setupNextStepGuessCards() {
+  let smCardEle = (data) => {
+    let result = $(`<div ${nextStepGuess.identifierName}=${data} class="sm-card card me-1 mt-1" draggable="false"></div>`);
+    result.on("click", handleMarkerClick);
+    let player = solver.get_players().find(p => p.id == data);
+    result.addClass("owner-tab-" + player.color);
+    return result[0];
+  }
+
+  let handleMarkerClick = (e) => {
+    $(e.target).remove();
+    updateFinGuessBtn();
+  }
+
+  let updateFinGuessBtn = () => {
+    $("#finalGuessBtn").prop("disabled", $(`#guessList .sm-card`).length <= 3);
+  }
+
+  nextStepGuess.setMoveCardBehaviorToCustom((data, destNode) => {
+    for (let card of $(`#guessList .sm-card[${nextStepGuess.identifierName}="${data}"`)) {
+      $(card).remove();
+    }
+    let finalDestination = $(destNode).find(".marker-box");
+    if ($(destNode).attr("max-players") == finalDestination.children().length) {
+      finalDestination.children().first()?.remove();
+    }
+    let smCard = smCardEle(data);
+    finalDestination.append(smCard);
+    updateFinGuessBtn();
+  });
+  
+  // button will add guess to rust and refresh with new data from rust
+  nextStepGuess.identifierName = "player-id";
+  nextStepGuess.cardBoxId = "";
+  nextStepGuess.emptySlotGenerator = generateGuessSlot;
+}
+
 function setupGuessCards() {
   guessCardsDragDrop.onCardMoveComplete = () => {
     $("#guessBtn").prop("disabled", $("#guessCards > [card-id]").length != 3);
@@ -316,22 +416,6 @@ function setupGuessCards() {
   };
   guessCardsDragDrop.setMoveCardBehaviorToClone();
   guessCardsDragDrop.emptySlotGenerator = generateGuessSlot;
-}
-
-function setupPlayerGuessCards() {
-  playerCardsDragDrop.onCardMoveComplete = () => {
-    $("#guessBtn").prop("disabled",
-      ($("#guessCards [player-id]").length
-       + $("#idkBox [player-id]").length) != 3
-    );
-  };
-  playerCardsDragDrop.filter = (card) => {
-    $(card).replaceWith(createPlayerSlot());
-  };
-  playerCardsDragDrop.identifierName = "player-id";
-  playerCardsDragDrop.cardBoxId = "#playerListForGuess";
-  playerCardsDragDrop.setMoveCardBehaviorToMove();
-  playerCardsDragDrop.emptySlotGenerator = createPlayerSlot;
 }
 
 async function startup() {
@@ -353,10 +437,12 @@ async function startup() {
     render();
   });
   setupGuessCards();
-  setupPlayerGuessCards();
+  setupNextStepGuessCards();
 
   $('#updatePlayerDataTrigger').on('click', updatePlayerData);
   $('#newGameTriggerBtn').on('click', deal);
   $('#guessBtn').on('click', clickAddGuessBtn);
+  $('#nextGuessStepBtn').on('click', clickNextGuessStepBtn);
+  $('#finalGuessBtn').on('click', clickFinalGuessBtn);
 }
 startup();

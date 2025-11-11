@@ -1,3 +1,5 @@
+// HOW TO BUILD: wasm-pack build --target web
+
 use std::cmp::Ordering;
 use wasm_bindgen::prelude::*;
 use serde::Deserialize;
@@ -73,7 +75,8 @@ pub struct Player {
     name: String,
 }
 
-#[derive(Clone)]
+#[wasm_bindgen]
+#[derive(Clone, Deserialize)]
 pub struct Guess {
     cards: Vec<Card>,
     who_told: Vec<usize>,
@@ -98,7 +101,7 @@ pub struct ClueSolver {
 }
 
 trait GuessEngine {
-    fn add_guess(&mut self, guess: Guess);
+    fn _add_guess(&mut self, guess: Guess);
     fn _new_game(&mut self, options: &GameOptions);
 
     fn partial_solution(&self) -> Vec<Card>;
@@ -169,6 +172,20 @@ impl GameOptions {
     }
 }
 
+#[wasm_bindgen]
+impl Guess {
+    #[wasm_bindgen(constructor)]
+    pub fn new() -> Guess {
+        Guess {
+            cards: Vec::new(),
+            who_told: Vec::new(),
+            who_told_not: Vec::new(),
+            guesser: 0,
+        }
+    }
+}
+
+
 impl GuessEngine for ClueSolver {
     fn get_player(&self, mut player_id: usize) -> Player {
         let mut idx = 0;
@@ -193,7 +210,7 @@ impl GuessEngine for ClueSolver {
     //     }
     // }
 
-    fn add_guess(&mut self, guess: Guess) {
+    fn _add_guess(&mut self, guess: Guess) {
         // Add guess to list, then process all cards in list
 
         self.guesses.push(guess);
@@ -443,13 +460,14 @@ impl ClueSolver {
         ).collect::<js_sys::Array>()
     }
 
-    pub fn own_card(&mut self, player_id: usize, js_card: JsValue) -> String {
-        let json_thingy = serde_wasm_bindgen::from_value::<Card>(js_card);
-        if let Err(err) = json_thingy {
-            return err.to_string();
+    pub fn own_card(&mut self, player_id: usize, card_id: usize) -> String {
+        if card_id < self.cards_by_id.len() {
+            let card = self.cards_by_id[card_id].clone();
+            self._own_card(player_id, &card);
+            String::new()
+        } else {
+            String::from("card_id out of bounds")
         }
-        self._own_card(player_id, &json_thingy.unwrap());
-        return String::new();
     }
 
     pub fn get_colors(&self) -> js_sys::Array {
@@ -498,5 +516,24 @@ impl ClueSolver {
 
     pub fn get_card(&self, id: usize) -> JsValue {
         serde_wasm_bindgen::to_value(&self.cards_by_id[id]).unwrap()
+    }
+
+    pub fn add_guess(&mut self, js_guess: JsValue) -> String {
+        let guess_box = serde_wasm_bindgen::from_value::<Guess>(js_guess);
+        if let Err(err) = guess_box {
+            return err.to_string();
+        }
+        let mut guess = guess_box.unwrap();
+
+        guess.who_told_not = self.players.iter().filter_map(|p|
+            if guess.who_told.contains(&p.id) {
+                None
+            } else {
+                Some(p.id)
+            }
+        ).collect::<Vec<usize>>();
+
+        self._add_guess(guess);
+        return String::new();
     }
 }

@@ -5,6 +5,14 @@
 .owner-blue { box-shadow: 0 0 10pt blue; border: 2pt solid blue; }
 .owner-indigo { box-shadow: 0 0 10pt indigo; border: 2pt solid indigo; }
 .owner-lightgrey { box-shadow: 0 0 10pt grey; border: 1pt solid lightgrey; }
+.owner-tab-darkred { background: darkred; color: white; }
+.owner-tab-gold { background: gold; color: black; }
+.owner-tab-white { background: white; color: black; }
+.owner-tab-darkgreen { background: darkgreen; color: white; }
+.owner-tab-blue { background: blue; color: white; }
+.owner-tab-indigo { background: indigo; color: white; }
+.owner-tab-lightgrey { background: lightgrey; color: black; }
+
 body {
   background: radial-gradient(circle at 30% 30%, #3a8fd0 0%, #1f6fb2 40%, #144c7e 100%);
   min-height: 100vh;
@@ -40,8 +48,19 @@ body {
   height: 80pt;
   font-weight: 500; font-size: 12pt; padding: 6pt;
 }
+.sm-card {
+  width: 1.25rem;
+  height: 2.5rem;
+}
 .cl-card:hover, .cl-card:focus {
     box-shadow: 0 0 8pt yellow;
+}
+.cl-card[selected-player=true] {
+  border: 2pt solid #8888;
+}
+.cl-card[selected-player=false] {
+  opacity: 0.7;
+  transition: opacity 1s;
 }
 .modal {
   /* --bs-modal-bg: #FFF4; */

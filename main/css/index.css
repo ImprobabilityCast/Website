@@ -111,3 +111,13 @@
 {
     max-width: 200pt;
 }
+
+.portrait
+{
+    max-height: 30rem;
+}
+
+#about
+{
+    max-width: 45rem;
+}

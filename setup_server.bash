@@ -76,6 +76,7 @@ mysql -e "GRANT CREATE, INSERT, INDEX, SELECT, ALTER, UPDATE, DELETE ON adoodley
 # rest will be done through django migrations
 
 # setup django project
+mkdir ~/Website/um/public/static/img/art
 virtualenv ~/Website/um/env
 source ~/Website/um/env/bin/activate
 python -m ensurepip --upgrade
@@ -87,7 +88,7 @@ touch ~/Website/um/um.log
 chmod uo+rw ~/Website/um/um.log
 apache2ctl restart
 
-# TODO: make subdomain use different port with proxypass
-# TODO in general: update index.html to include stuff like etsy and upwork
-# update upwork to link to specific projects instead of all of them in one
 
+echo "remember to copy prod.toml, mood_db_php_user_pwd.txt, and art images manually"
+
+# TODO: make subdomain use different port with proxypass

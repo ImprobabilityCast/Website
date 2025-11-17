@@ -6,7 +6,7 @@ TO_PROD=${1:-1}
 if [ $TO_PROD != 0 ]
 then
     # replace all 127.0.0.1:444 with um.adoodleydo.dev
-    REP_STR='s/127.0.0.1:444/um.adoodleydo.dev/g'
+    REP_STR="s/127.0.0.1:444/um.adoodleydo.dev/g;s/127.0.0.1/adoodleydo.dev/g"
     for file in $(tree -fi -P *.js --noreport './main/js/' | grep -P '^.*\.js$')
     do
         sed -i $REP_STR $file
@@ -17,7 +17,7 @@ then
     for file in $(tree -fi -I 'public|env|Hello World' -P '*.html|*.js|views.py|*.php|*.conf' --noreport --prune \
             | grep -P '\.html$|\.js$|\.py$|\.php$|\.conf$')
     do
-        sed -i 's/127.0.0.1/adoodleydo.dev/g' $file
+        sed -i $REP_STR $file
     done
 
     # update settings.py
@@ -28,14 +28,14 @@ then
         s/ssl\/private\/ssl-cert-snakeoil/apache2\/sslkey/g" "./config/999-main.conf"
 
     sed -i "s/ssl\/certs\/ssl-cert-snakeoil/apache2\/sslfullchain/g;
-        s/ssl\/private\/ssl-cert-snakeoil/apache2\/sslkey/g
+        s/ssl\/private\/ssl-cert-snakeoil/apache2\/sslkey/g;
         s/VirtualHost \*:444/VirtualHost \*:443/g;" "./config/001-um.conf"
 
     sed -i "s/^\Redirect/\t#Redirect/g;" "./config/000-default.conf"
 
 else
     # replace all um.adoodleydo.dev with 127.0.0.1:444
-    REP_STR='s/um.adoodleydo.dev/127.0.0.1:444/g'
+    REP_STR="s/um.adoodleydo.dev/127.0.0.1:444/g;s/adoodleydo.dev/127.0.0.1/g"
     for file in $(tree -fi -P *.js --noreport './main/js/' | grep -P '^.*\.js$')
     do
         sed -i $REP_STR $file
@@ -46,7 +46,7 @@ else
     for file in $(tree -fi -I 'public|env|Hello World' -P '*.html|*.js|views.py|*.php|*.conf' --noreport --prune \
             | grep -P '\.html$|\.js$|\.py$|\.php$|\.conf$')
     do
-        sed -i 's/adoodleydo.dev/127.0.0.1/g' $file
+        sed -i $REP_STR $file
     done
 
     # update settings.py

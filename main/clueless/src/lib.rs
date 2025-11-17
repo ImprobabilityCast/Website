@@ -8,6 +8,8 @@ use serde::Serialize;
 #[wasm_bindgen]
 extern {
     pub fn alert(s: &str);
+    #[wasm_bindgen(js_namespace = console)]
+    pub fn debug(s: &str);
 }
 
 #[derive(Deserialize)]
@@ -28,14 +30,11 @@ pub enum CardType {
 
 #[wasm_bindgen]
 pub struct GameOptions {
-    #[wasm_bindgen(getter, setter)]
     pub num_players: usize,
-    #[wasm_bindgen(getter, setter)]
     pub disable_conservatory: bool,
 }
 
 const SOLUTION_ID: usize = 1;
-const DEFAULT_CARD_COLOR: &str = "lightgrey";
 
 #[wasm_bindgen]
 #[derive(Deserialize, Serialize)]
@@ -65,13 +64,9 @@ pub struct JsCard {
 #[wasm_bindgen]
 #[derive(Clone, Serialize, Deserialize)]
 pub struct Player {
-    #[wasm_bindgen(getter, setter)]
     id: usize, // by 2: 2, 4, 8, 16, 32...
-    #[wasm_bindgen(getter, setter)]
     max_cards: usize,
-    #[wasm_bindgen(getter, setter)]
     color: String,
-    #[wasm_bindgen(getter, setter)]
     name: String,
 }
 
@@ -185,7 +180,6 @@ impl Guess {
     }
 }
 
-
 impl GuessEngine for ClueSolver {
     fn get_player(&self, mut player_id: usize) -> Player {
         let mut idx = 0;
@@ -222,6 +216,7 @@ impl GuessEngine for ClueSolver {
             // Add the cards in guess to not-my-cards for those who did not show.
             self.add_not_my_cards(&current);
 
+            debug("(_add_guess) section 1");
             // Remove cards if we know who they belong to, later removing those
             // cards from self.cards_by_type_left
             let mut cards_resolved = self.resolve_cards(&mut current);
@@ -235,12 +230,17 @@ impl GuessEngine for ClueSolver {
                 }
             }
 
+            debug("(_add_guess) section 2");
+
             // If all cards in a guess are known, remove guess from list
             if current.cards.len() == 0 {
                 self.guesses.swap_remove(guess_idx);
             } else { // otherwise update the guess in the list
                 self.guesses[guess_idx] = current;
             }
+
+
+            debug("(_add_guess) section 3");
 
             // If only one card of a type is left in cards_left_by_type, add to solution
             let to_be_owned_by_solution = self.cards_left_by_type.iter_mut().filter_map(|x|
@@ -254,10 +254,11 @@ impl GuessEngine for ClueSolver {
                 self.owner_mask_by_card_id[card.id] = SOLUTION_ID;
             }
 
+            debug("(_add_guess) section 4");
+
             // Calling this down here so we can borrow mut again
             //self.update_cards_left_by_type(&cards_resolved[..]);
 
-            
             guess_idx = if cards_resolved > 0 {
                 // Found a new card, go through all the guesses again O(n^2) where n = num of guesses
                 self.guesses.len() - 1
@@ -265,6 +266,9 @@ impl GuessEngine for ClueSolver {
                 // Did not find a new card, move on to the next guess
                 guess_idx - 1
             };
+
+            debug("(_add_guess) section 5");
+            debug(&format!("(_add_guess) guesses len: {}, guess_idx: {}, max_usize: {}", self.guesses.len(), guess_idx, usize::MAX));
         }
     }
 
@@ -273,15 +277,17 @@ impl GuessEngine for ClueSolver {
         let mut were_cards_removed = false;
         let mut card_idx = guess.cards.len() - 1;
 
-        while card_idx > 0 {
+        while card_idx < usize::MAX {
             let card = guess.cards[card_idx].clone();
             let mask = self.owner_mask_by_card_id[card.id];
             // if solution bit is 0, a player owns it
             // if the solution bit is 1 and the rest are 0, then it is part of the solution
+            debug(&format!("(remove_owned_cards) checking card {} with mask {:b}", card.id, mask));
             if mask % 2 == 0 || mask == SOLUTION_ID {
+                debug(&format!("(remove_owned_cards) removing card {} from guess", card.id));
                 guess.cards.remove(card_idx);
                 were_cards_removed = true;
-                guess.who_told.retain(|x| *x == mask);
+                //guess.who_told.retain(|x| *x != mask);
             }
             card_idx -= 1;
         }
@@ -294,25 +300,36 @@ impl GuessEngine for ClueSolver {
             no_tell_mask |= player_id;
         }
         for card in &guess.cards {
+            debug(&format!("(add_not my cards) setting mask {:b} to {:b}", self.owner_mask_by_card_id[card.id], self.owner_mask_by_card_id[card.id] & !no_tell_mask));
             self.owner_mask_by_card_id[card.id] &= !no_tell_mask;
         }
     }
 
     fn partial_solution(&self) -> Vec<Card> {
         self.owner_mask_by_card_id.iter().enumerate()
-            .filter_map(|(mask, &idx)|
+            .filter_map(|(idx, &mask)| {
+                debug(&format!("(partial_solution) mask {:b}, idx {}", mask, idx));
                 if mask == SOLUTION_ID { Some(self.cards_by_id[idx].clone()) } else { None }
-            ).collect::<Vec<Card>>()
+            }).collect::<Vec<Card>>()
     }
 
     fn _own_card(&mut self, player_id: usize, card: &Card) {
+        debug(&format!("(_own_card) player {} owning card {}", player_id, card.id));
         self.cards_left_by_type[card.card_type as usize].retain(|c| c != card);
         self.owner_mask_by_card_id[card.id] = player_id;
+        if player_id > 0 && self.are_all_cards_known(&self.get_player(player_id)) {
+            for mask in self.owner_mask_by_card_id.iter_mut().filter(|m| **m != player_id) {
+                *mask &= !player_id;
+            }
+        }
     }
 
     fn resolve_cards_to_who_told(&mut self, guess: &mut Guess) -> usize {
+        if guess.cards.len() == 0 { return 0; }
+
         let mut cards_found = 0;
         let mut told_idx = 0;
+
         // see if we can assign any of the cards in the guess to
         // the player who has them
         while told_idx < guess.who_told.len() {
@@ -322,13 +339,14 @@ impl GuessEngine for ClueSolver {
                 .collect::<Vec<_>>();
             
             if possible_cards.len() == 0 { // told a card we already know
-                alert("why");
+                alert(&format!("(resolve_cards_to_who_told) why are we here. len: {}", guess.who_told.len()));
             } else if possible_cards.len() == 1 { // told a card we did not know
                 // unwrap is fine here, because length is 1
                 let found_card = guess.cards.pop().unwrap();
+                debug(&format!("(resolve_cards_to_who_told) player {} owning card {}", rat_id, found_card.id));
                 self._own_card(rat_id, &found_card);
                 cards_found += 1;
-                guess.who_told.remove(told_idx);
+                //guess.who_told.remove(told_idx);
                 told_idx = 0; // reduced number of cards, so re-examine any previous tellers
             } else { // too many possible cards, cannot conclude anything
                 told_idx += 1;
@@ -347,7 +365,11 @@ impl GuessEngine for ClueSolver {
         let mut card_idx = guess.cards.len() - 1;
         while card_idx < usize::MAX { // yes, using integer overflow to signal the end of the loop
             let card = &guess.cards[card_idx];
+            debug(&format!("(resolve_cards) card_idx {}", card_idx));
             if self.partial_solution().iter().any(|sol_card| sol_card.card_type == card.card_type) {
+                debug(&format!("(resolve_cards) partial_solution[0] id {}", self.partial_solution()[0].id));
+                debug(&format!("(resolve_cards) partial_solution[0] mask {:b}", self.owner_mask_by_card_id[self.partial_solution()[0].id]));
+                debug(&format!("(resolve_cards) player {} owning card {}", guess.guesser, card.id));
                 self._own_card(guess.guesser, card);
                 guess.cards.swap_remove(card_idx);
                 cards_found += 1;
@@ -484,12 +506,6 @@ impl ClueSolver {
     }
 
     pub fn get_card_display_data(&self) -> js_sys::Array {
-        let nobody_player = Player {
-            id: usize::MAX,
-            name: String::new(),
-            color: String::from(DEFAULT_CARD_COLOR),
-            max_cards: usize::MAX,
-        };
         self.cards_by_id.iter().map(|c|
             serde_wasm_bindgen::to_value(
                 &JsCard {
@@ -497,9 +513,50 @@ impl ClueSolver {
                     id: c.id,
                     name: c.name.clone(),
                     owner: if let Some(owner) = self.players.iter().find(|p| p.id == self.owner_mask_by_card_id[c.id]) {
-                        owner.clone()
+                        owner.clone() // owner known
+                    } else if self.owner_mask_by_card_id[c.id] == 0 {
+                        // not owned by anyone, nor solution
+                        Player {
+                            id: usize::MAX,
+                            name: String::from("deleted"),
+                            color: String::from("black"),
+                            max_cards: usize::MAX,
+                        }
+                    } else if SOLUTION_ID == self.owner_mask_by_card_id[c.id] {
+                        Player {
+                            id: usize::MAX,
+                            name: String::from("solution"),
+                            color: String::from("lime"),
+                            max_cards: usize::MAX,
+                        }
                     } else {
-                        nobody_player.clone()
+                        let mut colors = self.players.iter().filter_map(|p|
+                            if p.id & self.owner_mask_by_card_id[c.id] == p.id {
+                                Some(p.color.clone())
+                            } else {
+                                None
+                            }
+                        ).collect::<Vec<_>>();
+
+                        let name = if SOLUTION_ID & self.owner_mask_by_card_id[c.id] == SOLUTION_ID {
+                            colors.push(String::from("lime"));
+                            String::from("unknown (maybe solution)")
+                        } else {
+                            String::from("unknown (not solution)")
+                        };
+                        let percenty = 100 / colors.len();
+                        let mut color_ps = Vec::<String>::new();
+                        let mut cent_counter = 0;
+                        for color in colors {
+                            color_ps.push(format!("{} {}% {}%", color, percenty * cent_counter, percenty * {cent_counter += 1; cent_counter}))
+                        }
+
+                        Player {
+                            id: usize::MAX,
+                            name: name,
+                            color: format!("linear-gradient(120deg, {})", color_ps.join(",")),
+                            max_cards: usize::MAX,
+                        }
                     },
                 }
             ).unwrap()
@@ -526,7 +583,7 @@ impl ClueSolver {
         let mut guess = guess_box.unwrap();
 
         guess.who_told_not = self.players.iter().filter_map(|p|
-            if guess.who_told.contains(&p.id) {
+            if guess.who_told.contains(&p.id) || p.id == guess.guesser {
                 None
             } else {
                 Some(p.id)

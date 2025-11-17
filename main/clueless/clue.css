@@ -1,10 +1,3 @@
-.owner-darkred { box-shadow: 0 0 10pt darkred; border: 2pt solid darkred; }
-.owner-gold { box-shadow: 0 0 10pt gold; border: 2pt solid gold; }
-.owner-white { box-shadow: 0 0 10pt white; border: 2pt solid white; }
-.owner-darkgreen { box-shadow: 0 0 10pt darkgreen; border: 2pt solid darkgreen; }
-.owner-blue { box-shadow: 0 0 10pt blue; border: 2pt solid blue; }
-.owner-indigo { box-shadow: 0 0 10pt indigo; border: 2pt solid indigo; }
-.owner-lightgrey { box-shadow: 0 0 10pt grey; border: 1pt solid lightgrey; }
 .owner-tab-darkred { background: darkred; color: white; }
 .owner-tab-gold { background: gold; color: black; }
 .owner-tab-white { background: white; color: black; }
@@ -24,8 +17,9 @@ body {
   border-radius: 16pt; padding: 12pt; box-shadow: 0 6pt 18pt rgba(0,0,0,.2);
 }
 .fake-guess-card {
-    border: 1pt dashed lightgrey;
+    border: 1pt dashed lightgrey !important;
     background: #fff3;
+    color: white;
 }
 .fake-guess-card:hover {
     background: #fff6;
@@ -36,33 +30,166 @@ body {
 }
 .cards { display: flex; flex-wrap: wrap; gap: 10pt; }
 .cl-card {
-  width: 52pt; height: 83pt;
+  width: 72pt;
+  height: 102pt;
   border-radius: 8pt;
   font-size: 10pt;
-  position: relative; display: grid; place-items: center;
+  position: relative;
+  display: grid;
+  place-items: center;
+  border: 1pt solid lightgrey;
   padding: 6pt;
   transition: 0.3s box-shadow, backround;
 }
 .big-cards > .cl-card {
-  width: 62pt;
-  height: 80pt;
   font-weight: 500; font-size: 12pt; padding: 6pt;
 }
 .sm-card {
   width: 1.25rem;
   height: 2.5rem;
 }
+.player-choice-card {
+  width: 72pt;
+  transition: 0.3s box-shadow, backround;
+  box-shadow: 0 0 8pt grey;
+}
 .cl-card:hover, .cl-card:focus {
+  border: 1pt solid lightgrey;
+}
+.cl-card:hover, .cl-card:focus, .player-choice-card:hover, .player-choice-card:focus, .player-choice-card:hover {
     box-shadow: 0 0 8pt yellow;
 }
 .cl-card[selected-player=true] {
-  border: 2pt solid #8888;
+  border: 2pt solid #8888 !important;
 }
 .cl-card[selected-player=false] {
   opacity: 0.7;
-  transition: opacity 1s;
+  transition: opacity 0.5s;
 }
 .modal {
-  /* --bs-modal-bg: #FFF4; */
   backdrop-filter: blur(10pt);
+}
+
+button[player-id] {
+  box-shadow: 0 0 8pt grey;
+}
+
+[card-id]::before {
+  filter: blur(2pt);
+  content: '';
+  z-index: -1;
+  border-radius: 10pt;
+  width: 80pt;
+  height: 110pt;
+  position: relative;
+  top: -11pt;
+  left: -11pt;
+}
+
+[card-id="0"] {
+  background: url(./img/suspects.jpg);
+  background-position: 2pt -2pt;
+  background-size: 280%;
+}
+[card-id="1"] {
+  background: url(./img/suspects.jpg);
+  background-position: -130pt -107pt;
+  background-size: 280%;
+}
+[card-id="2"] {
+  background: url(./img/suspects.jpg);
+  background-position: -64pt -2pt;
+  background-size: 280%;
+}
+[card-id="3"] {
+  background: url(./img/suspects.jpg);
+  background-position: -64pt -106pt;
+  background-size: 280%;
+}
+[card-id="4"] {
+  background: url(./img/suspects.jpg);
+  background-position: -130pt -3pt;
+  background-size: 280%;
+}
+[card-id="5"] {
+  background: url(./img/suspects.jpg);
+  background-position: 1pt -106pt;
+  background-size: 280%;
+}
+
+[card-id="6"] {
+  background: url(./img/weapons.jpg);
+  background-position: -68pt -2pt;
+  background-size: 290%;
+}
+[card-id="7"] {
+  background: url(./img/weapons.jpg);
+  background-position: 3pt -1pt;
+  background-size: 290%;
+}
+[card-id="8"] {
+  background: url(./img/weapons.jpg);
+  background-position: 2pt -106pt;
+  background-size: 290%;
+}
+[card-id="9"] {
+  background: url(./img/weapons.jpg);
+  background-position: -136pt -105pt;
+  background-size: 290%;
+}
+[card-id="10"] {
+  background: url(./img/weapons.jpg);
+  background-position: -69pt -106pt;
+  background-size: 290%;
+}
+[card-id="11"] {
+  background: url(./img/weapons.jpg);
+  background-position: -136pt 1pt;
+  background-size: 290%;
+}
+
+[card-id="12"] {
+  background: url(./img/rooms.jpg);
+  background-position: -205pt -2pt;
+  background-size: 480%;
+}
+[card-id="13"] {
+  background: url(./img/rooms.jpg);
+  background-position: -271pt -1pt;
+  background-size: 480%;
+}
+[card-id="14"] {
+  background: url(./img/rooms.jpg);
+  background-position: 0pt -106pt;
+  background-size: 480%;
+}
+[card-id="15"] {
+  background: url(./img/rooms.jpg);
+  background-position: -136pt -2pt;
+  background-size: 480%;
+}
+[card-id="16"] {
+  background: url(./img/rooms.jpg);
+  background-position: -68pt -107pt;
+  background-size: 480%;
+}
+[card-id="17"] {
+  background: url(./img/rooms.jpg);
+  background-position: -136pt -107pt;
+  background-size: 480%;
+}
+[card-id="18"] {
+  background: url(./img/rooms.jpg);
+  background-position: -68pt -2pt;
+  background-size: 480%;
+}
+[card-id="19"] {
+  background: url(./img/rooms.jpg);
+  background-position: 0pt -2pt;
+  background-size: 480%;
+}
+[card-id="20"] {
+  background: url(./img/rooms.jpg);
+  background-position: -205pt -107pt;
+  background-size: 480%;
 }

@@ -4,12 +4,19 @@ var solver;
 var guessCardsDragDrop = gimmieADraggyDroppy();
 var nextStepGuess = gimmieADraggyDroppy();
 
-function cardEl(centerText="?", modalTrigger=""){
-  return `
-    <div ${modalTrigger} class="cl-card card" draggable="true">
-      ${centerText}
-    </div>
-  `;
+function cardEl(centerText="?", attribs={}){
+  let result = $(`<div class="cl-card card">${centerText}</div>`);
+  result.attr(attribs);
+  return result;
+}
+
+// https://stackoverflow.com/a/5058336
+function loadBackgroundImagesIntoCache() {
+  for (let url of ["./img/suspects.jpg", "./img/weapons.jpg", "./img/rooms.jpg"]) {
+    $("<img>").attr("src", url).on("load", () => {
+      $(this).remove();
+    });
+  }
 }
 
 // very inspired by https://stackoverflow.com/a/12034334
@@ -47,24 +54,43 @@ function render() {
     hands[idx] = handBox; 
   });
 
+  let dynamicStyle = $("#dynamicStyle");
+  dynamicStyle.empty();
+  let styles = [];
   for (let cardData of solver.get_card_display_data()) {
     let row = rows[cardData.card_type_idx];
-    let cardEle = $(cardEl(cardData.name));
-    cardEle.attr("card-id", cardData.id);
-    cardEle.attr("card-type", cardTypes[cardData.card_type_idx]);
+    let cardEle = cardEl("", {
+      "aria-label": cardData.name,
+      "card-id":    cardData.id,
+      "card-type":  cardTypes[cardData.card_type_idx],
+      "draggable":  true,
+    });
     guessCardsDragDrop.registerSource(cardEle);
-    cardEle.addClass("owner-" + cardData.owner.color);
+    styles.push(`[card-id="${cardData.id}"]::before { background: ${cardData.owner.color}; }`);
     if (cardData.owner.name.length > 0) {
       cardEle.attr("title", htmlEscape(cardData.owner.name) + " has this");
     }
     row.append(cardEle);
   }
+  dynamicStyle[0].innerHTML = styles.join("\n");
   hands.forEach((v, _) => table.append(v));
+
+  // populate who guessed select
+  let htmlList = $("#guesserList");
+  htmlList.empty();
+  for (let player of solver.get_players()) {
+    let ele = $(`<button type="button" player-id="${player.id}" class="d-block rounded p-2 border-0 mt-2 owner-tab-${player.color}"
+        data-bs-dismiss="modal">${player.name}</button>`);
+    ele.on("click", clickPlayerCard);
+    htmlList.append(ele);
+  }
 
   // setup guess stuff
   addGuessCards();
-  $("#guessBtn").prop("disable", true);
-  $('#guessCardsHand').removeClass("d-none");
+  $("#guesserSelect").replaceWith($(`<button type="button" class="btn btn-light d-block mt-2" id="guesserSelect"
+      data-bs-toggle="modal" data-bs-target="#guesserModal">None</button>`));
+  $("#nextGuessStepBtn").prop("disabled", true);
+  $("#guessCardsHand").removeClass("d-none");
 }
 
 function updatePlayerData() {
@@ -77,7 +103,7 @@ function updatePlayerData() {
     player.color = playerSuspect.value;
     player.max_cards = numCards;
     let err = solver.update_player(player);
-    if (err.length > 0) console.log(err);
+    if (err.length > 0) console.error(err);
   });
 }
 
@@ -189,9 +215,8 @@ function gimmieADraggyDroppy() {
 
 function generateGuessSlot(idx) {
   let cardType = solver.get_card_types()[idx];
-  let ele = $(cardEl(cardType, `card-type="${cardType}"`));
-  ele.prop("draggable", false);
-  ele.addClass("fake-guess-card");
+  let ele = cardEl(cardType, {"card-type":cardType});
+  ele.addClass(["fake-guess-card", "top-card"]);
   return ele;
 }
 
@@ -205,29 +230,14 @@ function addGuessCards() {
   }
 }
 
-function clickAddGuessBtn() {
-  let htmlList = $("#guesserList");
-  htmlList.empty();
-  for (let player of solver.get_players()) {
-    let ele = $(cardEl(player.name, `player-id="${player.id}"`));
-    ele.addClass("owner-tab-" + player.color);
-    ele.addClass("owner-" + player.color);
-    ele.on("click", clickPlayerCard);
-    nextStepGuess.registerSource(ele);
-    htmlList.append(ele);
-  }
-
-  $("#nextGuessStepBtn").prop("disabled", true);
-
+function clickNextGuessStepBtn() {
   // disable / hide guess entry cards
   $("#table").toggleClass("d-none");
   $("#guessCardsHand").toggleClass("d-none");
   $("#addGuessPlayersStep").toggleClass("d-none");
-}
 
-function clickNextGuessStepBtn() {
   // copy the guessed cards to the next step
-  let markerRow = $("<div class='marker-box d-flex position-relative top-50'></div>")[0];
+  let markerRow = $("<div class='marker-box d-flex position-relative bottom-100 shadow-sm'></div>")[0];
   let guessList = $("#guessList");
   guessList.empty();
 
@@ -240,8 +250,10 @@ function clickNextGuessStepBtn() {
     guessList.append(newNode);
   }
   // add an idk slot after the og cards
-  let idkEle = $(cardEl("idk which", "max-players=3"));
+  let idkEle = cardEl("idk which", {"max-players":3});
   idkEle.addClass("owner-lightgrey");
+  markerRow.classList.remove("bottom-100");
+  markerRow.classList.add("top-50");
   idkEle.append(markerRow);
   nextStepGuess.registerDestination(idkEle);
   guessList.append(idkEle);
@@ -252,15 +264,28 @@ function clickNextGuessStepBtn() {
 function clickPlayerCard(e) {
   $(e.target.parentElement.children).attr("selected-player", false);
   $(e.target).attr("selected-player", true);
-  $("#nextGuessStepBtn").prop("disabled", false);
+  let sel = $("#guesserSelect");
+  let newNode = e.target.cloneNode(true);
+  $(newNode).attr({"data-bs-toggle":"modal",
+    "data-bs-target":"#guesserModal",
+    "id":"guesserSelect",
+    "data-bs-dismiss":""
+  });
+  sel.replaceWith(newNode);
+  updateNextGuessStepBtn();
+}
+
+function updateNextGuessStepBtn() {
+  $("#nextGuessStepBtn").prop("disabled", $("#guessCards > [card-id]").length != 3 || !($("#guesserSelect").attr("player-id") - 0 >= 0));
 }
 
 function clonePlayersLeft() {
   let destNode = $("#playerListForGuess");
   destNode.empty();
   for (let playerCard of $("#guesserList > [selected-player=false]")) {
-    let cloned = playerCard.cloneNode(true);
-    cloned.removeAttribute("selected-player");
+    let cloned = $(playerCard.cloneNode(true));
+    cloned.attr({"selected-player":"", "data-bs-dismiss":"", "draggable":"true"});
+    cloned.addClass(["card", "player-choice-card"]);
     nextStepGuess.registerSource(cloned);
     destNode.append(cloned);
   }
@@ -278,16 +303,19 @@ function clickFinalGuessBtn() {
     if (cardId !== undefined) {
       guess.cards.push(solver.get_card(cardId));
       if (players.length > 0) { // will only ever be one here
-        solver.own_card(players.attr("player-id"), cardId);
+        let err = solver.own_card(players.attr("player-id"), cardId);
+        if (err.length > 0) console.error(err);
       }
     }
     for (let player of players) {
-      guess.who_told.push($(player).attr("player-id"));
+      guess.who_told.push($(player).attr("player-id") - 0);
     }
   }
 
-  guess.guesser = $("#guesserList > [selected-player=true]").attr("player-id");
-  solver.add_guess(guess);
+  guess.guesser = $("#guesserList > [selected-player=true]").attr("player-id") - 0;
+  console.log(guess);
+  let err = solver.add_guess(guess);
+  if (err.length > 0) console.error(err);
 
   // reset everything
   $("#table").toggleClass("d-none");
@@ -296,14 +324,6 @@ function clickFinalGuessBtn() {
 
   // re-render everything from updated rust data
   render();
-}
-
-function ownCardForMainPlayer(card) {
-  let err = solver.own_card(Player.get_main_player_id(), card.id);
-  if (err.length > 0 ) console.log(err);
-  let ele = $(cardEl(card.name));
-  $('#addCardBtn').before(ele);
-  // TODO: remove add button if max cards reached maybe
 }
 
 function radioCard(player, val) {
@@ -355,9 +375,13 @@ function populateCardsLeftModal(idx) {
   let parent = $("#cardModalCards");
   parent.empty();
   for (let card of solver.get_cards_left_by_type()[idx]) {
-    let ele = $(cardEl(card.name, `data-bs-dismiss="modal"`));
+    let ele = cardEl("", {"card-id":card.id, "data-bs-dismiss":"modal"});
     ele.on('click', () => {
-      ownCardForMainPlayer(card);
+      let err = solver.own_card(Player.get_main_player_id(), card.id);
+      if (err.length > 0 ) console.error(err);
+      $('#addCardBtn').before(ele);
+      ele.off('click');
+      // TODO: remove add button if max cards reached maybe
     });
     parent.append(ele);
   }
@@ -365,7 +389,7 @@ function populateCardsLeftModal(idx) {
 
 function setupNextStepGuessCards() {
   let smCardEle = (data) => {
-    let result = $(`<div ${nextStepGuess.identifierName}=${data} class="sm-card card me-1 mt-1" draggable="false"></div>`);
+    let result = $(`<div ${nextStepGuess.identifierName}=${data} class="sm-card card me-1 mt-1"></div>`);
     result.on("click", handleMarkerClick);
     let player = solver.get_players().find(p => p.id == data);
     result.addClass("owner-tab-" + player.color);
@@ -378,7 +402,7 @@ function setupNextStepGuessCards() {
   }
 
   let updateFinGuessBtn = () => {
-    $("#finalGuessBtn").prop("disabled", $(`#guessList .sm-card`).length <= 3);
+    $("#finalGuessBtn").prop("disabled", $(`#guessList .sm-card`).length > 3);
   }
 
   nextStepGuess.setMoveCardBehaviorToCustom((data, destNode) => {
@@ -401,9 +425,7 @@ function setupNextStepGuessCards() {
 }
 
 function setupGuessCards() {
-  guessCardsDragDrop.onCardMoveComplete = () => {
-    $("#guessBtn").prop("disabled", $("#guessCards > [card-id]").length != 3);
-  };
+  guessCardsDragDrop.onCardMoveComplete = updateNextGuessStepBtn;
   guessCardsDragDrop.filter = (card) => {
     let cardType = $(card).attr("card-type");
     $(`#table > :not(#${cardType})`).hide();
@@ -420,14 +442,20 @@ function setupGuessCards() {
 
 async function startup() {
   await init();
+  loadBackgroundImagesIntoCache();
   $.getJSON("./cards.json", function(data) {
     solver = ClueSolver.from_json(data);
     $('#newGameTriggerBtn').prop("disabled", false);
     let modal = $("#cardTypeModalCards");
-    let modalTrigger = `data-bs-toggle="modal" data-bs-target="#cardsLeftInTypeModal"`;
     let cardTypes = solver.get_card_types();
     solver.get_cards_left_by_type().forEach((val, i) => {
-      let ele = $(cardEl(cardTypes[i], modalTrigger));
+
+      let ele = $(`<button class="btn btn-outline-light cl-card card">${cardTypes[i]}</button>`);
+      ele.attr({
+        "data-bs-toggle":"modal",
+        "data-bs-target":"#cardsLeftInTypeModal",
+        "type":"button",
+      });
       ele.on('click', () => populateCardsLeftModal(i));
       modal.append(ele);
     });
@@ -441,7 +469,6 @@ async function startup() {
 
   $('#updatePlayerDataTrigger').on('click', updatePlayerData);
   $('#newGameTriggerBtn').on('click', deal);
-  $('#guessBtn').on('click', clickAddGuessBtn);
   $('#nextGuessStepBtn').on('click', clickNextGuessStepBtn);
   $('#finalGuessBtn').on('click', clickFinalGuessBtn);
 }

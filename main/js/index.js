@@ -23,7 +23,7 @@
         let div = document.createElement("div");
         let a = document.createElement("a");
         let img = document.createElement("img");
-        let fullUrl = "https://127.0.0.1:444" + imgUrl;
+        let fullUrl = "https://um.adoodleydo.dev" + imgUrl;
         img.src = fullUrl;
         img.alt = imgUrl;
         img.classList.add("img-fluid", "p-3", "art");
@@ -61,7 +61,7 @@
                 imgData.urlIndex = 0;
                 addNewImages();
             };
-            request.open("GET", "https://127.0.0.1:444/rando/img_list?category=art");
+            request.open("GET", "https://um.adoodleydo.dev/rando/img_list?category=art");
             request.send();
         } else {
             // if blank page visible or near visible, and images avilable

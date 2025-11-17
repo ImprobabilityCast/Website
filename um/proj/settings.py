@@ -21,7 +21,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
-config_name = '../config/debug.toml'
+config_name = '../config/prod.toml'
 config = {}
 with open(BASE_DIR / config_name, 'rb') as f:
     config = tomllib.load(f)

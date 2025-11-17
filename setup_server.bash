@@ -54,7 +54,7 @@ then # prod
     acme.sh --issue --dns dns_dreamhost -d adoodleydo.dev -d www.adoodleydo.dev -d um.adoodleydo.dev \
         --server  letsencrypt -w /home/name/Website/main
     acme.sh --install-cert -d adoodleydo.dev -d www.adoodleydo.dev -d um.adoodleydo.dev \
-        --fullchain-file /etc/apache2/sslfullchain.cer \
+        --fullchain-file /etc/apache2/sslfullchain.pem \
         --key-file /etc/apache2/sslkey.key \
         --reloadcmd "apache2ctl restart"
     cd ~/Website

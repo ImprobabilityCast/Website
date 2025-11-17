@@ -317,9 +317,13 @@ impl GuessEngine for ClueSolver {
         debug(&format!("(_own_card) player {} owning card {}", player_id, card.id));
         self.cards_left_by_type[card.card_type as usize].retain(|c| c != card);
         self.owner_mask_by_card_id[card.id] = player_id;
-        if player_id > 0 && self.are_all_cards_known(&self.get_player(player_id)) {
+        if player_id > 1 && self.are_all_cards_known(&self.get_player(player_id)) { // found player's last card
             for mask in self.owner_mask_by_card_id.iter_mut().filter(|m| **m != player_id) {
                 *mask &= !player_id;
+            }
+        } else if player_id == SOLUTION_ID { // found solution for a type
+            for card_id in self.cards_left_by_type[card.card_type as usize].iter().map(|c| c.id) {
+                self.owner_mask_by_card_id[card_id] &= !player_id;
             }
         }
     }

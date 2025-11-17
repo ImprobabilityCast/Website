@@ -53,7 +53,7 @@
         let artLoadingMsgID = "artLoadingMsg";
         if (artDiv[0].lastElementChild.id == artLoadingMsgID) {
             // show loading animation, nah just loading text :P
-            // get list of images um.adoodleydo.dev/rando/img_list?category=art
+            // get list of images 127.0.0.1:444/rando/img_list?category=art
             let request = new XMLHttpRequest();
             request.onload = function () {
                 artDiv.find("#artLoadingMsg").hide(0);

@@ -84,7 +84,7 @@ python manage.py migrate
 python manage.py collectstatic --noinput
 deactivate
 touch ~/Website/um/um.log
-chmod uo+rw ~/Webite/um/um.log
+chmod uo+rw ~/Website/um/um.log
 apache2ctl restart
 
 # TODO: make subdomain use different port with proxypass

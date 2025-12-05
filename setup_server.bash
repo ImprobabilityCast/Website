@@ -1,4 +1,6 @@
 #!/bin/bash
+
+
 HOME=/home/name
 # TODO: find a better solution for the permissions problem
 chmod 777 $HOME
@@ -11,7 +13,7 @@ apt -y install php$PHP_VERSION-curl libapache2-mod-php$PHP_VERSION \
      php$PHP_VERSION php$PHP_VERSION-cli php$PHP_VERSION-common php$PHP_VERSION-mysql
 apt -y install python3 python3-dev python3-virtualenv libapache2-mod-wsgi-py3 python-is-python3
 apt -y install mariadb-server
-# need gcc libs to build the mysql dependancy for django project
+# need gcc libs to build the mysql dependency for django project
 apt -y install cron gcc
 
 # need for cattle prod
@@ -38,9 +40,6 @@ apt -y install fortune-mod
 TO_PROD=${1:-1}
 
 ./cattle_prod.bash $TO_PROD
-
-# clone website repo
-# git clone --single-branch --branch master https://github.com/ImprobabilityCast/Website.git
 
 # copy config
 cd $HOME/Website/config
@@ -107,5 +106,3 @@ echo "33 4    * * 4   root    /home/name/Website/restart.bash" >> /etc/crontab
 
 
 echo "remember to copy prod.toml, mood_db_php_user_pwd.txt, clueless.js, clueless_bg.wasm, and art images manually"
-
-# TODO: make subdomain use different port with proxypass

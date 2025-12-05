@@ -7,7 +7,7 @@
 .owner-tab-lightgrey { background: lightgrey; color: black; }
 
 body {
-  background: radial-gradient(circle at 30% 30%, #3a8fd0 0%, #1f6fb2 40%, #144c7e 100%);
+  background: radial-gradient(circle at 30% 30%, #51758f 0%, #1b5383 40%, #08233a 100%);
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -22,11 +22,20 @@ body {
     color: white;
 }
 .fake-guess-card:hover {
-    background: #fff6;
+  background: #fff6;
+}
+.carousel-item > .card, .modal-content, #cardTypeModalCards > .card  {
+  background: #19316b70;
+  color: white;
+}
+#addCardBtn {
+  background: #ffffff12;
+  color: white;
 }
 #guessCardsHand {
-    background: #3a8fd0;
-    border-radius: 0;
+  background: #1d4b6d;
+  color: white;
+  border-radius: 0;
 }
 .cards { display: flex; flex-wrap: wrap; gap: 10pt; }
 .cl-card {
@@ -79,11 +88,11 @@ button[player-id] {
   content: '';
   z-index: -1;
   border-radius: 10pt;
-  width: 80pt;
-  height: 110pt;
+  width: 78pt;
+  height: 108pt;
   position: relative;
-  top: -11pt;
-  left: -11pt;
+  top: -10pt;
+  left: -10pt;
 }
 
 [card-id="0"] {

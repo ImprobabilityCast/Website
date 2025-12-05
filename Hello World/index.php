@@ -1,14 +1,14 @@
 <?php
 // check for invalid URLs
 if (strlen($_SERVER["PATH_INFO"]) != 0) {
-    require $_SERVER["DOCUMENT_ROOT"] . "/error-pages/404.php";
+    require $_SERVER["DOCUMENT_ROOT"] . "/error-pages/404.html";
     exit(0);
 } 
 ?>
 
 <!DOCTYPE html>
 <html lang="en-US">
-<meta charset="UTF-8">
+<meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
 <?php require $_SERVER['DOCUMENT_ROOT'] . "/meta-pages/includes.php"; ?>
@@ -83,9 +83,9 @@ $array = get_browser($_SERVER['HTTP_USER_AGENT'], true);
 
 // Signature
 // $_SERVER['SERVER_SIGNATURE'] does not work on IIS
-echo "</ul></div><footer><i>",$_SERVER['SERVER_SOFTWARE'], " Server at ",
-	$_SERVER['LOCAL_ADDR'], " Port ", $_SERVER['SERVER_PORT'], "</i><address>",
+echo "<footer><i>",$_SERVER['SERVER_SOFTWARE'], " Server at ",
+	$_SERVER['LOCAL_ADDR'], " port ", $_SERVER['SERVER_PORT'], "</i><address>",
 	$array['browser'], "/", $array['version'], " Browser at ",
-	$_SERVER['REMOTE_ADDR'], " Port ", $_SERVER['REMOTE_PORT'],
+	$_SERVER['REMOTE_ADDR'], " port ", $_SERVER['REMOTE_PORT'],
 	"</address></footer></body></html>";
 ?>

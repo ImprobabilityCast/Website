@@ -195,15 +195,6 @@ impl GuessEngine for ClueSolver {
             .count() == player.max_cards
     }
 
-    // fn update_cards_left_by_type(&mut self, found_cards: &[Card]) {
-    //     for found_card in found_cards {
-    //         if let Some(stored_idx) = self.cards_left_by_type[found_card.card_type as usize]
-    //                 .iter().position(|c| c == found_card) {
-    //             self.cards_left_by_type[found_card.card_type as usize].swap_remove(stored_idx);
-    //         }
-    //     }
-    // }
-
     fn _add_guess(&mut self, guess: Guess) {
         // Add guess to list, then process all cards in list
 
@@ -220,15 +211,6 @@ impl GuessEngine for ClueSolver {
             // Remove cards if we know who they belong to, later removing those
             // cards from self.cards_by_type_left
             let mut cards_resolved = self.resolve_cards(&mut current);
-
-            // If no showers left and guesser cannot have it, IT'S THE ONE
-            let player = self.get_player(current.guesser);
-            if current.who_told.len() == 0 && self.are_all_cards_known(&player) {
-                cards_resolved += current.cards.len();
-                for card in current.cards.drain(..) {
-                    self._own_card(SOLUTION_ID, &card);
-                }
-            }
 
             debug("(_add_guess) section 2");
 
@@ -250,6 +232,7 @@ impl GuessEngine for ClueSolver {
                     None
                 }
             ).collect::<Vec<Card>>();
+            cards_resolved += to_be_owned_by_solution.len();
             for card in to_be_owned_by_solution {
                 self.owner_mask_by_card_id[card.id] = SOLUTION_ID;
             }
@@ -295,13 +278,20 @@ impl GuessEngine for ClueSolver {
     }
 
     fn add_not_my_cards(&mut self, guess: &Guess) {
-        let mut no_tell_mask = 0;
+        let mut no_tell_mask = usize::MAX;
         for player_id in &guess.who_told_not {
-            no_tell_mask |= player_id;
+            debug(&format!("(add_not my cards) no tell player_id {:b}", player_id));
+            no_tell_mask &= !player_id;
         }
         for card in &guess.cards {
-            debug(&format!("(add_not my cards) setting mask {:b} to {:b}", self.owner_mask_by_card_id[card.id], self.owner_mask_by_card_id[card.id] & !no_tell_mask));
-            self.owner_mask_by_card_id[card.id] &= !no_tell_mask;
+            let new_mask = self.owner_mask_by_card_id[card.id] & no_tell_mask;
+            debug(&format!("(add_not my cards) setting mask {:b} to {:b}", self.owner_mask_by_card_id[card.id], new_mask));
+            self.owner_mask_by_card_id[card.id] = new_mask;
+            // check if our new mask is actually aplayer id, or the solution id
+            if new_mask & (new_mask - 1) == 0 {
+                debug(&format!("(add_not my cards) found player_id {:b}", new_mask));
+                self._own_card(new_mask, card)
+            }
         }
     }
 
@@ -350,8 +340,7 @@ impl GuessEngine for ClueSolver {
                 debug(&format!("(resolve_cards_to_who_told) player {} owning card {}", rat_id, found_card.id));
                 self._own_card(rat_id, &found_card);
                 cards_found += 1;
-                //guess.who_told.remove(told_idx);
-                told_idx = 0; // reduced number of cards, so re-examine any previous tellers
+                guess.who_told.remove(told_idx);
             } else { // too many possible cards, cannot conclude anything
                 told_idx += 1;
             }
@@ -366,19 +355,27 @@ impl GuessEngine for ClueSolver {
 
         // If a card of a type is unresolved, and the solution for that type is known,
         // then the guesser guessed one of his/her own cards.
-        let mut card_idx = guess.cards.len() - 1;
-        while card_idx < usize::MAX { // yes, using integer overflow to signal the end of the loop
-            let card = &guess.cards[card_idx];
-            debug(&format!("(resolve_cards) card_idx {}", card_idx));
-            if self.partial_solution().iter().any(|sol_card| sol_card.card_type == card.card_type) {
-                debug(&format!("(resolve_cards) partial_solution[0] id {}", self.partial_solution()[0].id));
-                debug(&format!("(resolve_cards) partial_solution[0] mask {:b}", self.owner_mask_by_card_id[self.partial_solution()[0].id]));
-                debug(&format!("(resolve_cards) player {} owning card {}", guess.guesser, card.id));
-                self._own_card(guess.guesser, card);
-                guess.cards.swap_remove(card_idx);
-                cards_found += 1;
+        if guess.who_told.len() == 0 {
+            let mut card_idx = guess.cards.len() - 1;
+            while card_idx < usize::MAX { // yes, using integer overflow to signal the end of the loop
+                let card = &guess.cards[card_idx];
+                debug(&format!("(resolve_cards) card_idx {}", card_idx));
+                let player = self.get_player(guess.guesser);
+                let pid = if self.are_all_cards_known(&player) {
+                    SOLUTION_ID     // If no showers left and guesser cannot have it, IT'S THE ONE
+                } else if self.partial_solution().iter().any(|sol_card| sol_card.card_type == card.card_type) {
+                    guess.guesser   // If no showers left and solution for that type is known, the guesser has it
+                } else {
+                    0               // cannot conclude anything
+                };
+                if pid > 0 {
+                    debug(&format!("(resolve_cards) player id {} owning card {}", pid, card.id));
+                    self._own_card(pid, card);
+                    guess.cards.swap_remove(card_idx);
+                    cards_found += 1;
+                }
+                card_idx -= 1;
             }
-            card_idx -= 1;
         }
 
         cards_found
@@ -403,7 +400,7 @@ impl GuessEngine for ClueSolver {
         }
 
         // reset self.owner_mask_by_card_id
-        self.owner_mask_by_card_id = vec![!0; self.cards_by_id.len()];
+        self.owner_mask_by_card_id = vec![!(!0 << (options.num_players + 1)); self.cards_by_id.len()];
 
         if options.disable_conservatory {
             self.disable_card("Conservatory");

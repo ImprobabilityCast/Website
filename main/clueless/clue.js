@@ -43,7 +43,7 @@ function render() {
     let handBox = $(`
       <div class="p-0" id="${cardType}">
         <div class="hand">
-          <h5 class="text-white">
+          <h5 class="text-white mb-3">
             ${cardType}s
           </h5>
           <div class="cards"></div>
@@ -329,7 +329,7 @@ function clickFinalGuessBtn() {
 function radioCard(player, val) {
   return (`<input type="radio" class="btn-check" name="numCards${player.id}" id="numCards${player.id}${val}"
     autocomplete="off" ${player.max_cards == val ? "checked" : ""} value="${val}">
-    <label class="btn btn-outline-primary" for="numCards${player.id}${val}">${val} Cards</label>
+    <label class="btn btn-outline-light" for="numCards${player.id}${val}">${val} Cards</label>
   `);
 }
 

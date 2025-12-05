@@ -7,6 +7,7 @@ git pull
 
 # update django if needed
 source $REPO/um/env/bin/activate
+cd $REPO/um
 python -m pip install -r $REPO/um/proj/requirements.txt
 python manage.py migrate
 python manage.py collectstatic --noinput

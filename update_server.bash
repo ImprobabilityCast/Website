@@ -1,11 +1,12 @@
 #!/bin/bash
 
 REPO=/home/name/Website
+cd $REPO
 
 git pull
 
 # update django if needed
-source $REPO/um/env/activate
+source $REPO/um/env/bin/activate
 python -m pip install -r $REPO/um/proj/requirements.txt
 python manage.py migrate
 python manage.py collectstatic --noinput

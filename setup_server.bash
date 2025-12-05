@@ -3,7 +3,9 @@
 
 HOME=/home/name
 # TODO: find a better solution for the permissions problem
-chmod 777 $HOME
+chmod 750 $HOME
+usermod name -a -G www-data
+chgrp www-data $HOME
 
 cd $HOME/Website
 source $HOME/Website/config/prod.toml
@@ -105,4 +107,17 @@ chmod 755 /home/name/Website/restart.bash
 echo "33 4    * * 4   root    /home/name/Website/restart.bash" >> /etc/crontab
 
 
-echo "remember to copy prod.toml, mood_db_php_user_pwd.txt, clueless.js, clueless_bg.wasm, and art images manually"
+# setup ssh login with keys only
+sed -i 's/^PasswordAuthentication/#PasswordAuthentication/g;
+s/^PermitEmptyPasswords/#PermitEmptyPasswords/g;
+s/^PubkeyAuthentication/#PubkeyAuthentication/g;
+s/^UsePAM/#UsePAM/g;
+s/^ChallengeResponseAuthentication/#ChallengeResponseAuthentication/g' '/etc/ssh/sshd_config'
+
+echo 'PasswordAuthentication no
+PubkeyAuthentication yes
+UsePAM no
+PermitEmptyPasswords no
+ChallengeResponseAuthentication no' >> '/etc/ssh/sshd_config'
+systemctl restart sshd
+

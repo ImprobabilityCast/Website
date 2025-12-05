@@ -7,19 +7,16 @@ SCP_OPTIONS="-P 23 -i $2"
 SSH_OPTIONS="-p 23 -i $2"
 HOSTY=$1@adoodleyo.dev
 
-echo $REPO
-echo $OPTIONS
-echo $HOSTY
 
-
-FILE_PATH=/config/prod.toml
-scp $REPO$FILE_PATH $HOSTY:$REPO$FILE_PATH $OPTIONS
-FILE_PATH=/config/mood_db_php_user_pwd.txt
-scp $REPO$FILE_PATH $HOSTY:$REPO$FILE_PATH $OPTIONS
+# FILE_PATH=/config/prod.toml
+# scp $SCP_OPTIONS $REPO$FILE_PATH $HOSTY:$REPO$FILE_PATH
+# FILE_PATH=/config/mood_db_php_user_pwd.txt
+# scp $SCP_OPTIONS $REPO$FILE_PATH $HOSTY:$REPO$FILE_PATH
 FILE_PATH=/update_server.bash
-scp $REPO$FILE_PATH $HOSTY:$REPO$FILE_PATH $OPTIONS
+scp $SCP_OPTIONS $REPO$FILE_PATH $HOSTY:$REPO$FILE_PATH
 FILE_PATH=/main/clueless/pkg/
-scp $REPO$FILE_PATH $HOSTY:$REPO$FILE_PATH $OPTIONS -r
+ssh $SSH_OPTIONS $HOSTY "mkdir -p $REPO$FILE_PATH"
+scp $SCP_OPTIONS -r $REPO$FILE_PATH $HOSTY:$REPO$FILE_PATH
 
 
-ssh $SSH_OPTIONS $HOSTY $REPO/update_server.bash
+ssh $SSH_OPTIONS $HOSTY sudo $REPO/update_server.bash

@@ -62,12 +62,15 @@ then # prod
     alias acme.sh=/root/.acme.sh/acme.sh
     acme.sh --set-default-ca  --server  letsencrypt
     export DH_API_KEY=$DH_API_KEY
-    acme.sh --issue --dns dns_dreamhost -d adoodleydo.dev -d www.adoodleydo.dev -d um.adoodleydo.dev \
-        --server  letsencrypt -w $HOME/Website/main
+    acme.sh --issue --dns dns_dreamhost -d adoodleydo.dev -w $HOME/Website/main \
+	-d www.adoodleydo.dev -w $HOME/Website/main \
+	-d um.adoodleydo.dev -w $HOME/Website/um \
+        --server  letsencrypt
     acme.sh --install-cert -d adoodleydo.dev -d www.adoodleydo.dev -d um.adoodleydo.dev \
         --fullchain-file /etc/apache2/sslfullchain.pem \
         --key-file /etc/apache2/sslkey.key \
         --reloadcmd "apache2ctl restart"
+    echo "37 4    * * 4   root    /root/.acme.sh/acme.sh --cron" >> /etc/crontab
     cd $HOME/Website
 else # debug
     source $HOME/Website/config/debug.toml
@@ -105,6 +108,7 @@ chown root /home/name/Website/restart.bash
 chgrp root /home/name/Website/restart.bash
 chmod 755 /home/name/Website/restart.bash
 echo "33 4    * * 4   root    /home/name/Website/restart.bash" >> /etc/crontab
+echo "37 4    * * 4   root    /root/.acme.sh/acme.sh --cron" >> /etc/crontab
 
 
 # setup ssh login with keys only

@@ -103,6 +103,7 @@ trait GuessEngine {
     fn _own_card(&mut self, player_id: usize, card: &Card);
     fn _update_player(&mut self, player: Player);
 
+    fn all_shown_condition(&mut self, guess: &Guess);
     fn remove_owned_cards(&mut self, guess: &mut Guess) -> bool;
     fn add_not_my_cards(&mut self, guess: &Guess);
     fn resolve_cards_to_who_told(&mut self, guess: &mut Guess) -> usize;
@@ -204,6 +205,8 @@ impl GuessEngine for ClueSolver {
         while guess_idx < usize::MAX {
             let mut current = self.guesses[guess_idx].clone();
 
+            self.all_shown_condition(&current);
+
             // Add the cards in guess to not-my-cards for those who did not show.
             self.add_not_my_cards(&current);
 
@@ -252,6 +255,16 @@ impl GuessEngine for ClueSolver {
 
             debug("(_add_guess) section 5");
             debug(&format!("(_add_guess) guesses len: {}, guess_idx: {}, max_usize: {}", self.guesses.len(), guess_idx, usize::MAX));
+        }
+    }
+
+    fn all_shown_condition(&mut self, guess: &Guess) {
+        if guess.cards.len() == 3 && guess.who_told.len() == 3 {
+            debug("(all_shown_condition) triggered");
+            for card in guess.cards.iter() {
+                self.owner_mask_by_card_id[card.id] &= !SOLUTION_ID;
+                self.cards_left_by_type[card.card_type as usize].retain(|c| c != card);
+            }
         }
     }
 

@@ -22,8 +22,6 @@ apt -y install cron gcc
 apt -y install tree
 
 apt -y install fail2ban
-sed -i "s/^port\s*=\s*ssh/port     = $SSH_PORT/g;
-s/^backend = auto/backend = systemd/g" /etc/fail2ban/jail.conf
 
 wget https://packages.microsoft.com/config/debian/12/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
 dpkg -i packages-microsoft-prod.deb
@@ -49,6 +47,8 @@ TO_PROD=${1:-1}
 
 # copy config
 cd $HOME/Website/config
+cp jail.local /etc/fail2ban/
+sed "s/port = ssh/port = $SSH_PORT/g" /etc/fail2ban/jail.local
 cp ports.conf apache2.conf /etc/apache2/
 cp 999-main.conf 998-main.conf 002-echo.conf 001-um.conf 000-default.conf /etc/apache2/sites-available/
 cd ../

@@ -50,9 +50,9 @@ TO_PROD=${1:-1}
 # copy config
 cd $HOME/Website/config
 cp ports.conf apache2.conf /etc/apache2/
-cp 999-main.conf 002-echo.conf 001-um.conf 000-default.conf /etc/apache2/sites-available/
+cp 999-main.conf 998-main.conf 002-echo.conf 001-um.conf 000-default.conf /etc/apache2/sites-available/
 cd ../
-a2ensite 001-um 002-echo 999-main 000-default
+a2ensite 001-um 002-echo 998-main 999-main 000-default
 apache2ctl restart
 
 

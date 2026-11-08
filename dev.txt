@@ -1,0 +1,48 @@
+HOME=/home/name
+
+# create vm disk
+qemu-img create ~/website-dev.img 5G
+
+# create vm
+qemu-system-x86_64 -enable-kvm -hda ~/website-dev.img -cdrom ~/Downloads/debian-13.2.0-amd64-netinst.iso -boot d -m 512
+
+# never got any of this tap/bridge stuff to work
+# install & setup bridge utils
+#apt install bridge-utils
+
+# add br0 bridge:
+# edit /etc/netplan/01-network-manager-all.yaml:
+# enp2s0 is the name of the ethernet interface
+#network:
+#  version: 2
+#  renderer: NetworkManager
+#  ethernets:
+#    enp2s0:
+#      dhcp4: no
+#  bridges:
+#    br0:
+#      dhcp4: yes
+#      interfaces:
+#        - enp2s0
+
+# apply network changes
+#netplan apply
+
+#sudo ip tuntap add mode tap tap0
+#brctl addif br0 tap0
+
+#sudo ip link set enp2s0 up
+#sudo ip link set tap0 up
+#sudo ip link set br0 up
+
+# fstab on guest
+#host0   $HOME/Website  9p  trans=virtio,version=9p2000.L   0   0
+
+#mkdir /etc/qemu
+#echo "allow br0" >> /etc/qemu/bridge.conf
+
+# run vm
+# qemu-system-x86_64 -enable-kvm -hda website-dev.img -netdev bridge,id=hn0 -device virtio-net-pci,netdev=hn0,id=nic1 -m 512
+
+qemu-system-x86_64 -enable-kvm -nographic -hda website-dev.img -m 512 -virtfs local,path=$HOME/Website,mount_tag=host0,security_model=mapped,id=host0 -nic user,hostfwd=tcp::22-:22,hostfwd=tcp::80-:80,hostfwd=tcp::443-:443,hostfwd=tcp::444-:444,hostfwd=tcp::445-:445
+

@@ -21,6 +21,8 @@ apt -y install cron gcc
 # need for cattle prod
 apt -y install tree
 
+apt -y install fail2ban
+
 wget https://packages.microsoft.com/config/debian/12/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
 dpkg -i packages-microsoft-prod.deb
 rm packages-microsoft-prod.deb
